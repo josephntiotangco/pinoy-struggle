@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171613">
-  <meta name="description" content="A nine-stage arcade fighter set in Tondo, Manila.">
+  <!-- <meta name="description" content="A nine-stage arcade fighter set in Tondo, Manila."> -->
+  <!-- JT-2026/11/19 - describe the ten stage campaign -->
+  <meta name="description" content="A ten-stage arcade fighter set in Tondo, Manila.">
   <!-- JT-2026/11/19 - show the new game name in the browser tab -->
   <title>Pinoy Struggle</title>
   <link rel="stylesheet" href="styles.css">
@@ -44,9 +46,17 @@
             <div class="hud-heading"><span>01</span> PLAYER</div>
             <div class="health" id="player-health" role="meter" aria-label="Player health"
               aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span></span></div>
+            <!-- JT-2026/11/19 - show juan's super charge separately from his health -->
+            <div class="super-hud">
+              <div class="super-label" aria-hidden="true"><span>SUPER</span><span id="super-readout">0%</span></div>
+              <div class="super-meter" id="player-super" role="meter" aria-label="Juan's super charge"
+                aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+            </div>
           </div>
           <div class="timer">
-            <span class="stage-counter" id="stage-counter">LEVEL 01 / 09</span>
+            <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 09</span> -->
+            <!-- JT-2026/11/19 - show the new level count in the initial hud -->
+            <span class="stage-counter" id="stage-counter">LEVEL 01 / 10</span>
             <span class="seconds" id="seconds" aria-label="Seconds left">60</span>
           </div>
           <div class="fighter-hud enemy-hud">
@@ -66,7 +76,9 @@
             <p class="eyebrow" id="panel-kicker">SINGLE PLAYER ARCADE</p>
             <!-- JT-2026/11/19 - show the new game name on the start screen -->
             <h1 class="panel-title" id="panel-title"><span>Pinoy</span> <strong>Struggle</strong></h1>
-            <p class="panel-copy" id="panel-copy">Defeat all nine challengers.</p>
+            <!-- <p class="panel-copy" id="panel-copy">Defeat all nine challengers.</p> -->
+            <!-- JT-2026/11/19 - update the start screen objective -->
+            <p class="panel-copy" id="panel-copy">Defeat all ten challengers.</p>
             <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
             <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
           </div>
@@ -75,7 +87,9 @@
       </div>
       <div class="arena-strip">
         <span><i aria-hidden="true"></i> TONDO, MANILA</span>
-        <span id="cleared">0 / 9 CLEARED</span>
+        <!-- <span id="cleared">0 / 9 CLEARED</span> -->
+        <!-- JT-2026/11/19 - start progress at zero of ten cleared -->
+        <span id="cleared">0 / 10 CLEARED</span>
       </div>
     </section>
 
@@ -90,8 +104,11 @@
         <li><kbd>J</kbd><span>Punch</span></li>
         <li><kbd>K</kbd><span>Kick</span></li>
         <!-- JT-2026/11/19 - list the special attack keys -->
-        <li><kbd>L</kbd><span>Hadouken</span></li>
-        <li><kbd>I</kbd><span>Shoryuken</span></li>
+        <!-- <li><kbd>L</kbd><span>Hadouken</span></li> -->
+        <!-- <li><kbd>I</kbd><span>Shoryuken</span></li> -->
+        <!-- JT-2026/11/19 - use the new special names in the keyboard controls -->
+        <li><kbd>L</kbd><span>Energy Wave</span></li>
+        <li><kbd>I</kbd><span>Super Upper Cut</span></li>
       </ul>
       <span class="pause-guide"><kbd>Esc</kbd> Pause</span>
       <div class="touch-controls" id="touch-controls" aria-label="Touch controls">
@@ -105,11 +122,16 @@
           <!-- JT-2026/11/19 - put both specials on the touch attack pad -->
           <button type="button" data-input="light">Punch</button>
           <button type="button" data-input="heavy">Kick</button>
-          <button type="button" data-input="hadouken">Hadouken</button>
-          <button type="button" data-input="shoryuken">Shoryuken</button>
+          <!-- <button type="button" data-input="hadouken">Hadouken</button> -->
+          <!-- <button type="button" data-input="shoryuken">Shoryuken</button> -->
+          <!-- JT-2026/11/19 - use the new special names on the touch attack pad -->
+          <button type="button" data-input="energyWave">Energy Wave</button>
+          <button type="button" data-input="superUpperCut">Super Upper Cut</button>
         </div>
         <!-- JT-2026/11/19 - explain guard on touch screens -->
-        <p class="touch-hint">Move away from your opponent to guard.</p>
+        <!-- <p class="touch-hint">Move away from your opponent to guard.</p> -->
+        <!-- JT-2026/11/19 - explain how to charge super on touch screens -->
+        <p class="touch-hint">Move away to guard. Land punches and kicks to charge Super.</p>
       </div>
     </section>
 

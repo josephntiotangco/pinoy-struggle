@@ -168,6 +168,38 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   transform-origin: right center;
 }
 
+/* JT-2026/11/19 - distinguish super charge from health and highlight a full bar */
+.super-hud { width: min(100%, 230px); margin-top: 7px; }
+.super-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 3px;
+  color: #bbf7eb;
+  font: 800 clamp(.56rem, 1cqw, .73rem)/1 var(--mono);
+  letter-spacing: .1em;
+  text-shadow: 0 2px #091514;
+}
+
+.super-meter {
+  height: clamp(8px, 1cqw, 13px);
+  padding: 1px;
+  border: 1px solid #73b4a8;
+  background: #12201f;
+  box-shadow: 0 2px 0 #0c0908;
+}
+
+.super-meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(#c9fff0 0 32%, #4cddcb 32% 82%, #188f88 82% 100%);
+  transform: scaleX(var(--super, 0));
+  transform-origin: left center;
+  transition: transform .15s linear;
+}
+
+.super-meter[aria-valuenow="100"] { border-color: #c9fff0; box-shadow: 0 0 9px #4cddcb99; }
+
 .timer {
   min-width: clamp(69px, 8cqw, 108px);
   text-align: center;
@@ -340,7 +372,9 @@ kbd {
 .touch-controls { display: none; }
 .ladder { padding-top: 17px; }
 .ladder h2 { margin-bottom: 12px; }
-.roster { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; }
+/* .roster { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; } */
+/* JT-2026/11/19 - fit all ten levels in the desktop ladder */
+.roster { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; }
 .roster li {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -364,12 +398,14 @@ kbd {
 
 @media (max-width: 1050px) {
   .topbar-inner, .arcade { width: calc(100% - 44px); }
+  /* JT-2026/11/19 - keep longer enemy names readable in two rows */
+  .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .roster li { padding-inline: 5px; }
 }
 
 @media (max-width: 880px) {
   .arena { aspect-ratio: 2.01; }
-  .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  /* .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); } */
 }
 
 @media (max-width: 680px) {
@@ -426,7 +462,9 @@ kbd {
   }
   /* .touch-controls button[data-input="light"], .touch-controls button[data-input="heavy"] { color: #ffe091; } */
   /* JT-2026/11/19 - color the special buttons like the other attacks */
-  .touch-controls button:is([data-input="light"], [data-input="heavy"], [data-input="hadouken"], [data-input="shoryuken"]) {
+  /* .touch-controls button:is([data-input="light"], [data-input="heavy"], [data-input="hadouken"], [data-input="shoryuken"]) { */
+  /* JT-2026/11/19 - apply attack button styling to the renamed specials */
+  .touch-controls button:is([data-input="light"], [data-input="heavy"], [data-input="energyWave"], [data-input="superUpperCut"]) {
     color: #ffe091;
   }
   .touch-controls button.is-held { background: #f8ce53; color: #20170b; }
@@ -438,5 +476,7 @@ kbd {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .health > span { transition: none; }
+  /* .health > span { transition: none; } */
+  /* JT-2026/11/19 - respect reduced motion for both fight meters */
+  .health > span, .super-meter > span { transition: none; }
 }

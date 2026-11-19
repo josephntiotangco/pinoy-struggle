@@ -1,5 +1,6 @@
 "use strict";
 
+/*
 //JT-2026/11/19 - define the opponent order and combat behavior
 const OPPONENTS = [
   { id: "kamote_rider_0", size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
@@ -13,20 +14,44 @@ const OPPONENTS = [
   { id: "emotional_damage_0", size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
   { id: "gasoline_0", size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
 ];
-const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
+*/
+//JT-2026/11/19 - add snatcher and raise opponent health across the new ladder
+const OPPONENTS = [
+  { id: "kamote_rider_0", maxHealth: 160, size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
+  { id: "snatcher_0", maxHealth: 175, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
+  { id: "adik_0", maxHealth: 185, size: 1.14, body: 27, speed: 173, reach: 76, power: 10, interval: .89, heavy: .34, guard: .05 },
+  { id: "congressman_0", displayName: "politiko", maxHealth: 200, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
+  { id: "mayabang_0", maxHealth: 215, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  { id: "matapobre_0", maxHealth: 230, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
+  { id: "gasoline_0", maxHealth: 245, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
+  { id: "billing_0", maxHealth: 260, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  { id: "stress_0", maxHealth: 280, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
+  { id: "emotional_damage_0", maxHealth: 300, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+];
+// const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
+//JT-2026/11/19 - give juan an explicit health maximum for timeout comparisons
+const HERO = { id: "hero_0", maxHealth: 100, size: 1.21, body: 25, speed: 263 };
 const ROUND_SECONDS = 60;
+//JT-2026/11/19 - define the charge awarded by a clean punch or kick
+const SUPER_MAX = 100;
+const SUPER_GAIN = { light: 20, heavy: 34 };
 const FRAME = { width: 504, height: 201, x: 156, y: 192, scale: 1.5 };
 // const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, guard: 7 };
 //JT-2026/11/19 - map the taller hero frames and special attack art
 const HERO_FRAME = { ...FRAME, height: 234, y: 225 };
-const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, hadouken: 7, shoryuken: 8 };
+// const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, hadouken: 7, shoryuken: 8 };
+//JT-2026/11/19 - map the renamed special moves to their existing animation rows
+const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, energyWave: 7, superUpperCut: 8 };
 const FIREBALL = { row: 9, speed: 540, lifetime: 1.4, radius: 38, elevation: 65, scale: .86 };
 const MOVES = {
   light: { duration: .35, impact: .15, damage: 14, reach: 82, push: 158, stun: .27 },
   heavy: { duration: .61, impact: .29, damage: 23, reach: 107, push: 260, stun: .34 },
   //JT-2026/11/19 - set the timing and damage of juan's special attacks
-  hadouken: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
-  shoryuken: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
+  // hadouken: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
+  // shoryuken: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
+  //JT-2026/11/19 - identify juan's moves as energy wave and super upper cut
+  energyWave: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
+  superUpperCut: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
 };
 const KEYS = {
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
@@ -34,7 +59,9 @@ const KEYS = {
   // KeyJ: "light", KeyK: "heavy",
   //JT-2026/11/19 - replace the guard key with two special attack bindings
   ArrowUp: "jump", KeyW: "jump",
-  KeyJ: "light", KeyK: "heavy", KeyL: "hadouken", KeyI: "shoryuken",
+  // KeyJ: "light", KeyK: "heavy", KeyL: "hadouken", KeyI: "shoryuken",
+  //JT-2026/11/19 - bind the existing keys to the renamed moves
+  KeyJ: "light", KeyK: "heavy", KeyL: "energyWave", KeyI: "superUpperCut",
 };
 
 //JT-2026/11/19 - connect the arcade ui and initialize the first matchup
@@ -42,6 +69,8 @@ const byId = id => document.getElementById(id);
 const ui = {
   arena: byId("arena"), canvas: byId("fight"),
   playerHealth: byId("player-health"), enemyHealth: byId("enemy-health"),
+  //JT-2026/11/19 - connect the super meter and its ready readout
+  playerSuper: byId("player-super"), superReadout: byId("super-readout"),
   playerPlate: byId("player-plate"), enemyPlate: byId("enemy-plate"),
   counter: byId("stage-counter"), seconds: byId("seconds"), cleared: byId("cleared"),
   roster: byId("roster"), status: byId("status"), announcement: byId("announcement"),
@@ -102,7 +131,10 @@ ui.touch.querySelectorAll("button").forEach(button => {
 
 //JT-2026/11/19 - normalize sprite ids for the fighter nameplates
 function fighterName(id, separator = " ") {
-  return id.replace(/_0$/, "").replaceAll("_", separator);
+  // return id.replace(/_0$/, "").replaceAll("_", separator);
+  //JT-2026/11/19 - use the opponent's display name when provided
+  const name = OPPONENTS.find(opponent => opponent.id === id)?.displayName ?? id.replace(/_0$/, "");
+  return name.replaceAll("_", separator);
 }
 
 //JT-2026/11/19 - format levels consistently across the arena and ladder
@@ -130,7 +162,9 @@ function makeFighter(profile, x, direction) {
   const edge = profile.edge ?? 35;
   return {
     profile, edge, x: clamp(x, edge, view.world - edge), direction,
-    y: 0, velocity: 0, knockback: 0, health: 100,
+    // y: 0, velocity: 0, knockback: 0, health: 100,
+    //JT-2026/11/19 - start each fighter at their own maximum health
+    y: 0, velocity: 0, knockback: 0, health: profile.maxHealth,
     stun: 0, guard: false, moving: false, attack: null, down: 0,
   };
 }
@@ -150,8 +184,12 @@ function resetRound() {
   ui.counter.textContent = `LEVEL ${levelNumber(game.level + 1)} / ${levelNumber(OPPONENTS.length)}`;
   ui.enemyPlate.textContent = fighterName(game.enemy.profile.id, "_");
   view.plates = [ui.playerPlate.offsetWidth, ui.enemyPlate.offsetWidth];
-  setHealth(ui.playerHealth, 100);
-  setHealth(ui.enemyHealth, 100);
+  // setHealth(ui.playerHealth, 100);
+  // setHealth(ui.enemyHealth, 100);
+  //JT-2026/11/19 - reset both health bars and start each round with an empty super bar
+  setHealth(ui.playerHealth, game.player);
+  setHealth(ui.enemyHealth, game.enemy);
+  setSuperCharge(0);
   showTimer();
   showProgress();
 }
@@ -379,10 +417,17 @@ function updateFight(dt) {
   player.guard = false;
   if (canAct(player)) {
     const grounded = !player.y && !player.velocity;
-    if (grounded && pressed.has("shoryuken")) {
-      attack(player, "shoryuken");
-    } else if (grounded && !game.projectile && pressed.has("hadouken")) {
-      attack(player, "hadouken");
+    // if (grounded && pressed.has("shoryuken")) {
+    //   attack(player, "shoryuken");
+    // } else if (grounded && !game.projectile && pressed.has("hadouken")) {
+    //   attack(player, "hadouken");
+    // }
+    //JT-2026/11/19 - require a full super bar before starting either special
+    const superReady = grounded && game.superCharge === SUPER_MAX;
+    if (superReady && pressed.has("superUpperCut")) {
+      attack(player, "superUpperCut");
+    } else if (superReady && !game.projectile && pressed.has("energyWave")) {
+      attack(player, "energyWave");
     } else {
       if (grounded && pressed.has("jump")) player.velocity = 473;
       if (pressed.has("heavy")) attack(player, "heavy");
@@ -456,6 +501,8 @@ function attack(fighter, kind) {
     reach,
     damage: isPlayer ? move.damage : fighter.profile.power + (heavy ? 5 : 0),
   };
+  //JT-2026/11/19 - spend the full super bar when juan starts a special
+  if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) setSuperCharge(0);
   if (isPlayer) tone(heavy ? "swing" : "jab");
 }
 
@@ -494,7 +541,9 @@ function hitFrom(attacker, target, dt) {
   if (action.spent || action.elapsed < action.impact) return null;
   action.spent = true;
   //JT-2026/11/19 - release the fireball or launch juan when a special reaches its strike frame
-  if (action.kind === "hadouken") {
+  // if (action.kind === "hadouken") {
+  //JT-2026/11/19 - release the projectile for energy wave
+  if (action.kind === "energyWave") {
     game.projectile = {
       x: attacker.x + (attacker.profile.body + 17) * attacker.direction,
       y: attacker.y,
@@ -505,7 +554,9 @@ function hitFrom(attacker, target, dt) {
     tone("swing");
     return null;
   }
-  if (action.kind === "shoryuken") attacker.velocity = 406;
+  // if (action.kind === "shoryuken") attacker.velocity = 406;
+  //JT-2026/11/19 - start the rise for super upper cut
+  if (action.kind === "superUpperCut") attacker.velocity = 406;
 
   const distance = (target.x - attacker.x) * attacker.direction;
   return distance >= 0 && distance <= action.reach && Math.abs(attacker.y - target.y) <= 59 ? action : null;
@@ -524,15 +575,27 @@ function applyHit(target, attacker, action, meter) {
   target.stun = blocked ? .1 : action.stun;
   target.knockback = attacker.direction * action.push * (blocked ? .26 : 1);
   target.attack = null;
-  setHealth(meter, target.health);
+  // setHealth(meter, target.health);
+  //JT-2026/11/19 - charge juan's meter only from unblocked punches and kicks
+  setHealth(meter, target);
+  const gain = SUPER_GAIN[action.kind];
+  if (attacker === game.player && !blocked && gain) setSuperCharge(game.superCharge + gain);
   sparks((target.x + attacker.x) / 2, 70 + Math.max(attacker.y, target.y), blocked);
   tone(blocked ? "guard" : "hit");
 }
 
+/*
 //JT-2026/11/19 - expose health changes visually and through the meter value
 function setHealth(meter, health) {
   meter.style.setProperty("--hp", health / 100);
   meter.setAttribute("aria-valuenow", health);
+}
+*/
+//JT-2026/11/19 - scale each health bar to its fighter's maximum
+function setHealth(meter, fighter) {
+  meter.style.setProperty("--hp", fighter.health / fighter.profile.maxHealth);
+  meter.setAttribute("aria-valuemax", fighter.profile.maxHealth);
+  meter.setAttribute("aria-valuenow", fighter.health);
 }
 
 //JT-2026/11/19 - show the remaining time and highlight the final ten seconds
@@ -549,7 +612,10 @@ function showTimer() {
 function finishRound() {
   const { player, enemy } = game;
   const knockout = !player.health || !enemy.health;
-  game.winner = player.health > enemy.health ? "player" : player.health < enemy.health ? "enemy" : "draw";
+  // game.winner = player.health > enemy.health ? "player" : player.health < enemy.health ? "enemy" : "draw";
+  //JT-2026/11/19 - compare remaining health percentages when maximum health differs
+  const healthDifference = player.health * enemy.profile.maxHealth - enemy.health * player.profile.maxHealth;
+  game.winner = healthDifference > 0 ? "player" : healthDifference < 0 ? "enemy" : "draw";
   if (!player.health) player.down = .01;
   if (!enemy.health) enemy.down = .01;
   game.phase = .82;
@@ -577,8 +643,12 @@ function showResult() {
   showProgress();
   if (game.cleared === OPPONENTS.length) {
     setMode("complete");
-    showPanel("9 / 9 CLEARED", "Tondo champion", "You defeated all nine challengers.", "Play again");
-    announce("Tondo champion. All nine levels cleared.");
+    // showPanel("9 / 9 CLEARED", "Tondo champion", "You defeated all nine challengers.", "Play again");
+    // announce("Tondo champion. All nine levels cleared.");
+    //JT-2026/11/19 - use the roster total in the campaign victory screen
+    const total = OPPONENTS.length;
+    showPanel(`${total} / ${total} CLEARED`, "Tondo champion", `You defeated all ${total} challengers.`, "Play again");
+    announce(`Tondo champion. All ${total} levels cleared.`);
   } else {
     setMode("won");
     const next = fighterName(OPPONENTS[game.level + 1].id);
@@ -800,4 +870,14 @@ function drawProjectile(shot) {
   context.drawImage(img, 0, FIREBALL.row * height, width, height,
     -x * size, -height * size / 2, width * size, height * size);
   context.restore();
+}
+
+//JT-2026/11/19 - update the visible and accessible super charge together
+function setSuperCharge(charge) {
+  game.superCharge = clamp(charge, 0, SUPER_MAX);
+  const ready = game.superCharge === SUPER_MAX;
+  ui.playerSuper.style.setProperty("--super", game.superCharge / SUPER_MAX);
+  ui.playerSuper.setAttribute("aria-valuenow", game.superCharge);
+  ui.playerSuper.setAttribute("aria-valuetext", ready ? "Ready" : `${game.superCharge}%`);
+  ui.superReadout.textContent = ready ? "READY" : `${game.superCharge}%`;
 }

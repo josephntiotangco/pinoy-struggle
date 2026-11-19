@@ -1,18 +1,27 @@
 <!-- JT-2026/11/19 - document how to play and host pinoy struggle -->
 # Pinoy Struggle
 
-Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat nine challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat nine challengers to clear the game. -->
+<!-- JT-2026/11/19 - update the campaign to ten challengers -->
+Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat ten challengers to clear the game.
 
 ## Play locally
 
 Open [index.html](index.html) in a browser and choose **Start Fight**.
 
-Each round lasts up to 60 seconds. Win by knockout or by finishing the round with more health than your opponent. Choose **Next Level** after a win or **Retry Level** after a loss or draw.
+<!-- Each round lasts up to 60 seconds. Win by knockout or by finishing the round with more health than your opponent. Choose **Next Level** after a win or **Retry Level** after a loss or draw. -->
+<!-- JT-2026/11/19 - explain the timeout rule with different health totals -->
+Each round lasts up to 60 seconds. Win by knockout or by finishing with a higher percentage of your full health. Choose **Next Level** after a win or **Retry Level** after a loss or draw.
 
 ## Controls
 
 <!-- | Guard | `↓` or `S` | -->
 <!-- JT-2026/11/19 - document the retreat guard and both special attacks -->
+<!--
+| Hadouken | `L` |
+| Shoryuken | `I` |
+-->
+<!-- JT-2026/11/19 - list the renamed specials and their keyboard controls -->
 | Action | Keyboard |
 | --- | --- |
 | Move left or right | `←` / `→` or `A` / `D` |
@@ -20,16 +29,26 @@ Each round lasts up to 60 seconds. Win by knockout or by finishing the round wit
 | Guard | Move away from your opponent |
 | Punch | `J` |
 | Kick | `K` |
-| Hadouken | `L` |
-| Shoryuken | `I` |
+| Energy Wave | `L` |
+| Super Upper Cut | `I` |
 | Pause or resume | `Esc` |
 
-Juan takes zero damage while actively moving away from his opponent. Leave room to step back. Use Hadouken and Shoryuken while on the ground.
+<!-- Juan takes zero damage while actively moving away from his opponent. Leave room to step back. Use Hadouken and Shoryuken while on the ground. -->
+<!-- JT-2026/11/19 - keep guard instructions with the movement controls -->
+Juan takes zero damage while actively moving away from his opponent. Leave room to step back.
 
 On a phone, use the touch controls below the arena.
 
+<!-- JT-2026/11/19 - explain how to earn and spend super charge -->
+## Super Bar
+
+Juan can use **Energy Wave (`L`)** or **Super Upper Cut (`I`)** while on the ground once his Super Bar reaches **100%** and shows **READY**. Starting either move resets the bar to **0%**.
+
+Each round starts at **0%**. Land unblocked punches (**+20%**) and kicks (**+34%**) to fill the bar.
+
 ## Opponent ladder
 
+<!--
 1. `kamote_rider`
 2. `adik`
 3. `mayabang`
@@ -39,6 +58,18 @@ On a phone, use the touch controls below the arena.
 7. `stress`
 8. `emotional_damage`
 9. `gasoline`
+-->
+<!-- JT-2026/11/19 - list the new fight order and increased health -->
+1. `kamote_rider` — 160 HP
+2. `snatcher` — 175 HP
+3. `adik` — 185 HP
+4. `politiko` — 200 HP
+5. `mayabang` — 215 HP
+6. `matapobre` — 230 HP
+7. `gasoline` — 245 HP
+8. `billing` — 260 HP
+9. `stress` — 280 HP
+10. `emotional_damage` — 300 HP
 
 ## Host on Vercel
 
