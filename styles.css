@@ -405,7 +405,9 @@ kbd {
 .ladder h2 { margin-bottom: 12px; }
 /* .roster { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; } */
 /* JT-2026/11/19 - fit all ten levels in the desktop ladder */
-.roster { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; }
+/* .roster { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; } */
+/* JT-2026/11/19 - fit eleven levels in the desktop ladder */
+.roster { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 5px; }
 .roster li {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -427,10 +429,15 @@ kbd {
 .roster li[aria-current="step"] .level-number, .roster li.is-cleared .level-number { color: var(--yellow); }
 .roster li.is-cleared { border-color: #655334; }
 
+/* JT-2026/11/19 - give opponent names more room on narrower screens */
+@media (max-width: 1150px) {
+  .roster { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
 @media (max-width: 1050px) {
   .topbar-inner, .arcade { width: calc(100% - 44px); }
   /* JT-2026/11/19 - keep longer enemy names readable in two rows */
-  .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  /* .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); } */
   .roster li { padding-inline: 5px; }
 }
 

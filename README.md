@@ -3,7 +3,9 @@
 
 <!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat nine challengers to clear the game. -->
 <!-- JT-2026/11/19 - update the campaign to ten challengers -->
-Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat ten challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat ten challengers to clear the game. -->
+<!-- JT-2026/11/19 - update the campaign to eleven challengers -->
+Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat eleven challengers to clear the game.
 
 ## Play locally
 
@@ -69,6 +71,7 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 9. `gasoline`
 -->
 <!-- JT-2026/11/19 - list the new fight order and increased health -->
+<!--
 1. `kamote_rider` — 160 HP
 2. `snatcher` — 175 HP
 3. `adik` — 185 HP
@@ -79,6 +82,19 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 8. `billing` — 260 HP
 9. `stress` — 280 HP
 10. `emotional_damage` — 300 HP
+-->
+<!-- JT-2026/11/19 - document the eleven opponent order and health -->
+1. `kamote_rider` — 300 HP
+2. `snatcher` — 320 HP
+3. `kahirapan` — 330 HP
+4. `adik` — 340 HP
+5. `politiko` — 360 HP
+6. `mayabang` — 380 HP
+7. `matapobre` — 400 HP
+8. `gasoline` — 420 HP
+9. `billing` — 440 HP
+10. `stress` — 460 HP
+11. `emotional_damage` — 480 HP
 
 ## Host on Vercel
 
