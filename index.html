@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171613">
+  <meta name="description" content="A nine-stage arcade fighter set in Tondo, Manila.">
+  <!-- JT-2026/11/19 - show the new game name in the browser tab -->
+  <title>Pinoy Struggle</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/arcade/tondo_0.jpg">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <!-- JT-2026/11/19 - lay out the arcade arena, controls, and opponent ladder -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <!-- JT-2026/11/19 - update the header name and initials -->
+        <span class="brand-mark" aria-hidden="true">PS</span>
+        <span>PINOY <strong>STRUGGLE</strong></span>
+      </div>
+      <div class="utilities">
+        <button class="utility" id="sound" type="button" aria-pressed="false">
+          <span class="icon icon-sound" aria-hidden="true"></span>
+          <span id="sound-label">Sound off</span>
+        </button>
+        <button class="utility" id="pause" type="button" disabled>
+          <span class="icon icon-pause" aria-hidden="true"></span>
+          <span id="pause-label">Pause</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="arcade">
+    <section class="cabinet" aria-label="Fight arena">
+      <div class="arena" id="arena" data-mode="menu">
+        <canvas id="fight" aria-hidden="true"></canvas>
+        <div class="arena-shade" aria-hidden="true"></div>
+
+        <div class="hud">
+          <div class="fighter-hud">
+            <div class="hud-heading"><span>01</span> PLAYER</div>
+            <div class="health" id="player-health" role="meter" aria-label="Player health"
+              aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span></span></div>
+          </div>
+          <div class="timer">
+            <span class="stage-counter" id="stage-counter">LEVEL 01 / 09</span>
+            <span class="seconds" id="seconds" aria-label="Seconds left">60</span>
+          </div>
+          <div class="fighter-hud enemy-hud">
+            <div class="hud-heading">CHALLENGER <span>CPU</span></div>
+            <div class="health" id="enemy-health" role="meter" aria-label="Opponent health"
+              aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span></span></div>
+          </div>
+        </div>
+
+        <!-- JT-2026/11/19 - name the playable fighter juan -->
+        <div class="nameplate" id="player-plate">Juan</div>
+        <div class="nameplate enemy-plate" id="enemy-plate">kamote_rider</div>
+        <div class="announcement" id="announcement" aria-hidden="true"></div>
+
+        <div class="panel-wrap" id="panel-wrap">
+          <div class="panel">
+            <p class="eyebrow" id="panel-kicker">SINGLE PLAYER ARCADE</p>
+            <!-- JT-2026/11/19 - show the new game name on the start screen -->
+            <h1 class="panel-title" id="panel-title"><span>Pinoy</span> <strong>Struggle</strong></h1>
+            <p class="panel-copy" id="panel-copy">Defeat all nine challengers.</p>
+            <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
+            <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
+          </div>
+        </div>
+        <p class="sr-only" id="status" role="status" aria-live="polite"></p>
+      </div>
+      <div class="arena-strip">
+        <span><i aria-hidden="true"></i> TONDO, MANILA</span>
+        <span id="cleared">0 / 9 CLEARED</span>
+      </div>
+    </section>
+
+    <section class="control-deck" aria-label="Game controls">
+      <h2>Controls</h2>
+      <ul class="key-guide">
+        <li><kbd>←</kbd><kbd>→</kbd><span>Move</span></li>
+        <li><kbd>↑</kbd><span>Jump</span></li>
+        <li><kbd>↓</kbd><span>Guard</span></li>
+        <li><kbd>J</kbd><span>Punch</span></li>
+        <li><kbd>K</kbd><span>Kick</span></li>
+      </ul>
+      <span class="pause-guide"><kbd>Esc</kbd> Pause</span>
+      <div class="touch-controls" id="touch-controls" aria-label="Touch controls">
+        <div class="touch-group">
+          <button type="button" data-input="left" aria-label="Move left">←</button>
+          <button type="button" data-input="right" aria-label="Move right">→</button>
+          <button type="button" data-input="jump" aria-label="Jump">↑</button>
+        </div>
+        <div class="touch-group">
+          <button type="button" data-input="guard">Guard</button>
+          <button type="button" data-input="light">Punch</button>
+          <button type="button" data-input="heavy">Kick</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="ladder" aria-labelledby="ladder-title">
+      <h2 id="ladder-title">Opponent ladder</h2>
+      <ol id="roster" class="roster"></ol>
+    </section>
+  </main>
+</body>
+</html>
