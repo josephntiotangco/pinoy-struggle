@@ -39,8 +39,11 @@ const OPPONENTS = [
   { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
   { id: "mayabang_0", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   { id: "matapobre_0", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
-  { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
-  { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  // { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
+  // { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  //JT-2026/11/19 - show gasoline and billing as petrolyo and bills
+  { id: "gasoline_0", displayName: "petrolyo", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
+  { id: "billing_0", displayName: "bills", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
   { id: "stress_0", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
   { id: "emotional_damage_0", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
 ];

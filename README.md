@@ -84,6 +84,7 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 10. `emotional_damage` — 300 HP
 -->
 <!-- JT-2026/11/19 - document the eleven opponent order and health -->
+<!--
 1. `kamote_rider` — 300 HP
 2. `snatcher` — 320 HP
 3. `kahirapan` — 330 HP
@@ -93,6 +94,19 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 7. `matapobre` — 400 HP
 8. `gasoline` — 420 HP
 9. `billing` — 440 HP
+10. `stress` — 460 HP
+11. `emotional_damage` — 480 HP
+-->
+<!-- JT-2026/11/19 - show gasoline and billing as petrolyo and bills in the ladder -->
+1. `kamote_rider` — 300 HP
+2. `snatcher` — 320 HP
+3. `kahirapan` — 330 HP
+4. `adik` — 340 HP
+5. `politiko` — 360 HP
+6. `mayabang` — 380 HP
+7. `matapobre` — 400 HP
+8. `petrolyo` — 420 HP
+9. `bills` — 440 HP
 10. `stress` — 460 HP
 11. `emotional_damage` — 480 HP
 
