@@ -48,9 +48,19 @@
               aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span></span></div>
             <!-- JT-2026/11/19 - show juan's super charge separately from his health -->
             <div class="super-hud">
+              <!--
               <div class="super-label" aria-hidden="true"><span>SUPER</span><span id="super-readout">0%</span></div>
               <div class="super-meter" id="player-super" role="meter" aria-label="Juan's super charge"
                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+              -->
+              <!-- JT-2026/11/19 - show three super segments and the number of casts ready -->
+              <div class="super-label" aria-hidden="true"><span>SUPER</span><span id="super-readout">0/3</span></div>
+              <div class="super-meter" id="player-super" role="meter" aria-label="Juan's super charge"
+                aria-valuemin="0" aria-valuemax="300" aria-valuenow="0">
+                <span><span></span></span>
+                <span><span></span></span>
+                <span><span></span></span>
+              </div>
             </div>
           </div>
           <div class="timer">
@@ -99,7 +109,9 @@
         <!-- <li><kbd>←</kbd><kbd>→</kbd><span>Move</span></li> -->
         <!-- <li><kbd>↓</kbd><span>Guard</span></li> -->
         <!-- JT-2026/11/19 - show how movement activates guard -->
-        <li><kbd>←</kbd><kbd>→</kbd><span>Move · back to guard</span></li>
+        <!-- <li><kbd>←</kbd><kbd>→</kbd><span>Move · back to guard</span></li> -->
+        <!-- JT-2026/11/19 - tell keyboard players to hold back for guard -->
+        <li><kbd>←</kbd><kbd>→</kbd><span>Move · hold back to guard</span></li>
         <li><kbd>↑</kbd><span>Jump</span></li>
         <li><kbd>J</kbd><span>Punch</span></li>
         <li><kbd>K</kbd><span>Kick</span></li>
@@ -131,7 +143,9 @@
         <!-- JT-2026/11/19 - explain guard on touch screens -->
         <!-- <p class="touch-hint">Move away from your opponent to guard.</p> -->
         <!-- JT-2026/11/19 - explain how to charge super on touch screens -->
-        <p class="touch-hint">Move away to guard. Land punches and kicks to charge Super.</p>
+        <!-- <p class="touch-hint">Move away to guard. Land punches and kicks to charge Super.</p> -->
+        <!-- JT-2026/11/19 - explain hold back guard and super charge to touch players -->
+        <p class="touch-hint">Hold back to guard, even at the wall. Land punches and kicks to charge Super.</p>
       </div>
     </section>
 

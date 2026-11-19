@@ -181,6 +181,7 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   text-shadow: 0 2px #091514;
 }
 
+/*
 .super-meter {
   height: clamp(8px, 1cqw, 13px);
   padding: 1px;
@@ -199,6 +200,36 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
 }
 
 .super-meter[aria-valuenow="100"] { border-color: #c9fff0; box-shadow: 0 0 9px #4cddcb99; }
+*/
+/* JT-2026/11/19 - show three independently filled segments in juan's super meter */
+.super-meter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  height: clamp(8px, 1cqw, 13px);
+}
+
+.super-meter > span {
+  --segment-offset: 0;
+  padding: 1px;
+  border: 1px solid #73b4a8;
+  background: #12201f;
+  box-shadow: 0 2px 0 #0c0908;
+}
+
+.super-meter > span:nth-child(2) { --segment-offset: 1; }
+.super-meter > span:nth-child(3) { --segment-offset: 2; }
+
+.super-meter > span > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(#c9fff0 0 32%, #4cddcb 32% 82%, #188f88 82% 100%);
+  transform: scaleX(clamp(0, calc(var(--super, 0) - var(--segment-offset)), 1));
+  transform-origin: left center;
+  transition: transform .15s linear;
+}
+
+.super-meter[aria-valuenow="300"] > span { border-color: #c9fff0; box-shadow: 0 0 9px #4cddcb99; }
 
 .timer {
   min-width: clamp(69px, 8cqw, 108px);
@@ -478,5 +509,7 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   /* .health > span { transition: none; } */
   /* JT-2026/11/19 - respect reduced motion for both fight meters */
-  .health > span, .super-meter > span { transition: none; }
+  /* .health > span, .super-meter > span { transition: none; } */
+  /* JT-2026/11/19 - respect reduced motion for the segmented fill */
+  .health > span, .super-meter > span > span { transition: none; }
 }

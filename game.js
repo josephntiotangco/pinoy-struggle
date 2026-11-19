@@ -33,8 +33,13 @@ const OPPONENTS = [
 const HERO = { id: "hero_0", maxHealth: 100, size: 1.21, body: 25, speed: 263 };
 const ROUND_SECONDS = 60;
 //JT-2026/11/19 - define the charge awarded by a clean punch or kick
-const SUPER_MAX = 100;
-const SUPER_GAIN = { light: 20, heavy: 34 };
+// const SUPER_MAX = 100;
+// const SUPER_GAIN = { light: 20, heavy: 34 };
+//JT-2026/11/19 - let juan earn and store up to three special casts
+const SUPER_BARS = 3;
+const SUPER_COST = 100;
+const SUPER_MAX = SUPER_BARS * SUPER_COST;
+const SUPER_GAIN = { light: 30, heavy: 50 };
 const FRAME = { width: 504, height: 201, x: 156, y: 192, scale: 1.5 };
 // const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, guard: 7 };
 //JT-2026/11/19 - map the taller hero frames and special attack art
@@ -50,8 +55,11 @@ const MOVES = {
   // hadouken: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
   // shoryuken: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
   //JT-2026/11/19 - identify juan's moves as energy wave and super upper cut
-  energyWave: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
-  superUpperCut: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
+  // energyWave: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
+  // superUpperCut: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
+  //JT-2026/11/19 - make both specials stronger than the regular attacks
+  energyWave: { duration: .72, impact: .29, damage: 35, reach: 0, push: 185, stun: .25 },
+  superUpperCut: { duration: .8, impact: .16, damage: 45, reach: 89, push: 246, stun: .34 },
 };
 const KEYS = {
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
@@ -178,7 +186,9 @@ function resetRound() {
   game.enemyGuard = 0;
   game.effects = [];
   //JT-2026/11/19 - clear the fireball before starting another round
-  game.projectile = null;
+  // game.projectile = null;
+  //JT-2026/11/19 - start each round without any active energy waves
+  game.projectiles = [];
   game.winner = null;
   clearInputs();
   ui.counter.textContent = `LEVEL ${levelNumber(game.level + 1)} / ${levelNumber(OPPONENTS.length)}`;
@@ -206,7 +216,9 @@ function resizeArena() {
   }
   game.effects.forEach(effect => { effect.x *= positionScale; });
   //JT-2026/11/19 - keep a fireball aligned with the resized arena
-  if (game.projectile) game.projectile.x *= positionScale;
+  // if (game.projectile) game.projectile.x *= positionScale;
+  //JT-2026/11/19 - keep every active energy wave aligned after resizing
+  game.projectiles.forEach(shot => { shot.x *= positionScale; });
   view.world = world;
   view.width = width;
   view.height = height;
@@ -423,10 +435,14 @@ function updateFight(dt) {
     //   attack(player, "hadouken");
     // }
     //JT-2026/11/19 - require a full super bar before starting either special
-    const superReady = grounded && game.superCharge === SUPER_MAX;
+    // const superReady = grounded && game.superCharge === SUPER_MAX;
+    //JT-2026/11/19 - let either special start with one charged bar
+    const superReady = grounded && game.superCharge >= SUPER_COST;
     if (superReady && pressed.has("superUpperCut")) {
       attack(player, "superUpperCut");
-    } else if (superReady && !game.projectile && pressed.has("energyWave")) {
+    // } else if (superReady && !game.projectile && pressed.has("energyWave")) {
+    //JT-2026/11/19 - let a charged energy wave start while another is in flight
+    } else if (superReady && pressed.has("energyWave")) {
       attack(player, "energyWave");
     } else {
       if (grounded && pressed.has("jump")) player.velocity = 473;
@@ -437,6 +453,7 @@ function updateFight(dt) {
   pressed.clear();
   const enemyMove = chooseEnemyMove(dt);
 
+  /*
   //JT-2026/11/19 - activate guard only when juan actually travels away from the opponent
   const playerStart = player.x;
   const retreating = (enemy.x - playerStart) * playerMove < 0;
@@ -445,13 +462,23 @@ function updateFight(dt) {
   moveFighter(enemy, player, enemyMove, dt);
   separateFighters();
   player.guard = steppedBack && (player.x - playerStart) * playerMove > 0 && (enemy.x - player.x) * playerMove < 0;
+  */
+  //JT-2026/11/19 - guard on back input even when juan cannot move past the wall
+  const playerStart = player.x;
+  moveFighter(player, enemy, playerMove, dt);
+  player.moving = player.moving && player.x !== playerStart;
+  moveFighter(enemy, player, enemyMove, dt);
+  separateFighters();
+  player.guard = !player.attack && (enemy.x - player.x) * playerMove < 0;
 
   const playerHit = hitFrom(player, enemy, dt);
   const enemyHit = hitFrom(enemy, player, dt);
   if (playerHit) applyHit(enemy, player, playerHit, ui.enemyHealth);
   if (enemyHit) applyHit(player, enemy, enemyHit, ui.playerHealth);
   //JT-2026/11/19 - resolve the fireball before judging the round
-  advanceProjectile(dt);
+  // advanceProjectile(dt);
+  //JT-2026/11/19 - resolve each active energy wave before judging the round
+  game.projectiles = game.projectiles.filter(shot => advanceProjectile(shot, dt));
   updateEffects(dt);
 
   if (!player.health || !enemy.health || game.seconds <= 0) finishRound();
@@ -502,7 +529,11 @@ function attack(fighter, kind) {
     damage: isPlayer ? move.damage : fighter.profile.power + (heavy ? 5 : 0),
   };
   //JT-2026/11/19 - spend the full super bar when juan starts a special
-  if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) setSuperCharge(0);
+  // if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) setSuperCharge(0);
+  //JT-2026/11/19 - spend one bar and keep the rest of juan's charge
+  if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
+    setSuperCharge(game.superCharge - SUPER_COST);
+  }
   if (isPlayer) tone(heavy ? "swing" : "jab");
 }
 
@@ -544,13 +575,16 @@ function hitFrom(attacker, target, dt) {
   // if (action.kind === "hadouken") {
   //JT-2026/11/19 - release the projectile for energy wave
   if (action.kind === "energyWave") {
-    game.projectile = {
+    // game.projectile = {
+    //JT-2026/11/19 - add this energy wave to the active projectiles
+    game.projectiles.push({
       x: attacker.x + (attacker.profile.body + 17) * attacker.direction,
       y: attacker.y,
       direction: attacker.direction,
       remaining: FIREBALL.lifetime,
       action,
-    };
+    // };
+    });
     tone("swing");
     return null;
   }
@@ -620,7 +654,9 @@ function finishRound() {
   if (!enemy.health) enemy.down = .01;
   game.phase = .82;
   //JT-2026/11/19 - stop the fireball and retreat guard when the round ends
-  game.projectile = null;
+  // game.projectile = null;
+  //JT-2026/11/19 - clear all energy waves when the round ends
+  game.projectiles = [];
   player.guard = false;
   clearInputs();
   setMode("round-end");
@@ -676,7 +712,9 @@ function paint() {
   fighters.forEach(drawShadow);
   fighters.forEach(drawFighter);
   //JT-2026/11/19 - draw the active fireball with the street arena
-  if (game.projectile) drawProjectile(game.projectile);
+  // if (game.projectile) drawProjectile(game.projectile);
+  //JT-2026/11/19 - draw each energy wave still in flight
+  game.projectiles.forEach(drawProjectile);
   for (const effect of game.effects) drawSpark(effect);
   placeNameplates();
 }
@@ -733,6 +771,8 @@ function getPose(fighter) {
   if (hero && (fighter.y || fighter.velocity)) {
     return [POSE.jump, fighter.velocity > 160 ? 1 : fighter.velocity > -155 ? 2 : 3];
   }
+  //JT-2026/11/19 - show juan's raised hands when guarding in place
+  if (hero && fighter.guard && !fighter.moving) return [POSE.idle, 0];
   // if (fighter.moving) return [POSE.move, Math.floor(game.age * 11) % 4];
   //JT-2026/11/19 - play juan's walk frames in reverse when he backs away
   if (fighter.moving) {
@@ -840,6 +880,7 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
 }
 
+/*
 //JT-2026/11/19 - move the fireball until it hits the opponent or leaves the arena
 function advanceProjectile(dt) {
   const shot = game.projectile;
@@ -857,6 +898,21 @@ function advanceProjectile(dt) {
     game.projectile = null;
   }
 }
+*/
+//JT-2026/11/19 - advance one energy wave and report whether it is still active
+function advanceProjectile(shot, dt) {
+  shot.remaining -= dt;
+  shot.x += shot.direction * FIREBALL.speed * dt;
+  const enemy = game.enemy;
+  const hitsEnemy = enemy.health > 0 && Math.abs(enemy.x - shot.x) <= enemy.profile.body + FIREBALL.radius
+    && Math.abs(enemy.y - shot.y) <= FIREBALL.elevation - 10;
+  if (hitsEnemy) {
+    const source = { x: enemy.x - shot.direction * FIREBALL.radius, y: shot.y, direction: shot.direction };
+    applyHit(enemy, source, shot.action, ui.enemyHealth);
+    return false;
+  }
+  return shot.remaining > 0 && shot.x >= -FIREBALL.radius && shot.x <= view.world + FIREBALL.radius;
+}
 
 //JT-2026/11/19 - draw the supplied fireball sprite in its travel direction
 function drawProjectile(shot) {
@@ -872,6 +928,7 @@ function drawProjectile(shot) {
   context.restore();
 }
 
+/*
 //JT-2026/11/19 - update the visible and accessible super charge together
 function setSuperCharge(charge) {
   game.superCharge = clamp(charge, 0, SUPER_MAX);
@@ -880,4 +937,14 @@ function setSuperCharge(charge) {
   ui.playerSuper.setAttribute("aria-valuenow", game.superCharge);
   ui.playerSuper.setAttribute("aria-valuetext", ready ? "Ready" : `${game.superCharge}%`);
   ui.superReadout.textContent = ready ? "READY" : `${game.superCharge}%`;
+}
+*/
+//JT-2026/11/19 - show charge across all three segments and count available casts
+function setSuperCharge(charge) {
+  game.superCharge = clamp(charge, 0, SUPER_MAX);
+  const filledBars = Math.floor(game.superCharge / SUPER_COST);
+  ui.playerSuper.style.setProperty("--super", game.superCharge / SUPER_COST);
+  ui.playerSuper.setAttribute("aria-valuenow", game.superCharge);
+  ui.playerSuper.setAttribute("aria-valuetext", `${filledBars} of ${SUPER_BARS} bars ready`);
+  ui.superReadout.textContent = `${filledBars}/${SUPER_BARS}`;
 }
