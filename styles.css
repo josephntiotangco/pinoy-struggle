@@ -399,8 +399,19 @@ kbd {
 }
 
 @media (pointer: coarse), (max-width: 680px) {
-  .touch-controls, .touch-group { display: flex; justify-content: space-between; gap: 5px; }
-  .touch-controls { width: 100%; }
+  /* .touch-controls, .touch-group { display: flex; justify-content: space-between; gap: 5px; } */
+  /* .touch-controls { width: 100%; } */
+  /* JT-2026/11/19 - fit the direction and four attack buttons on narrow screens */
+  .touch-controls {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+  .touch-group { display: grid; grid-template-columns: repeat(2, minmax(43px, 1fr)); gap: 5px; }
+  .touch-group button[data-input="jump"] { grid-area: 1 / 1 / 2 / 3; justify-self: center; }
+  .touch-hint { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .82rem; }
   .touch-controls button {
     min-width: 43px;
     min-height: 43px;
@@ -413,7 +424,11 @@ kbd {
     user-select: none;
     font: 750 .74rem/1 var(--mono);
   }
-  .touch-controls button[data-input="light"], .touch-controls button[data-input="heavy"] { color: #ffe091; }
+  /* .touch-controls button[data-input="light"], .touch-controls button[data-input="heavy"] { color: #ffe091; } */
+  /* JT-2026/11/19 - color the special buttons like the other attacks */
+  .touch-controls button:is([data-input="light"], [data-input="heavy"], [data-input="hadouken"], [data-input="shoryuken"]) {
+    color: #ffe091;
+  }
   .touch-controls button.is-held { background: #f8ce53; color: #20170b; }
 }
 

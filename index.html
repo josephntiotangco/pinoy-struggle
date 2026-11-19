@@ -82,11 +82,16 @@
     <section class="control-deck" aria-label="Game controls">
       <h2>Controls</h2>
       <ul class="key-guide">
-        <li><kbd>←</kbd><kbd>→</kbd><span>Move</span></li>
+        <!-- <li><kbd>←</kbd><kbd>→</kbd><span>Move</span></li> -->
+        <!-- <li><kbd>↓</kbd><span>Guard</span></li> -->
+        <!-- JT-2026/11/19 - show how movement activates guard -->
+        <li><kbd>←</kbd><kbd>→</kbd><span>Move · back to guard</span></li>
         <li><kbd>↑</kbd><span>Jump</span></li>
-        <li><kbd>↓</kbd><span>Guard</span></li>
         <li><kbd>J</kbd><span>Punch</span></li>
         <li><kbd>K</kbd><span>Kick</span></li>
+        <!-- JT-2026/11/19 - list the special attack keys -->
+        <li><kbd>L</kbd><span>Hadouken</span></li>
+        <li><kbd>I</kbd><span>Shoryuken</span></li>
       </ul>
       <span class="pause-guide"><kbd>Esc</kbd> Pause</span>
       <div class="touch-controls" id="touch-controls" aria-label="Touch controls">
@@ -96,10 +101,15 @@
           <button type="button" data-input="jump" aria-label="Jump">↑</button>
         </div>
         <div class="touch-group">
-          <button type="button" data-input="guard">Guard</button>
+          <!-- <button type="button" data-input="guard">Guard</button> -->
+          <!-- JT-2026/11/19 - put both specials on the touch attack pad -->
           <button type="button" data-input="light">Punch</button>
           <button type="button" data-input="heavy">Kick</button>
+          <button type="button" data-input="hadouken">Hadouken</button>
+          <button type="button" data-input="shoryuken">Shoryuken</button>
         </div>
+        <!-- JT-2026/11/19 - explain guard on touch screens -->
+        <p class="touch-hint">Move away from your opponent to guard.</p>
       </div>
     </section>
 

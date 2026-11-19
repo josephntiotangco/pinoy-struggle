@@ -11,14 +11,20 @@ Each round lasts up to 60 seconds. Win by knockout or by finishing the round wit
 
 ## Controls
 
+<!-- | Guard | `↓` or `S` | -->
+<!-- JT-2026/11/19 - document the retreat guard and both special attacks -->
 | Action | Keyboard |
 | --- | --- |
 | Move left or right | `←` / `→` or `A` / `D` |
 | Jump | `↑` or `W` |
-| Guard | `↓` or `S` |
+| Guard | Move away from your opponent |
 | Punch | `J` |
 | Kick | `K` |
+| Hadouken | `L` |
+| Shoryuken | `I` |
 | Pause or resume | `Esc` |
+
+Juan takes zero damage while actively moving away from his opponent. Leave room to step back. Use Hadouken and Shoryuken while on the ground.
 
 On a phone, use the touch controls below the arena.
 

@@ -16,15 +16,25 @@ const OPPONENTS = [
 const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
 const ROUND_SECONDS = 60;
 const FRAME = { width: 504, height: 201, x: 156, y: 192, scale: 1.5 };
-const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, guard: 7 };
+// const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, guard: 7 };
+//JT-2026/11/19 - map the taller hero frames and special attack art
+const HERO_FRAME = { ...FRAME, height: 234, y: 225 };
+const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, hadouken: 7, shoryuken: 8 };
+const FIREBALL = { row: 9, speed: 540, lifetime: 1.4, radius: 38, elevation: 65, scale: .86 };
 const MOVES = {
   light: { duration: .35, impact: .15, damage: 14, reach: 82, push: 158, stun: .27 },
   heavy: { duration: .61, impact: .29, damage: 23, reach: 107, push: 260, stun: .34 },
+  //JT-2026/11/19 - set the timing and damage of juan's special attacks
+  hadouken: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
+  shoryuken: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
 };
 const KEYS = {
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
-  ArrowUp: "jump", KeyW: "jump", ArrowDown: "guard", KeyS: "guard",
-  KeyJ: "light", KeyK: "heavy",
+  // ArrowUp: "jump", KeyW: "jump", ArrowDown: "guard", KeyS: "guard",
+  // KeyJ: "light", KeyK: "heavy",
+  //JT-2026/11/19 - replace the guard key with two special attack bindings
+  ArrowUp: "jump", KeyW: "jump",
+  KeyJ: "light", KeyK: "heavy", KeyL: "hadouken", KeyI: "shoryuken",
 };
 
 //JT-2026/11/19 - connect the arcade ui and initialize the first matchup
@@ -133,6 +143,8 @@ function resetRound() {
   game.decision = .5;
   game.enemyGuard = 0;
   game.effects = [];
+  //JT-2026/11/19 - clear the fireball before starting another round
+  game.projectile = null;
   game.winner = null;
   clearInputs();
   ui.counter.textContent = `LEVEL ${levelNumber(game.level + 1)} / ${levelNumber(OPPONENTS.length)}`;
@@ -155,6 +167,8 @@ function resizeArena() {
     fighter.x = clamp(fighter.x * positionScale, fighter.edge, world - fighter.edge);
   }
   game.effects.forEach(effect => { effect.x *= positionScale; });
+  //JT-2026/11/19 - keep a fireball aligned with the resized arena
+  if (game.projectile) game.projectile.x *= positionScale;
   view.world = world;
   view.width = width;
   view.height = height;
@@ -355,22 +369,44 @@ function updateFight(dt) {
   game.seconds = Math.max(0, game.seconds - dt);
   showTimer();
   const playerMove = Number(hasInput("right")) - Number(hasInput("left"));
-  player.guard = !player.attack && !player.stun && !player.y && hasInput("guard");
+  // player.guard = !player.attack && !player.stun && !player.y && hasInput("guard");
+  // if (canAct(player)) {
+  //   if (pressed.has("jump") && !player.y && !player.velocity) player.velocity = 473;
+  //   if (pressed.has("heavy")) attack(player, "heavy");
+  //   else if (pressed.has("light")) attack(player, "light");
+  // }
+  //JT-2026/11/19 - start specials from the ground and let retreating juan keep moving
+  player.guard = false;
   if (canAct(player)) {
-    if (pressed.has("jump") && !player.y && !player.velocity) player.velocity = 473;
-    if (pressed.has("heavy")) attack(player, "heavy");
-    else if (pressed.has("light")) attack(player, "light");
+    const grounded = !player.y && !player.velocity;
+    if (grounded && pressed.has("shoryuken")) {
+      attack(player, "shoryuken");
+    } else if (grounded && !game.projectile && pressed.has("hadouken")) {
+      attack(player, "hadouken");
+    } else {
+      if (grounded && pressed.has("jump")) player.velocity = 473;
+      if (pressed.has("heavy")) attack(player, "heavy");
+      else if (pressed.has("light")) attack(player, "light");
+    }
   }
   pressed.clear();
   const enemyMove = chooseEnemyMove(dt);
 
+  //JT-2026/11/19 - activate guard only when juan actually travels away from the opponent
+  const playerStart = player.x;
+  const retreating = (enemy.x - playerStart) * playerMove < 0;
   moveFighter(player, enemy, playerMove, dt);
+  const steppedBack = retreating && player.moving && (player.x - playerStart) * playerMove > 0;
   moveFighter(enemy, player, enemyMove, dt);
   separateFighters();
+  player.guard = steppedBack && (player.x - playerStart) * playerMove > 0 && (enemy.x - player.x) * playerMove < 0;
+
   const playerHit = hitFrom(player, enemy, dt);
   const enemyHit = hitFrom(enemy, player, dt);
   if (playerHit) applyHit(enemy, player, playerHit, ui.enemyHealth);
   if (enemyHit) applyHit(player, enemy, enemyHit, ui.playerHealth);
+  //JT-2026/11/19 - resolve the fireball before judging the round
+  advanceProjectile(dt);
   updateEffects(dt);
 
   if (!player.health || !enemy.health || game.seconds <= 0) finishRound();
@@ -457,12 +493,32 @@ function hitFrom(attacker, target, dt) {
   if (action.elapsed >= action.duration) attacker.attack = null;
   if (action.spent || action.elapsed < action.impact) return null;
   action.spent = true;
+  //JT-2026/11/19 - release the fireball or launch juan when a special reaches its strike frame
+  if (action.kind === "hadouken") {
+    game.projectile = {
+      x: attacker.x + (attacker.profile.body + 17) * attacker.direction,
+      y: attacker.y,
+      direction: attacker.direction,
+      remaining: FIREBALL.lifetime,
+      action,
+    };
+    tone("swing");
+    return null;
+  }
+  if (action.kind === "shoryuken") attacker.velocity = 406;
+
   const distance = (target.x - attacker.x) * attacker.direction;
   return distance >= 0 && distance <= action.reach && Math.abs(attacker.y - target.y) <= 59 ? action : null;
 }
 
 //JT-2026/11/19 - apply damage, hit stun, and guard feedback
 function applyHit(target, attacker, action, meter) {
+  //JT-2026/11/19 - block all damage and recoil while juan is retreating
+  if (target === game.player && target.guard) {
+    sparks((target.x + attacker.x) / 2, 70 + Math.max(attacker.y, target.y), true);
+    tone("guard");
+    return;
+  }
   const blocked = target.guard && (attacker.x - target.x) * target.direction >= 0;
   target.health = Math.max(0, target.health - (blocked ? Math.floor(action.damage * .21) : action.damage));
   target.stun = blocked ? .1 : action.stun;
@@ -497,6 +553,9 @@ function finishRound() {
   if (!player.health) player.down = .01;
   if (!enemy.health) enemy.down = .01;
   game.phase = .82;
+  //JT-2026/11/19 - stop the fireball and retreat guard when the round ends
+  game.projectile = null;
+  player.guard = false;
   clearInputs();
   setMode("round-end");
   ui.announcement.textContent = knockout ? "K.O.!" : "TIME!";
@@ -546,6 +605,8 @@ function paint() {
   const fighters = player.x <= enemy.x ? [player, enemy] : [enemy, player];
   fighters.forEach(drawShadow);
   fighters.forEach(drawFighter);
+  //JT-2026/11/19 - draw the active fireball with the street arena
+  if (game.projectile) drawProjectile(game.projectile);
   for (const effect of game.effects) drawSpark(effect);
   placeNameplates();
 }
@@ -566,7 +627,10 @@ function drawFighter(fighter) {
   const img = atlases.get(fighter.profile.id)?.img;
   if (!img?.complete || !img.naturalWidth) return;
   const [row, column] = getPose(fighter);
-  const size = view.scale * fighter.profile.size / FRAME.scale;
+  // const size = view.scale * fighter.profile.size / FRAME.scale;
+  //JT-2026/11/19 - draw juan from his expanded atlas without shifting his ground position
+  const frame = fighter === game.player ? HERO_FRAME : FRAME;
+  const size = view.scale * fighter.profile.size / frame.scale;
   context.save();
   const x = Math.round(fighter.x * view.scale);
   const y = Math.round(view.floor - fighter.y * view.scale);
@@ -574,8 +638,11 @@ function drawFighter(fighter) {
   context.scale(fighter.direction, 1);
   context.imageSmoothingEnabled = true;
   if (fighter.guard && !fighter.down) context.filter = "brightness(1.14)";
-  context.drawImage(img, column * FRAME.width, row * FRAME.height, FRAME.width, FRAME.height,
-    -FRAME.x * size, -FRAME.y * size, FRAME.width * size, FRAME.height * size);
+  // context.drawImage(img, column * FRAME.width, row * FRAME.height, FRAME.width, FRAME.height,
+  //   -FRAME.x * size, -FRAME.y * size, FRAME.width * size, FRAME.height * size);
+  //JT-2026/11/19 - sample each fighter using its atlas frame dimensions
+  context.drawImage(img, column * frame.width, row * frame.height, frame.width, frame.height,
+    -frame.x * size, -frame.y * size, frame.width * size, frame.height * size);
   context.restore();
 }
 
@@ -590,11 +657,18 @@ function getPose(fighter) {
     // The final gasoline frame contains the flame, so show it on impact.
     return [POSE[kind], fighter.profile.id === "gasoline_0" && column >= 2 ? 3 : column];
   }
-  if (fighter.guard) return [hero ? POSE.guard : POSE.hurt, 0];
+  // if (fighter.guard) return [hero ? POSE.guard : POSE.hurt, 0];
+  //JT-2026/11/19 - keep the opponent guard pose and let juan animate his retreat
+  if (!hero && fighter.guard) return [POSE.hurt, 0];
   if (hero && (fighter.y || fighter.velocity)) {
     return [POSE.jump, fighter.velocity > 160 ? 1 : fighter.velocity > -155 ? 2 : 3];
   }
-  if (fighter.moving) return [POSE.move, Math.floor(game.age * 11) % 4];
+  // if (fighter.moving) return [POSE.move, Math.floor(game.age * 11) % 4];
+  //JT-2026/11/19 - play juan's walk frames in reverse when he backs away
+  if (fighter.moving) {
+    const column = Math.floor(game.age * 11) % 4;
+    return [POSE.move, hero && fighter.guard ? 3 - column : column];
+  }
   return [POSE.idle, reduceMotion.matches ? 0 : Math.floor(game.age * 3.7) % 4];
 }
 
@@ -694,4 +768,36 @@ function tone(kind) {
 //JT-2026/11/19 - constrain positions and timer values to their valid bounds
 function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
+}
+
+//JT-2026/11/19 - move the fireball until it hits the opponent or leaves the arena
+function advanceProjectile(dt) {
+  const shot = game.projectile;
+  if (!shot) return;
+  shot.remaining -= dt;
+  shot.x += shot.direction * FIREBALL.speed * dt;
+  const enemy = game.enemy;
+  const hitsEnemy = enemy.health > 0 && Math.abs(enemy.x - shot.x) <= enemy.profile.body + FIREBALL.radius
+    && Math.abs(enemy.y - shot.y) <= FIREBALL.elevation - 10;
+  if (hitsEnemy) {
+    const source = { x: enemy.x - shot.direction * FIREBALL.radius, y: shot.y, direction: shot.direction };
+    applyHit(enemy, source, shot.action, ui.enemyHealth);
+    game.projectile = null;
+  } else if (shot.remaining <= 0 || shot.x < -FIREBALL.radius || shot.x > view.world + FIREBALL.radius) {
+    game.projectile = null;
+  }
+}
+
+//JT-2026/11/19 - draw the supplied fireball sprite in its travel direction
+function drawProjectile(shot) {
+  const img = atlases.get(HERO.id)?.img;
+  if (!img?.complete || !img.naturalWidth) return;
+  const { width, height, x, scale } = HERO_FRAME;
+  const size = view.scale * FIREBALL.scale / scale;
+  context.save();
+  context.translate(shot.x * view.scale, view.floor - (shot.y + FIREBALL.elevation) * view.scale);
+  context.scale(shot.direction, 1);
+  context.drawImage(img, 0, FIREBALL.row * height, width, height,
+    -x * size, -height * size / 2, width * size, height * size);
+  context.restore();
 }
