@@ -10,7 +10,9 @@
   <!-- JT-2026/11/19 - describe the eleven stage campaign -->
   <!-- <meta name="description" content="An eleven-stage arcade fighter set in Tondo, Manila."> -->
   <!-- JT-2026/11/22 - describe the thirteen stage campaign across metro manila -->
-  <meta name="description" content="A thirteen-stage arcade fighter set in Metro Manila.">
+  <!-- <meta name="description" content="A thirteen-stage arcade fighter set in Metro Manila."> -->
+  <!-- JT-2026/11/22 - describe the sixteen stage campaign -->
+  <meta name="description" content="A sixteen-stage arcade fighter set in Metro Manila.">
   <!-- JT-2026/11/19 - show the new game name in the browser tab -->
   <title>Pinoy Struggle</title>
   <link rel="stylesheet" href="styles.css">
@@ -27,9 +29,16 @@
         <span>PINOY <strong>STRUGGLE</strong></span>
       </div>
       <div class="utilities">
+        <!--
         <button class="utility" id="sound" type="button" aria-pressed="false">
           <span class="icon icon-sound" aria-hidden="true"></span>
           <span id="sound-label">Sound off</span>
+        </button>
+        -->
+        <!-- JT-2026/11/22 - show sound as enabled when the game opens -->
+        <button class="utility" id="sound" type="button" aria-pressed="true">
+          <span class="icon icon-sound" aria-hidden="true"></span>
+          <span id="sound-label">Sound on</span>
         </button>
         <button class="utility" id="pause" type="button" disabled>
           <span class="icon icon-pause" aria-hidden="true"></span>
@@ -74,7 +83,9 @@
             <!-- JT-2026/11/19 - update the initial hud to eleven levels -->
             <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 11</span> -->
             <!-- JT-2026/11/22 - start the hud at level one of thirteen -->
-            <span class="stage-counter" id="stage-counter">LEVEL 01 / 13</span>
+            <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 13</span> -->
+            <!-- JT-2026/11/22 - start the hud at level one of sixteen -->
+            <span class="stage-counter" id="stage-counter">LEVEL 01 / 16</span>
             <span class="seconds" id="seconds" aria-label="Seconds left">60</span>
           </div>
           <div class="fighter-hud enemy-hud">
@@ -100,7 +111,9 @@
             <!-- JT-2026/11/19 - show the eleven challenger objective -->
             <!-- <p class="panel-copy" id="panel-copy">Defeat all eleven challengers.</p> -->
             <!-- JT-2026/11/22 - show the new number of challengers -->
-            <p class="panel-copy" id="panel-copy">Defeat all thirteen challengers.</p>
+            <!-- <p class="panel-copy" id="panel-copy">Defeat all thirteen challengers.</p> -->
+            <!-- JT-2026/11/22 - show the sixteen challenger objective -->
+            <p class="panel-copy" id="panel-copy">Defeat all sixteen challengers.</p>
             <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
             <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
           </div>
@@ -117,7 +130,9 @@
         <!-- JT-2026/11/19 - initialize campaign progress for eleven opponents -->
         <!-- <span id="cleared">0 / 11 CLEARED</span> -->
         <!-- JT-2026/11/22 - initialize progress for thirteen opponents -->
-        <span id="cleared">0 / 13 CLEARED</span>
+        <!-- <span id="cleared">0 / 13 CLEARED</span> -->
+        <!-- JT-2026/11/22 - initialize progress for sixteen opponents -->
+        <span id="cleared">0 / 16 CLEARED</span>
       </div>
     </section>
 
@@ -170,6 +185,30 @@
     <section class="ladder" aria-labelledby="ladder-title">
       <h2 id="ladder-title">Opponent ladder</h2>
       <ol id="roster" class="roster"></ol>
+    </section>
+
+    <!-- JT-2026/11/22 - show players the latest game changes below the ladder -->
+    <section class="game-updates" aria-labelledby="updates-title">
+      <h2 id="updates-title">Game Updates</h2>
+      <div class="update-entries">
+        <article class="update-entry">
+          <h3><time datetime="2026-11-22">November 22, 2026</time></h3>
+          <ul>
+            <li>The campaign now has 16 levels. Face Lipunan in Tondo at Level 7, Traffic in BGC at Level 8, and Baha on G. Araneta Avenue at Level 10.</li>
+            <li>Lubak na Daan and Ebike joined the Maypajo fights. The ladder shows every opponent’s portrait and marks who’s next.</li>
+            <li>Petrolyo, Bills, Stress, and Emotional Damage now fight in BGC.</li>
+            <li>Fight music and sound effects are on by default. Use the sound button to mute them.</li>
+          </ul>
+        </article>
+        <article class="update-entry">
+          <h3><time datetime="2026-11-19">November 19, 2026</time></h3>
+          <ul>
+            <li>Snatcher and Kahirapan joined the ladder.</li>
+            <li>Land punches and kicks to fill up to three Super Bars. Energy Wave and Super Upper Cut each spend one full bar.</li>
+            <li>Hold back to block all damage, even when cornered.</li>
+          </ul>
+        </article>
+      </div>
     </section>
   </main>
 </body>

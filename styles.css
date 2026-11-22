@@ -114,6 +114,18 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   background-position: center bottom, center center;
 }
 
+/* JT-2026/11/22 - align the bgc street beneath the fighters */
+.arena[data-backdrop="bgc"] {
+  background-image: url("assets/arcade/bgc_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
+/* JT-2026/11/22 - position the g araneta road under the fighters */
+.arena[data-backdrop="g_araneta"] {
+  background-image: url("assets/arcade/g_araneta_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
 #fight, .arena-shade, .panel-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 #fight { display: block; }
 .arena-shade {
@@ -377,7 +389,16 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   border-bottom: 1px solid var(--line);
 }
 
+/*
 .control-deck h2, .ladder h2 {
+  margin: 0;
+  font: 800 .82rem/1 var(--mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+*/
+/* JT-2026/11/22 - match the game updates heading to the existing section labels */
+.control-deck h2, .ladder h2, .game-updates h2 {
   margin: 0;
   font: 800 .82rem/1 var(--mono);
   letter-spacing: .13em;
@@ -412,6 +433,24 @@ kbd {
 }
 
 .touch-controls { display: none; }
+
+/* JT-2026/11/22 - keep dated update entries readable across screen sizes */
+.game-updates { margin-top: 17px; padding-top: 17px; border-top: 1px solid var(--line); }
+.game-updates h2 { margin-bottom: 12px; }
+.update-entries {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+  gap: 8px;
+}
+.update-entry {
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  background: var(--surface);
+}
+.update-entry h3 { margin: 0; color: var(--yellow); font: 700 .76rem/1.3 var(--mono); }
+.update-entry ul { margin: 8px 0 0; padding-inline-start: 18px; color: var(--muted); font-size: .86rem; }
+.update-entry li + li { margin-top: 4px; }
+
 .ladder { padding-top: 17px; }
 .ladder h2 { margin-bottom: 12px; }
 /* .roster { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; } */
@@ -439,7 +478,9 @@ kbd {
 .roster-name { text-transform: capitalize; }
 */
 /* JT-2026/11/22 - give each opponent a readable portrait card */
-.roster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; }
+/* .roster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; } */
+/* JT-2026/11/22 - fit sixteen portraits in two desktop rows */
+.roster { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; }
 .roster li {
   display: grid;
   align-items: center;
@@ -486,7 +527,9 @@ kbd {
 @media (max-width: 1150px) {
   /* .roster { grid-template-columns: repeat(6, minmax(0, 1fr)); } */
   /* JT-2026/11/22 - keep portrait cards wide enough on smaller displays */
-  .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  /* .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); } */
+  /* JT-2026/11/22 - fit the expanded ladder in four rows on tablets */
+  .roster { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1050px) {

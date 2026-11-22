@@ -7,7 +7,9 @@
 <!-- JT-2026/11/19 - update the campaign to eleven challengers -->
 <!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat eleven challengers to clear the game. -->
 <!-- JT-2026/11/22 - describe the thirteen challenger campaign across metro manila -->
-Play as Juan in a single-player arcade fighter set in Metro Manila. Beat thirteen challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat thirteen challengers to clear the game. -->
+<!-- JT-2026/11/22 - describe the expanded sixteen challenger campaign -->
+Play as Juan in a single-player arcade fighter set in Metro Manila. Beat sixteen challengers to clear the game.
 
 ## Play locally
 
@@ -46,6 +48,12 @@ Hold back to guard against all damage, even at the wall. Juan drops his guard wh
 
 On a phone, use the touch controls below the arena.
 
+<!-- JT-2026/11/22 - explain how default audio begins and how to mute it -->
+Fight music and sound effects are on by default and start with your first fight. Use the **Sound on** button to mute them and **Sound off** to turn them back on.
+
+<!-- JT-2026/11/22 - show players where to find recent game changes -->
+Read **Game Updates** below the opponent ladder for recent changes.
+
 <!-- JT-2026/11/19 - explain how to earn and spend super charge -->
 ## Super Bar
 
@@ -62,7 +70,9 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 ## Opponent ladder
 
 <!-- JT-2026/11/22 - explain the three arenas and next opponent previews -->
-Levels 2–4 take place in Maypajo, Caloocan. Levels 7–9 take place at Malacañang. The other fights take place in Tondo.
+<!-- Levels 2–4 take place in Maypajo, Caloocan. Levels 7–9 take place at Malacañang. The other fights take place in Tondo. -->
+<!-- JT-2026/11/22 - document the arenas in the expanded campaign -->
+Levels 1 and 5–7 take place in Tondo. Levels 2–4 take place in Maypajo, Caloocan. Levels 8 and 13–16 take place in BGC, Taguig. Levels 9 and 11–12 take place at Malacañang. Level 10 takes place on G. Araneta Avenue, Quezon City.
 
 Each ladder card shows the opponent's portrait. The **Next** badge marks who follows the current fight.
 
@@ -119,6 +129,7 @@ Each ladder card shows the opponent's portrait. The **Next** badge marks who fol
 11. `emotional_damage` — 480 HP
 -->
 <!-- JT-2026/11/22 - list all thirteen opponents in campaign order -->
+<!--
 1. `kamote_rider` — 300 HP
 2. `lubak_na_daan` — 305 HP
 3. `ebike` — 315 HP
@@ -132,6 +143,24 @@ Each ladder card shows the opponent's portrait. The **Next** badge marks who fol
 11. `bills` — 440 HP
 12. `stress` — 460 HP
 13. `emotional_damage` — 480 HP
+-->
+<!-- JT-2026/11/22 - list the sixteen opponents by level -->
+1. `kamote_rider` — 300 HP
+2. `lubak_na_daan` — 305 HP
+3. `ebike` — 315 HP
+4. `snatcher` — 320 HP
+5. `kahirapan` — 330 HP
+6. `adik` — 340 HP
+7. `lipunan` — 345 HP
+8. `traffic` — 350 HP
+9. `politiko` — 360 HP
+10. `baha` — 370 HP
+11. `mayabang` — 380 HP
+12. `matapobre` — 400 HP
+13. `petrolyo` — 420 HP
+14. `bills` — 440 HP
+15. `stress` — 460 HP
+16. `emotional_damage` — 480 HP
 
 ## Host on Vercel
 

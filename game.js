@@ -40,26 +40,40 @@ const OPPONENTS = [
   { id: "snatcher_0", backdrop: "maypajo", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
   { id: "kahirapan_0", maxHealth: 330, size: 1.2, body: 39, speed: 115, reach: 93, power: 11, interval: 1.05, heavy: .36, guard: .09 },
   { id: "adik_0", maxHealth: 340, size: 1.14, body: 27, speed: 173, reach: 76, power: 10, interval: .89, heavy: .34, guard: .05 },
+  //JT-2026/11/22 - put lipunan in tondo and traffic in bgc before politiko
+  { id: "lipunan_0", backdrop: "tondo", maxHealth: 345, size: 1.17, body: 46, speed: 145, reach: 97, power: 11, interval: .88, heavy: .33, guard: .12 },
+  { id: "traffic_0", backdrop: "bgc", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
   // { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
   // { id: "mayabang_0", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   // { id: "matapobre_0", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
   //JT-2026/11/21 - set the malacaniang backdrop for politiko mayabang and matapobre
   { id: "congressman_0", displayName: "politiko", backdrop: "malacaniang", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
+  //JT-2026/11/22 - fight baha at g araneta between politiko and mayabang
+  { id: "baha_0", backdrop: "g_araneta", maxHealth: 370, size: 1.18, body: 54, speed: 144, reach: 101, power: 13, interval: .87, heavy: .42, guard: .12 },
   { id: "mayabang_0", backdrop: "malacaniang", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   { id: "matapobre_0", backdrop: "malacaniang", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
   // { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
   // { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
   //JT-2026/11/19 - show gasoline and billing as petrolyo and bills
-  { id: "gasoline_0", displayName: "petrolyo", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
-  { id: "billing_0", displayName: "bills", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
-  { id: "stress_0", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
-  { id: "emotional_damage_0", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+  // { id: "gasoline_0", displayName: "petrolyo", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
+  // { id: "billing_0", displayName: "bills", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  // { id: "stress_0", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
+  // { id: "emotional_damage_0", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+  //JT-2026/11/22 - place the final four fights in bgc
+  { id: "gasoline_0", displayName: "petrolyo", backdrop: "bgc", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
+  { id: "billing_0", displayName: "bills", backdrop: "bgc", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  { id: "stress_0", backdrop: "bgc", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
+  { id: "emotional_damage_0", backdrop: "bgc", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
 ];
 //JT-2026/11/22 - label all three campaign arenas
 const ARENA_LOCATIONS = {
   tondo: "TONDO, MANILA",
   maypajo: "MAYPAJO, CALOOCAN",
   malacaniang: "MALACAÑANG, MANILA",
+  //JT-2026/11/22 - show the bgc location in the arena strip
+  bgc: "BGC, TAGUIG",
+  //JT-2026/11/22 - show the g araneta location in the arena strip
+  g_araneta: "G. ARANETA, QUEZON CITY",
 };
 // const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
 //JT-2026/11/19 - give juan an explicit health maximum for timeout comparisons
@@ -105,6 +119,17 @@ const KEYS = {
   KeyJ: "light", KeyK: "heavy", KeyL: "energyWave", KeyI: "superUpperCut",
 };
 
+//JT-2026/11/22 - set the timing and volume of the recordings and fight music
+const GAME_AUDIO = {
+  playerHurt: { file: "amber2023-ouch-208265.mp3", offset: .17, duration: .48, volume: .85 },
+  opponentHurt: { file: "freesound_community-ough-47202.mp3", offset: .36, duration: .55, volume: .35 },
+  superImpact: { file: "dragon-studio-boom-copyright-free-487662.mp3", offset: 0, duration: 1, volume: .24 },
+  defeat: { file: "make_more_sound-8-bit-video-game-fail-version-2-145478.mp3", offset: .18, duration: 1.5, volume: .34 },
+  vehicleCrash: { file: "rsf_studios-car-crash-swerving-and-crash-592672.mp3", offset: .36, duration: 2.05, volume: .25 },
+  fightMusic: { file: "freesound_community-video-game-music-loop-27629.mp3", volume: .14, loop: true },
+};
+const VEHICLE_OPPONENTS = new Set(["kamote_rider_0", "ebike_0", "traffic_0", "mayabang_0"]);
+
 //JT-2026/11/19 - connect the arcade ui and initialize the first matchup
 const byId = id => document.getElementById(id);
 const ui = {
@@ -132,6 +157,9 @@ const held = new Map();
 const pressed = new Set();
 const atlases = new Map();
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+//JT-2026/11/22 - retain prepared clips and track playing audio for mute and pause
+const soundRecordings = new Map();
+const activeSoundNodes = new Set();
 let soundContext;
 let previousTime = 0;
 
@@ -153,7 +181,11 @@ window.addEventListener("keyup", event => {
 });
 window.addEventListener("blur", clearInputs);
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden && canFight()) togglePause();
+  // if (document.hidden && canFight()) togglePause();
+  //JT-2026/11/22 - stop recorded effects when a background tab is showing a result
+  if (!document.hidden) return;
+  if (canFight()) togglePause();
+  else stopGameSounds();
 });
 ui.touch.querySelectorAll("button").forEach(button => {
   const release = event => {
@@ -227,6 +259,8 @@ function makeFighter(profile, x, direction) {
 
 //JT-2026/11/19 - reset the round and update the opponent nameplate
 function resetRound() {
+  //JT-2026/11/22 - stop any result sounds before the next round
+  stopGameSounds();
   game.player = makeFighter(HERO, view.world * .225, 1);
   game.enemy = makeFighter(OPPONENTS[game.level], view.world * .775, -1);
   //JT-2026/11/22 - select and label the opponent's arena each round
@@ -337,6 +371,8 @@ function activate() {
 
 //JT-2026/11/19 - begin the selected matchup after its artwork loads
 async function startRound() {
+  //JT-2026/11/22 - unlock sound while the start action still counts as a player gesture
+  enableGameSounds();
   const from = game.mode;
   resetRound();
   setMode("loading");
@@ -355,6 +391,9 @@ async function startRound() {
 //JT-2026/11/19 - synchronize menus and pause controls with the match state
 function setMode(mode) {
   game.mode = mode;
+  //JT-2026/11/22 - play music only during combat and stop audio on pause
+  if (mode === "paused") stopGameSounds();
+  if (mode === "fight") startFightMusic();
   ui.arena.dataset.mode = mode;
   ui.panel.hidden = ["ready", "fight", "round-end"].includes(mode);
   if (mode !== "ready" && mode !== "fight" && mode !== "round-end") ui.announcement.textContent = "";
@@ -667,7 +706,15 @@ function applyHit(target, attacker, action, meter) {
   const gain = SUPER_GAIN[action.kind];
   if (attacker === game.player && !blocked && gain) setSuperCharge(game.superCharge + gain);
   sparks((target.x + attacker.x) / 2, 70 + Math.max(attacker.y, target.y), blocked);
-  tone(blocked ? "guard" : "hit");
+  // tone(blocked ? "guard" : "hit");
+  //JT-2026/11/22 - play a recorded hit reaction or special impact
+  if (blocked) {
+    tone("guard");
+  } else if (target.health > 0) {
+    const special = action.kind === "energyWave" || action.kind === "superUpperCut";
+    const cue = target === game.player ? "playerHurt" : special ? "superImpact" : "opponentHurt";
+    playRecordedSound(cue, "hit");
+  }
 }
 
 /*
@@ -713,7 +760,17 @@ function finishRound() {
   clearInputs();
   setMode("round-end");
   ui.announcement.textContent = knockout ? "K.O.!" : "TIME!";
-  tone(knockout ? "ko" : "start");
+  // tone(knockout ? "ko" : "start");
+  //JT-2026/11/22 - play the loss cue or the vehicle crash at the end of a round
+  stopGameSounds();
+  const resultTone = knockout ? "ko" : "start";
+  if (game.winner === "enemy") {
+    playRecordedSound("defeat", resultTone);
+  } else if (game.winner === "player" && knockout && VEHICLE_OPPONENTS.has(enemy.profile.id)) {
+    playRecordedSound("vehicleCrash", resultTone);
+  } else {
+    tone(resultTone);
+  }
 }
 
 //JT-2026/11/19 - offer the next level, a rematch, or a fresh campaign
@@ -890,6 +947,7 @@ function drawSpark(effect) {
   context.globalAlpha = 1;
 }
 
+/*
 //JT-2026/11/19 - enable or mute synthesized arcade effects
 function toggleSound() {
   const Audio = window.AudioContext || window.webkitAudioContext;
@@ -906,10 +964,26 @@ function toggleSound() {
     tone("start");
   }
 }
+*/
+//JT-2026/11/22 - let players mute or restore both music and fight effects
+function toggleSound() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext && !window.Audio) {
+    ui.sound.disabled = true;
+    return;
+  }
+  const enabled = ui.sound.getAttribute("aria-pressed") !== "true";
+  ui.sound.setAttribute("aria-pressed", enabled);
+  ui.soundLabel.textContent = enabled ? "Sound on" : "Sound off";
+  if (enabled) enableGameSounds(true);
+  else stopGameSounds();
+}
 
 //JT-2026/11/19 - synthesize lightweight fight cues with browser audio
 function tone(kind) {
-  if (!soundContext || ui.sound.getAttribute("aria-pressed") !== "true") return;
+  // if (!soundContext || ui.sound.getAttribute("aria-pressed") !== "true") return;
+  //JT-2026/11/22 - avoid queueing tones in a background or suspended tab
+  if (soundContext?.state !== "running" || document.hidden || ui.sound.getAttribute("aria-pressed") !== "true") return;
   const cue = {
     start: [420, 720, .16, "triangle"], jab: [175, 77, .07, "triangle"],
     swing: [145, 45, .13, "triangle"], hit: [118, 43, .16, "square"],
@@ -927,6 +1001,8 @@ function tone(kind) {
   oscillator.connect(volume).connect(soundContext.destination);
   oscillator.start(time);
   oscillator.stop(time + duration);
+  //JT-2026/11/22 - let mute and pause cut short an active tone
+  trackSoundNode(oscillator);
 }
 
 //JT-2026/11/19 - constrain positions and timer values to their valid bounds
@@ -1001,4 +1077,104 @@ function setSuperCharge(charge) {
   ui.playerSuper.setAttribute("aria-valuenow", game.superCharge);
   ui.playerSuper.setAttribute("aria-valuetext", `${filledBars} of ${SUPER_BARS} bars ready`);
   ui.superReadout.textContent = `${filledBars}/${SUPER_BARS}`;
+}
+
+//JT-2026/11/22 - preload effects and music after sound is enabled
+function prepareSoundEffects() {
+  for (const [name, effect] of Object.entries(GAME_AUDIO)) {
+    if (soundRecordings.has(name)) continue;
+    const recording = { ...effect };
+    const url = `assets/${effect.file}`;
+    soundRecordings.set(name, recording);
+    if (soundContext && window.location.protocol !== "file:") {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error(`Could not load ${effect.file}.`);
+          return response.arrayBuffer();
+        })
+        .then(bytes => soundContext.decodeAudioData(bytes))
+        .then(buffer => {
+          recording.buffer = buffer;
+          if (recording.loop) startFightMusic();
+        })
+        .catch(() => { soundRecordings.delete(name); });
+    } else if (window.Audio) {
+      const clip = new window.Audio(url);
+      clip.volume = effect.volume;
+      clip.loop = Boolean(effect.loop);
+      if (!clip.loop) {
+        clip.addEventListener("timeupdate", () => {
+          if (clip.currentTime >= effect.offset + effect.duration) clip.pause();
+        });
+      }
+      recording.clip = clip;
+    }
+  }
+}
+
+//JT-2026/11/22 - play a recorded cue or the fight loop with an optional fallback
+function playRecordedSound(name, fallback) {
+  if (document.hidden || ui.sound.getAttribute("aria-pressed") !== "true") return;
+  const recording = soundRecordings.get(name);
+  if (recording?.buffer && soundContext.state === "running") {
+    if (recording.source) return;
+    const source = soundContext.createBufferSource();
+    const gain = soundContext.createGain();
+    source.buffer = recording.buffer;
+    gain.gain.value = recording.volume;
+    source.connect(gain).connect(soundContext.destination);
+    if (recording.loop) {
+      source.loop = true;
+      source.start();
+      recording.source = source;
+    } else {
+      source.start(0, recording.offset, recording.duration);
+    }
+    trackSoundNode(source);
+  } else if (recording?.clip && !recording.clip.error) {
+    const { clip, offset } = recording;
+    if (clip.loop && !clip.paused) return;
+    clip.currentTime = offset ?? 0;
+    clip.play().catch(error => {
+      if (fallback && error.name !== "AbortError" && game.mode !== "paused") tone(fallback);
+    });
+  } else if (fallback) {
+    tone(fallback);
+  }
+}
+
+//JT-2026/11/22 - start the background loop when the fight and sound are active
+function startFightMusic() {
+  if (game.mode === "fight") playRecordedSound("fightMusic");
+}
+
+//JT-2026/11/22 - track a web audio source until its sound ends
+function trackSoundNode(node) {
+  activeSoundNodes.add(node);
+  node.addEventListener("ended", () => activeSoundNodes.delete(node), { once: true });
+}
+
+//JT-2026/11/22 - stop active recordings and tones when sound should end
+function stopGameSounds() {
+  for (const node of activeSoundNodes) node.stop();
+  activeSoundNodes.clear();
+  for (const recording of soundRecordings.values()) {
+    recording.source = null;
+    recording.clip?.pause();
+  }
+}
+
+//JT-2026/11/22 - prepare sound on start or unmute without bypassing a mute choice
+function enableGameSounds(confirm = false) {
+  if (ui.sound.getAttribute("aria-pressed") !== "true") return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (AudioContext) {
+    soundContext ??= new AudioContext();
+    soundContext.resume().then(() => {
+      if (confirm) tone("start");
+      startFightMusic();
+    }).catch(() => {});
+  }
+  prepareSoundEffects();
+  startFightMusic();
 }
