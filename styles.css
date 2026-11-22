@@ -103,6 +103,17 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   container-type: inline-size;
 }
 
+/* JT-2026/11/21 - show the malacaniang image for its assigned opponents */
+.arena[data-backdrop="malacaniang"] {
+  background-image: url("assets/arcade/malacaniang_0.jpg"), url("assets/arcade/tondo_0.jpg");
+}
+
+/* JT-2026/11/22 - keep the maypajo road visible at the fighters' feet */
+.arena[data-backdrop="maypajo"] {
+  background-image: url("assets/arcade/maypajo_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
 #fight, .arena-shade, .panel-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 #fight { display: block; }
 .arena-shade {
@@ -407,6 +418,7 @@ kbd {
 /* JT-2026/11/19 - fit all ten levels in the desktop ladder */
 /* .roster { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; } */
 /* JT-2026/11/19 - fit eleven levels in the desktop ladder */
+/*
 .roster { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 5px; }
 .roster li {
   display: grid;
@@ -425,13 +437,56 @@ kbd {
 
 .roster .level-number { color: #b1a084; font: 700 .71rem/1 var(--mono); }
 .roster-name { text-transform: capitalize; }
+*/
+/* JT-2026/11/22 - give each opponent a readable portrait card */
+.roster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; }
+.roster li {
+  display: grid;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #3e3629;
+  padding: 5px 8px 9px;
+  background: #222018;
+  color: #d9cdb4;
+  font: 700 .76rem/1.15 "Segoe UI", system-ui, sans-serif;
+  text-align: center;
+}
+
+.roster .level-number {
+  justify-self: start;
+  color: #b1a084;
+  font: 700 .71rem/1 var(--mono);
+}
+
+.roster-preview {
+  display: block;
+  width: 100%;
+  height: clamp(50px, 7vw, 78px);
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.roster-name { text-transform: capitalize; }
+.roster-next {
+  display: none;
+  color: var(--yellow);
+  font: 700 .65rem/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.roster li.is-next { border-color: #8d7544; }
+.roster li.is-next .roster-next { display: block; grid-row: 1; grid-column: 1; justify-self: end; }
+.roster li .level-number { grid-row: 1; grid-column: 1; }
 .roster li[aria-current="step"] { border-color: #aa803a; background: #41331a; color: #ffe49c; }
 .roster li[aria-current="step"] .level-number, .roster li.is-cleared .level-number { color: var(--yellow); }
 .roster li.is-cleared { border-color: #655334; }
 
 /* JT-2026/11/19 - give opponent names more room on narrower screens */
 @media (max-width: 1150px) {
-  .roster { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  /* .roster { grid-template-columns: repeat(6, minmax(0, 1fr)); } */
+  /* JT-2026/11/22 - keep portrait cards wide enough on smaller displays */
+  .roster { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1050px) {

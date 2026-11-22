@@ -5,7 +5,9 @@
 <!-- JT-2026/11/19 - update the campaign to ten challengers -->
 <!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat ten challengers to clear the game. -->
 <!-- JT-2026/11/19 - update the campaign to eleven challengers -->
-Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat eleven challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Tondo, Manila. Beat eleven challengers to clear the game. -->
+<!-- JT-2026/11/22 - describe the thirteen challenger campaign across metro manila -->
+Play as Juan in a single-player arcade fighter set in Metro Manila. Beat thirteen challengers to clear the game.
 
 ## Play locally
 
@@ -59,6 +61,11 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 
 ## Opponent ladder
 
+<!-- JT-2026/11/22 - explain the three arenas and next opponent previews -->
+Levels 2–4 take place in Maypajo, Caloocan. Levels 7–9 take place at Malacañang. The other fights take place in Tondo.
+
+Each ladder card shows the opponent's portrait. The **Next** badge marks who follows the current fight.
+
 <!--
 1. `kamote_rider`
 2. `adik`
@@ -98,6 +105,7 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 11. `emotional_damage` — 480 HP
 -->
 <!-- JT-2026/11/19 - show gasoline and billing as petrolyo and bills in the ladder -->
+<!--
 1. `kamote_rider` — 300 HP
 2. `snatcher` — 320 HP
 3. `kahirapan` — 330 HP
@@ -109,6 +117,21 @@ While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (
 9. `bills` — 440 HP
 10. `stress` — 460 HP
 11. `emotional_damage` — 480 HP
+-->
+<!-- JT-2026/11/22 - list all thirteen opponents in campaign order -->
+1. `kamote_rider` — 300 HP
+2. `lubak_na_daan` — 305 HP
+3. `ebike` — 315 HP
+4. `snatcher` — 320 HP
+5. `kahirapan` — 330 HP
+6. `adik` — 340 HP
+7. `politiko` — 360 HP
+8. `mayabang` — 380 HP
+9. `matapobre` — 400 HP
+10. `petrolyo` — 420 HP
+11. `bills` — 440 HP
+12. `stress` — 460 HP
+13. `emotional_damage` — 480 HP
 
 ## Host on Vercel
 

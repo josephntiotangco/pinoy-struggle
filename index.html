@@ -8,7 +8,9 @@
   <!-- JT-2026/11/19 - describe the ten stage campaign -->
   <!-- <meta name="description" content="A ten-stage arcade fighter set in Tondo, Manila."> -->
   <!-- JT-2026/11/19 - describe the eleven stage campaign -->
-  <meta name="description" content="An eleven-stage arcade fighter set in Tondo, Manila.">
+  <!-- <meta name="description" content="An eleven-stage arcade fighter set in Tondo, Manila."> -->
+  <!-- JT-2026/11/22 - describe the thirteen stage campaign across metro manila -->
+  <meta name="description" content="A thirteen-stage arcade fighter set in Metro Manila.">
   <!-- JT-2026/11/19 - show the new game name in the browser tab -->
   <title>Pinoy Struggle</title>
   <link rel="stylesheet" href="styles.css">
@@ -70,7 +72,9 @@
             <!-- JT-2026/11/19 - show the new level count in the initial hud -->
             <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 10</span> -->
             <!-- JT-2026/11/19 - update the initial hud to eleven levels -->
-            <span class="stage-counter" id="stage-counter">LEVEL 01 / 11</span>
+            <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 11</span> -->
+            <!-- JT-2026/11/22 - start the hud at level one of thirteen -->
+            <span class="stage-counter" id="stage-counter">LEVEL 01 / 13</span>
             <span class="seconds" id="seconds" aria-label="Seconds left">60</span>
           </div>
           <div class="fighter-hud enemy-hud">
@@ -94,7 +98,9 @@
             <!-- JT-2026/11/19 - update the start screen objective -->
             <!-- <p class="panel-copy" id="panel-copy">Defeat all ten challengers.</p> -->
             <!-- JT-2026/11/19 - show the eleven challenger objective -->
-            <p class="panel-copy" id="panel-copy">Defeat all eleven challengers.</p>
+            <!-- <p class="panel-copy" id="panel-copy">Defeat all eleven challengers.</p> -->
+            <!-- JT-2026/11/22 - show the new number of challengers -->
+            <p class="panel-copy" id="panel-copy">Defeat all thirteen challengers.</p>
             <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
             <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
           </div>
@@ -102,12 +108,16 @@
         <p class="sr-only" id="status" role="status" aria-live="polite"></p>
       </div>
       <div class="arena-strip">
-        <span><i aria-hidden="true"></i> TONDO, MANILA</span>
+        <!-- <span><i aria-hidden="true"></i> TONDO, MANILA</span> -->
+        <!-- JT-2026/11/21 - show the location of the current backdrop -->
+        <span><i aria-hidden="true"></i><span id="arena-location">TONDO, MANILA</span></span>
         <!-- <span id="cleared">0 / 9 CLEARED</span> -->
         <!-- JT-2026/11/19 - start progress at zero of ten cleared -->
         <!-- <span id="cleared">0 / 10 CLEARED</span> -->
         <!-- JT-2026/11/19 - initialize campaign progress for eleven opponents -->
-        <span id="cleared">0 / 11 CLEARED</span>
+        <!-- <span id="cleared">0 / 11 CLEARED</span> -->
+        <!-- JT-2026/11/22 - initialize progress for thirteen opponents -->
+        <span id="cleared">0 / 13 CLEARED</span>
       </div>
     </section>
 

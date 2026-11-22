@@ -33,12 +33,20 @@ const OPPONENTS = [
 //JT-2026/11/19 - add kahirapan after snatcher and give opponents enough health for three super bars
 const OPPONENTS = [
   { id: "kamote_rider_0", maxHealth: 300, size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
-  { id: "snatcher_0", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
+  // { id: "snatcher_0", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
+  //JT-2026/11/22 - put lubak na daan ebike and snatcher in the maypajo arena
+  { id: "lubak_sa_daan_0", displayName: "lubak_na_daan", backdrop: "maypajo", maxHealth: 305, size: 1.12, body: 56, speed: 111, reach: 101, power: 9, interval: 1.14, heavy: .25, guard: .11 },
+  { id: "ebike_0", backdrop: "maypajo", maxHealth: 315, size: 1.16, body: 55, speed: 158, reach: 94, power: 10, interval: 1.05, heavy: .23, guard: .10 },
+  { id: "snatcher_0", backdrop: "maypajo", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
   { id: "kahirapan_0", maxHealth: 330, size: 1.2, body: 39, speed: 115, reach: 93, power: 11, interval: 1.05, heavy: .36, guard: .09 },
   { id: "adik_0", maxHealth: 340, size: 1.14, body: 27, speed: 173, reach: 76, power: 10, interval: .89, heavy: .34, guard: .05 },
-  { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
-  { id: "mayabang_0", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
-  { id: "matapobre_0", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
+  // { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
+  // { id: "mayabang_0", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  // { id: "matapobre_0", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
+  //JT-2026/11/21 - set the malacaniang backdrop for politiko mayabang and matapobre
+  { id: "congressman_0", displayName: "politiko", backdrop: "malacaniang", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
+  { id: "mayabang_0", backdrop: "malacaniang", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  { id: "matapobre_0", backdrop: "malacaniang", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
   // { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
   // { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
   //JT-2026/11/19 - show gasoline and billing as petrolyo and bills
@@ -47,6 +55,12 @@ const OPPONENTS = [
   { id: "stress_0", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
   { id: "emotional_damage_0", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
 ];
+//JT-2026/11/22 - label all three campaign arenas
+const ARENA_LOCATIONS = {
+  tondo: "TONDO, MANILA",
+  maypajo: "MAYPAJO, CALOOCAN",
+  malacaniang: "MALACAÑANG, MANILA",
+};
 // const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
 //JT-2026/11/19 - give juan an explicit health maximum for timeout comparisons
 const HERO = { id: "hero_0", maxHealth: 100, size: 1.21, body: 25, speed: 263 };
@@ -95,6 +109,8 @@ const KEYS = {
 const byId = id => document.getElementById(id);
 const ui = {
   arena: byId("arena"), canvas: byId("fight"),
+  //JT-2026/11/21 - connect the arena location label
+  arenaLocation: byId("arena-location"),
   playerHealth: byId("player-health"), enemyHealth: byId("enemy-health"),
   //JT-2026/11/19 - connect the super meter and its ready readout
   playerSuper: byId("player-super"), superReadout: byId("super-readout"),
@@ -179,7 +195,20 @@ function makeRoster() {
     number.textContent = levelNumber(index + 1);
     name.className = "roster-name";
     name.textContent = fighterName(id);
-    item.append(number, name);
+    // item.append(number, name);
+    //JT-2026/11/22 - show a lightweight portrait and reserve a cue for the next fight
+    const preview = document.createElement("img");
+    preview.className = "roster-preview";
+    preview.alt = "";
+    preview.loading = "lazy";
+    preview.decoding = "async";
+    preview.width = 192;
+    preview.height = 128;
+    preview.src = `assets/arcade/previews/${id}.png`;
+    const next = document.createElement("span");
+    next.className = "roster-next";
+    next.textContent = "Next";
+    item.append(number, preview, name, next);
     ui.roster.append(item);
   });
 }
@@ -200,6 +229,10 @@ function makeFighter(profile, x, direction) {
 function resetRound() {
   game.player = makeFighter(HERO, view.world * .225, 1);
   game.enemy = makeFighter(OPPONENTS[game.level], view.world * .775, -1);
+  //JT-2026/11/22 - select and label the opponent's arena each round
+  const backdrop = game.enemy.profile.backdrop ?? "tondo";
+  ui.arena.dataset.backdrop = backdrop;
+  ui.arenaLocation.textContent = ARENA_LOCATIONS[backdrop];
   game.seconds = ROUND_SECONDS;
   game.decision = .5;
   game.enemyGuard = 0;
@@ -719,6 +752,8 @@ function showProgress() {
     if (index === game.level) item.setAttribute("aria-current", "step");
     else item.removeAttribute("aria-current");
     item.classList.toggle("is-cleared", index < game.cleared);
+    //JT-2026/11/22 - highlight the next opponent as players clear the ladder
+    item.classList.toggle("is-next", index === game.level + 1);
     item.firstElementChild.textContent = index < game.cleared ? "✓" : levelNumber(index + 1);
   });
 }
