@@ -126,6 +126,18 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   background-position: center bottom, center center;
 }
 
+/* JT-2026/11/23 - keep the floor visible for fights at bahay */
+.arena[data-backdrop="bahay"] {
+  background-image: url("assets/arcade/bahay_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
+/* JT-2026/11/23 - anchor the edsa roadway beneath the fighters */
+.arena[data-backdrop="edsa"] {
+  background-image: url("assets/arcade/edsa_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
 #fight, .arena-shade, .panel-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 #fight { display: block; }
 .arena-shade {
@@ -153,6 +165,9 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
 }
 
 .fighter-hud { padding-top: 5px; }
+/* JT-2026/11/23 - align the hud with the fighters' starting sides */
+.hud > .enemy-hud { order: -1; }
+.hud > .player-hud { order: 1; }
 .hud-heading {
   display: flex;
   align-items: center;
@@ -165,7 +180,9 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
 }
 
 .hud-heading span { color: var(--yellow); }
-.enemy-hud .hud-heading { justify-content: flex-end; }
+/* .enemy-hud .hud-heading { justify-content: flex-end; } */
+/* JT-2026/11/23 - align the player label with the right edge */
+.player-hud .hud-heading { justify-content: flex-end; }
 .enemy-hud .hud-heading span { color: #ff9a77; }
 
 .health {
@@ -182,17 +199,23 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   height: 100%;
   background: linear-gradient(#ffe285 0 27%, #f8ce53 27% 80%, #cf9330 80% 100%);
   transform: scaleX(var(--hp, 1));
-  transform-origin: left center;
+  /* transform-origin: left center; */
+  /* JT-2026/11/23 - anchor juan's health fill to the right edge */
+  transform-origin: right center;
   transition: transform .15s linear;
 }
 
 .enemy-hud .health > span {
   background: linear-gradient(#ff9a77 0 27%, #fa7656 27% 80%, #ba452e 80% 100%);
-  transform-origin: right center;
+  /* transform-origin: right center; */
+  /* JT-2026/11/23 - anchor the opponent's health fill to the left edge */
+  transform-origin: left center;
 }
 
 /* JT-2026/11/19 - distinguish super charge from health and highlight a full bar */
-.super-hud { width: min(100%, 230px); margin-top: 7px; }
+/* .super-hud { width: min(100%, 230px); margin-top: 7px; } */
+/* JT-2026/11/23 - line up juan's super meter with his health bar */
+.super-hud { width: min(100%, 230px); margin-top: 7px; margin-inline-start: auto; }
 .super-label {
   display: flex;
   justify-content: space-between;
@@ -286,7 +309,9 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   transform: translateX(-50%);
   width: max-content;
   max-width: 45%;
-  --position: 23%;
+  /* --position: 23%; */
+  /* JT-2026/11/23 - show juan's nameplate on the right before gameplay starts */
+  --position: 77%;
   border: 1px solid #71613e;
   border-bottom: 2px solid var(--yellow);
   padding: .33em .85em;
@@ -299,7 +324,9 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   pointer-events: none;
 }
 
-.enemy-plate { --position: 77%; border-bottom-color: var(--red); color: #ffc2ab; }
+/* .enemy-plate { --position: 77%; border-bottom-color: var(--red); color: #ffc2ab; } */
+/* JT-2026/11/23 - show the opponent's nameplate on the left before gameplay starts */
+.enemy-plate { --position: 23%; border-bottom-color: var(--red); color: #ffc2ab; }
 .panel-wrap {
   z-index: 1;
   display: grid;
@@ -398,7 +425,16 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
 }
 */
 /* JT-2026/11/22 - match the game updates heading to the existing section labels */
+/*
 .control-deck h2, .ladder h2, .game-updates h2 {
+  margin: 0;
+  font: 800 .82rem/1 var(--mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+*/
+/* JT-2026/11/23 - match the arena previews heading to the existing sections */
+.control-deck h2, .ladder h2, .arena-previews h2, .game-updates h2 {
   margin: 0;
   font: 800 .82rem/1 var(--mono);
   letter-spacing: .13em;
@@ -435,8 +471,11 @@ kbd {
 .touch-controls { display: none; }
 
 /* JT-2026/11/22 - keep dated update entries readable across screen sizes */
-.game-updates { margin-top: 17px; padding-top: 17px; border-top: 1px solid var(--line); }
-.game-updates h2 { margin-bottom: 12px; }
+/* .game-updates { margin-top: 17px; padding-top: 17px; border-top: 1px solid var(--line); } */
+/* .game-updates h2 { margin-bottom: 12px; } */
+/* JT-2026/11/23 - separate the preview gallery and updates with matching spacing */
+.arena-previews, .game-updates { margin-top: 17px; padding-top: 17px; border-top: 1px solid var(--line); }
+.arena-previews h2, .game-updates h2 { margin-bottom: 12px; }
 .update-entries {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
@@ -450,6 +489,21 @@ kbd {
 .update-entry h3 { margin: 0; color: var(--yellow); font: 700 .76rem/1.3 var(--mono); }
 .update-entry ul { margin: 8px 0 0; padding-inline-start: 18px; color: var(--muted); font-size: .86rem; }
 .update-entry li + li { margin-top: 4px; }
+
+/* JT-2026/11/23 - keep arena thumbnails and level captions readable on phones and desktops */
+.arena-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(42%, 15rem), 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.arena-gallery li { border: 1px solid var(--line); background: var(--surface); }
+.arena-gallery img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.arena-caption { padding: 8px 10px; border-top: 1px solid var(--line); }
+.arena-caption h3 { margin: 0; color: var(--paper); font: 700 .74rem/1.3 var(--mono); }
+.arena-caption p { margin: 4px 0 0; color: var(--muted); font-size: .76rem; }
 
 .ladder { padding-top: 17px; }
 .ladder h2 { margin-bottom: 12px; }
@@ -480,7 +534,9 @@ kbd {
 /* JT-2026/11/22 - give each opponent a readable portrait card */
 /* .roster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; } */
 /* JT-2026/11/22 - fit sixteen portraits in two desktop rows */
-.roster { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; }
+/* .roster { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; } */
+/* JT-2026/11/23 - fit eighteen opponents in two desktop rows */
+.roster { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 7px; }
 .roster li {
   display: grid;
   align-items: center;
@@ -603,6 +659,8 @@ kbd {
   .touch-controls button:is([data-input="light"], [data-input="heavy"], [data-input="energyWave"], [data-input="superUpperCut"]) {
     color: #ffe091;
   }
+  /* JT-2026/11/23 - give the hold to charge control space beneath movement */
+  .touch-group button[data-input="auraCharge"] { grid-column: 1 / -1; }
   .touch-controls button.is-held { background: #f8ce53; color: #20170b; }
 }
 

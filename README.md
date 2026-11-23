@@ -9,7 +9,9 @@
 <!-- JT-2026/11/22 - describe the thirteen challenger campaign across metro manila -->
 <!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat thirteen challengers to clear the game. -->
 <!-- JT-2026/11/22 - describe the expanded sixteen challenger campaign -->
-Play as Juan in a single-player arcade fighter set in Metro Manila. Beat sixteen challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat sixteen challengers to clear the game. -->
+<!-- JT-2026/11/23 - describe the eighteen challenger campaign -->
+Play as Juan in a single-player arcade fighter set in Metro Manila. Beat eighteen challengers to clear the game.
 
 ## Play locally
 
@@ -29,6 +31,11 @@ Each round lasts up to 60 seconds. Win by knockout or by finishing with a higher
 | Shoryuken | `I` |
 -->
 <!-- JT-2026/11/19 - list the renamed specials and their keyboard controls -->
+<!--
+| Energy Wave | `L` |
+| Super Upper Cut | `I` |
+-->
+<!-- JT-2026/11/23 - document the renamed specials and pray keyboard controls -->
 | Action | Keyboard |
 | --- | --- |
 | Move left or right | `←` / `→` or `A` / `D` |
@@ -36,8 +43,9 @@ Each round lasts up to 60 seconds. Win by knockout or by finishing with a higher
 | Guard | Hold the direction away from your opponent |
 | Punch | `J` |
 | Kick | `K` |
-| Energy Wave | `L` |
-| Super Upper Cut | `I` |
+| Kamehame Haduken | `L` |
+| Konoha Senpu | `I` |
+| Pray (Aura Charge) | Hold `U` |
 | Pause or resume | `Esc` |
 
 <!-- Juan takes zero damage while actively moving away from his opponent. Leave room to step back. Use Hadouken and Shoryuken while on the ground. -->
@@ -55,7 +63,9 @@ Fight music and sound effects are on by default and start with your first fight.
 Read **Game Updates** below the opponent ladder for recent changes.
 
 <!-- JT-2026/11/19 - explain how to earn and spend super charge -->
-## Super Bar
+<!-- ## Super Bar -->
+<!-- JT-2026/11/23 - use the new special meter name -->
+## Special Bar
 
 <!--
 Juan can use **Energy Wave (`L`)** or **Super Upper Cut (`I`)** while on the ground once his Super Bar reaches **100%** and shows **READY**. Starting either move resets the bar to **0%**.
@@ -63,18 +73,30 @@ Juan can use **Energy Wave (`L`)** or **Super Upper Cut (`I`)** while on the gro
 Each round starts at **0%**. Land unblocked punches (**+20%**) and kicks (**+34%**) to fill the bar.
 -->
 <!-- JT-2026/11/19 - explain how to stock and spend three super bars -->
-Juan can store up to **3 Super Bars**. An unblocked punch fills **30% of one bar** and an unblocked kick fills **50%**. Each round starts with all bars empty.
+<!-- Juan can store up to **3 Super Bars**. An unblocked punch fills **30% of one bar** and an unblocked kick fills **50%**. Each round starts with all bars empty. -->
+<!-- JT-2026/11/23 - document the lower charge from unblocked normal attacks -->
+Juan starts each round with empty Special Bars and can store up to **3**. An unblocked punch fills **2% of one bar**, and an unblocked kick fills **4%**.
 
-While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (`I`, 45 damage)** with at least one full bar. Each cast spends **one full bar** and keeps the remaining charge for your next cast.
+<!-- JT-2026/11/23 - explain how to charge super without landing a hit -->
+Hold **`U`** or the **Pray** touch button while standing still on the ground to fill one bar every **2.5 seconds**. Moving, attacking, jumping, or taking a hit interrupts the charge.
+
+<!-- While on the ground, use **Energy Wave (`L`, 35 damage)** or **Super Upper Cut (`I`, 45 damage)** with at least one full bar. Each cast spends **one full bar** and keeps the remaining charge for your next cast. -->
+<!-- JT-2026/11/23 - list the renamed specials with their damage and cost -->
+While on the ground, use **Kamehame Haduken (`L`, 100 damage)** or **Konoha Senpu (`I`, 60 damage)** with at least one full bar. Each cast spends **one full bar** and keeps the remaining charge for your next cast.
 
 ## Opponent ladder
 
 <!-- JT-2026/11/22 - explain the three arenas and next opponent previews -->
 <!-- Levels 2–4 take place in Maypajo, Caloocan. Levels 7–9 take place at Malacañang. The other fights take place in Tondo. -->
 <!-- JT-2026/11/22 - document the arenas in the expanded campaign -->
-Levels 1 and 5–7 take place in Tondo. Levels 2–4 take place in Maypajo, Caloocan. Levels 8 and 13–16 take place in BGC, Taguig. Levels 9 and 11–12 take place at Malacañang. Level 10 takes place on G. Araneta Avenue, Quezon City.
+<!-- Levels 1 and 5–7 take place in Tondo. Levels 2–4 take place in Maypajo, Caloocan. Levels 8 and 13–16 take place in BGC, Taguig. Levels 9 and 11–12 take place at Malacañang. Level 10 takes place on G. Araneta Avenue, Quezon City. -->
+<!-- JT-2026/11/23 - document the expanded campaign arenas including edsa and bahay -->
+Levels 1 and 5–7 take place in Tondo. Levels 2–3 take place in Maypajo, Caloocan. Levels 4, 8, and 12 take place on EDSA. Levels 9 and 14 take place in BGC, Taguig. Levels 10 and 13 take place at Malacañang. Level 11 takes place on G. Araneta Avenue, Quezon City. Levels 15–18 take place at Bahay.
 
 Each ladder card shows the opponent's portrait. The **Next** badge marks who follows the current fight.
+
+<!-- JT-2026/11/23 - tell players where to preview the fight locations -->
+Below the opponent ladder, **Arena Previews** shows each backdrop and the levels where you'll fight there.
 
 <!--
 1. `kamote_rider`
@@ -145,6 +167,7 @@ Each ladder card shows the opponent's portrait. The **Next** badge marks who fol
 13. `emotional_damage` — 480 HP
 -->
 <!-- JT-2026/11/22 - list the sixteen opponents by level -->
+<!--
 1. `kamote_rider` — 300 HP
 2. `lubak_na_daan` — 305 HP
 3. `ebike` — 315 HP
@@ -161,6 +184,26 @@ Each ladder card shows the opponent's portrait. The **Next** badge marks who fol
 14. `bills` — 440 HP
 15. `stress` — 460 HP
 16. `emotional_damage` — 480 HP
+-->
+<!-- JT-2026/11/23 - list boss mo at level nine and loans at level eighteen -->
+1. `kamote rider` — 300 HP
+2. `lubak` — 305 HP
+3. `ebike` — 315 HP
+4. `snatcher` — 320 HP
+5. `kahirapan` — 330 HP
+6. `adik` — 340 HP
+7. `lipunan` — 345 HP
+8. `traffic` — 350 HP
+9. `boss mo` — 355 HP
+10. `politiko` — 360 HP
+11. `baha` — 370 HP
+12. `mayabang` — 380 HP
+13. `matapobre` — 400 HP
+14. `petrolyo` — 420 HP
+15. `bills` — 440 HP
+16. `stress` — 460 HP
+17. `emotional_damage` — 480 HP
+18. `loans` — 500 HP
 
 ## Host on Vercel
 

@@ -32,17 +32,27 @@ const OPPONENTS = [
 */
 //JT-2026/11/19 - add kahirapan after snatcher and give opponents enough health for three super bars
 const OPPONENTS = [
-  { id: "kamote_rider_0", maxHealth: 300, size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
+  // { id: "kamote_rider_0", maxHealth: 300, size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
+  //JT-2026/11/23 - use a space on the kamote rider nameplate
+  { id: "kamote_rider_0", displayName: "kamote rider", maxHealth: 300, size: 1.16, body: 51, speed: 130, reach: 95, power: 9, interval: 1.18, heavy: .15, guard: .04 },
   // { id: "snatcher_0", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
   //JT-2026/11/22 - put lubak na daan ebike and snatcher in the maypajo arena
-  { id: "lubak_sa_daan_0", displayName: "lubak_na_daan", backdrop: "maypajo", maxHealth: 305, size: 1.12, body: 56, speed: 111, reach: 101, power: 9, interval: 1.14, heavy: .25, guard: .11 },
+  // { id: "lubak_sa_daan_0", displayName: "lubak_na_daan", backdrop: "maypajo", maxHealth: 305, size: 1.12, body: 56, speed: 111, reach: 101, power: 9, interval: 1.14, heavy: .25, guard: .11 },
+  //JT-2026/11/23 - shorten the level two nameplate to lubak
+  { id: "lubak_sa_daan_0", displayName: "lubak", backdrop: "maypajo", maxHealth: 305, size: 1.12, body: 56, speed: 111, reach: 101, power: 9, interval: 1.14, heavy: .25, guard: .11 },
   { id: "ebike_0", backdrop: "maypajo", maxHealth: 315, size: 1.16, body: 55, speed: 158, reach: 94, power: 10, interval: 1.05, heavy: .23, guard: .10 },
-  { id: "snatcher_0", backdrop: "maypajo", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
+  // { id: "snatcher_0", backdrop: "maypajo", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
+  //JT-2026/11/23 - move snatcher's fight to edsa
+  { id: "snatcher_0", backdrop: "edsa", maxHealth: 320, size: 1.16, body: 32, speed: 188, reach: 86, power: 10, interval: .96, heavy: .22, guard: .06 },
   { id: "kahirapan_0", maxHealth: 330, size: 1.2, body: 39, speed: 115, reach: 93, power: 11, interval: 1.05, heavy: .36, guard: .09 },
   { id: "adik_0", maxHealth: 340, size: 1.14, body: 27, speed: 173, reach: 76, power: 10, interval: .89, heavy: .34, guard: .05 },
   //JT-2026/11/22 - put lipunan in tondo and traffic in bgc before politiko
   { id: "lipunan_0", backdrop: "tondo", maxHealth: 345, size: 1.17, body: 46, speed: 145, reach: 97, power: 11, interval: .88, heavy: .33, guard: .12 },
-  { id: "traffic_0", backdrop: "bgc", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
+  // { id: "traffic_0", backdrop: "bgc", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
+  //JT-2026/11/23 - move traffic's fight to edsa
+  { id: "traffic_0", backdrop: "edsa", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
+  //JT-2026/11/23 - fight boss mo in bgc before politiko
+  { id: "bossy_0", displayName: "boss mo", backdrop: "bgc", maxHealth: 355, size: 1.16, body: 40, speed: 145, reach: 104, power: 12, interval: .89, heavy: .38, guard: .15 },
   // { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
   // { id: "mayabang_0", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   // { id: "matapobre_0", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
@@ -50,7 +60,9 @@ const OPPONENTS = [
   { id: "congressman_0", displayName: "politiko", backdrop: "malacaniang", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
   //JT-2026/11/22 - fight baha at g araneta between politiko and mayabang
   { id: "baha_0", backdrop: "g_araneta", maxHealth: 370, size: 1.18, body: 54, speed: 144, reach: 101, power: 13, interval: .87, heavy: .42, guard: .12 },
-  { id: "mayabang_0", backdrop: "malacaniang", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  // { id: "mayabang_0", backdrop: "malacaniang", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  //JT-2026/11/23 - move mayabang's fight to edsa
+  { id: "mayabang_0", backdrop: "edsa", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   { id: "matapobre_0", backdrop: "malacaniang", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
   // { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
   // { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
@@ -61,9 +73,14 @@ const OPPONENTS = [
   // { id: "emotional_damage_0", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
   //JT-2026/11/22 - place the final four fights in bgc
   { id: "gasoline_0", displayName: "petrolyo", backdrop: "bgc", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
-  { id: "billing_0", displayName: "bills", backdrop: "bgc", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
-  { id: "stress_0", backdrop: "bgc", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
-  { id: "emotional_damage_0", backdrop: "bgc", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+  // { id: "billing_0", displayName: "bills", backdrop: "bgc", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  // { id: "stress_0", backdrop: "bgc", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
+  // { id: "emotional_damage_0", backdrop: "bgc", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+  //JT-2026/11/23 - move the last four rounds to bahay and finish with loans
+  { id: "billing_0", displayName: "bills", backdrop: "bahay", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
+  { id: "stress_0", backdrop: "bahay", maxHealth: 460, size: 1.13, body: 37, speed: 190, reach: 84, power: 13, interval: .65, heavy: .35, guard: .19 },
+  { id: "emotional_damage_0", backdrop: "bahay", maxHealth: 480, size: 1.14, body: 42, speed: 166, reach: 95, power: 14, interval: .68, heavy: .5, guard: .22 },
+  { id: "loans_0", backdrop: "bahay", maxHealth: 500, size: 1.25, body: 56, speed: 148, reach: 111, power: 16, interval: .76, heavy: .55, guard: .23 },
 ];
 //JT-2026/11/22 - label all three campaign arenas
 const ARENA_LOCATIONS = {
@@ -74,6 +91,10 @@ const ARENA_LOCATIONS = {
   bgc: "BGC, TAGUIG",
   //JT-2026/11/22 - show the g araneta location in the arena strip
   g_araneta: "G. ARANETA, QUEZON CITY",
+  //JT-2026/11/23 - label the new home arena on the fight screen
+  bahay: "BAHAY",
+  //JT-2026/11/23 - show the edsa label during the road fights
+  edsa: "EDSA",
 };
 // const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
 //JT-2026/11/19 - give juan an explicit health maximum for timeout comparisons
@@ -86,11 +107,19 @@ const ROUND_SECONDS = 60;
 const SUPER_BARS = 3;
 const SUPER_COST = 100;
 const SUPER_MAX = SUPER_BARS * SUPER_COST;
-const SUPER_GAIN = { light: 30, heavy: 50 };
+// const SUPER_GAIN = { light: 30, heavy: 50 };
+//JT-2026/11/23 - make normal hits supplement the charge earned by praying
+const SUPER_GAIN = { light: 2, heavy: 4 };
 const FRAME = { width: 504, height: 201, x: 156, y: 192, scale: 1.5 };
 // const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, guard: 7 };
 //JT-2026/11/19 - map the taller hero frames and special attack art
 const HERO_FRAME = { ...FRAME, height: 234, y: 225 };
+//JT-2026/11/23 - align the alternate punch and charge sprites with juan's stance
+const HERO_ACTIONS = {
+  id: "hero_1", frame: { ...HERO_FRAME, width: 192, height: 250, x: 72, y: 241 }, punch: 0, charge: 1,
+};
+//JT-2026/11/23 - fill a bar in two and a half seconds of uninterrupted charge
+const AURA_CHARGE_RATE = 40;
 // const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, hadouken: 7, shoryuken: 8 };
 //JT-2026/11/19 - map the renamed special moves to their existing animation rows
 const POSE = { idle: 0, move: 1, light: 2, heavy: 3, hurt: 4, down: 5, jump: 6, energyWave: 7, superUpperCut: 8 };
@@ -105,8 +134,11 @@ const MOVES = {
   // energyWave: { duration: .72, impact: .29, damage: 19, reach: 0, push: 185, stun: .25 },
   // superUpperCut: { duration: .8, impact: .16, damage: 26, reach: 89, push: 246, stun: .34 },
   //JT-2026/11/19 - make both specials stronger than the regular attacks
-  energyWave: { duration: .72, impact: .29, damage: 35, reach: 0, push: 185, stun: .25 },
-  superUpperCut: { duration: .8, impact: .16, damage: 45, reach: 89, push: 246, stun: .34 },
+  // energyWave: { duration: .72, impact: .29, damage: 35, reach: 0, push: 185, stun: .25 },
+  // superUpperCut: { duration: .8, impact: .16, damage: 45, reach: 89, push: 246, stun: .34 },
+  //JT-2026/11/23 - raise both specials' damage for tougher opponents
+  energyWave: { duration: .72, impact: .29, damage: 100, reach: 0, push: 185, stun: .25 },
+  superUpperCut: { duration: .8, impact: .16, damage: 60, reach: 89, push: 246, stun: .34 },
 };
 const KEYS = {
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
@@ -117,6 +149,8 @@ const KEYS = {
   // KeyJ: "light", KeyK: "heavy", KeyL: "hadouken", KeyI: "shoryuken",
   //JT-2026/11/19 - bind the existing keys to the renamed moves
   KeyJ: "light", KeyK: "heavy", KeyL: "energyWave", KeyI: "superUpperCut",
+  //JT-2026/11/23 - bind the hold to charge action to u
+  KeyU: "auraCharge",
 };
 
 //JT-2026/11/22 - set the timing and volume of the recordings and fight music
@@ -127,6 +161,10 @@ const GAME_AUDIO = {
   defeat: { file: "make_more_sound-8-bit-video-game-fail-version-2-145478.mp3", offset: .18, duration: 1.5, volume: .34 },
   vehicleCrash: { file: "rsf_studios-car-crash-swerving-and-crash-592672.mp3", offset: .36, duration: 2.05, volume: .25 },
   fightMusic: { file: "freesound_community-video-game-music-loop-27629.mp3", volume: .14, loop: true },
+  //JT-2026/11/23 - assign the supplied sound bites to the specials and pray
+  energyWave: { file: "hadouken.mp3", offset: 0, duration: .84, volume: .7 },
+  superUpperCut: { file: "konoha_senpu.mp3", offset: 0, duration: 1.64, volume: .7 },
+  auraCharge: { file: "super_saiyan_god.mp3", offset: .1, duration: 3.75, volume: .8, interruptible: true },
 };
 const VEHICLE_OPPONENTS = new Set(["kamote_rider_0", "ebike_0", "traffic_0", "mayabang_0"]);
 
@@ -142,6 +180,8 @@ const ui = {
   playerPlate: byId("player-plate"), enemyPlate: byId("enemy-plate"),
   counter: byId("stage-counter"), seconds: byId("seconds"), cleared: byId("cleared"),
   roster: byId("roster"), status: byId("status"), announcement: byId("announcement"),
+  //JT-2026/11/23 - connect the arena gallery to the campaign setup
+  arenaGallery: byId("arena-gallery"),
   panel: byId("panel-wrap"), kicker: byId("panel-kicker"), title: byId("panel-title"),
   copy: byId("panel-copy"), action: byId("primary-action"), hint: byId("panel-hint"),
   sound: byId("sound"), soundLabel: byId("sound-label"), pause: byId("pause"),
@@ -164,6 +204,8 @@ let soundContext;
 let previousTime = 0;
 
 makeRoster();
+//JT-2026/11/23 - show the arena gallery alongside the opponent ladder
+makeArenaPreviews();
 resetRound();
 resizeArena();
 new ResizeObserver(resizeArena).observe(ui.arena);
@@ -261,8 +303,13 @@ function makeFighter(profile, x, direction) {
 function resetRound() {
   //JT-2026/11/22 - stop any result sounds before the next round
   stopGameSounds();
-  game.player = makeFighter(HERO, view.world * .225, 1);
-  game.enemy = makeFighter(OPPONENTS[game.level], view.world * .775, -1);
+  // game.player = makeFighter(HERO, view.world * .225, 1);
+  // game.enemy = makeFighter(OPPONENTS[game.level], view.world * .775, -1);
+  //JT-2026/11/23 - start juan on the right facing the opponent on the left
+  game.player = makeFighter(HERO, view.world * .775, -1);
+  game.enemy = makeFighter(OPPONENTS[game.level], view.world * .225, 1);
+  //JT-2026/11/23 - start each round outside the aura charge pose
+  game.player.auraTime = 0;
   //JT-2026/11/22 - select and label the opponent's arena each round
   const backdrop = game.enemy.profile.backdrop ?? "tondo";
   ui.arena.dataset.backdrop = backdrop;
@@ -338,7 +385,9 @@ function atlasFor(id) {
 //JT-2026/11/19 - hold the start action until the current fighters are available
 async function loadMatch() {
   const next = OPPONENTS[game.level + 1];
-  const ids = [HERO.id, game.enemy.profile.id];
+  // const ids = [HERO.id, game.enemy.profile.id];
+  //JT-2026/11/23 - keep both hero sprite sheets ready throughout the campaign
+  const ids = [HERO.id, HERO_ACTIONS.id, game.enemy.profile.id];
   for (const id of atlases.keys()) {
     if (!ids.includes(id) && id !== next?.id) atlases.delete(id);
   }
@@ -572,7 +621,10 @@ function updateFight(dt) {
   game.projectiles = game.projectiles.filter(shot => advanceProjectile(shot, dt));
   updateEffects(dt);
 
+  // if (!player.health || !enemy.health || game.seconds <= 0) finishRound();
+  //JT-2026/11/23 - only charge after active round hits and movement resolve
   if (!player.health || !enemy.health || game.seconds <= 0) finishRound();
+  else updateAuraCharge(playerMove, dt);
 }
 
 //JT-2026/11/19 - choose movement, guards, and attacks for the current opponent
@@ -622,10 +674,19 @@ function attack(fighter, kind) {
   //JT-2026/11/19 - spend the full super bar when juan starts a special
   // if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) setSuperCharge(0);
   //JT-2026/11/19 - spend one bar and keep the rest of juan's charge
+  /*
   if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
     setSuperCharge(game.superCharge - SUPER_COST);
   }
   if (isPlayer) tone(heavy ? "swing" : "jab");
+  */
+  //JT-2026/11/23 - play the matching sound when juan spends a bar on a special
+  if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
+    setSuperCharge(game.superCharge - SUPER_COST);
+    playRecordedSound(kind, "jab");
+  } else if (isPlayer) {
+    tone(heavy ? "swing" : "jab");
+  }
 }
 
 //JT-2026/11/19 - apply movement, jump gravity, and hit recoil to one fighter
@@ -757,6 +818,8 @@ function finishRound() {
   //JT-2026/11/19 - clear all energy waves when the round ends
   game.projectiles = [];
   player.guard = false;
+  //JT-2026/11/23 - end the charge pose as soon as the round finishes
+  player.auraTime = 0;
   clearInputs();
   setMode("round-end");
   ui.announcement.textContent = knockout ? "K.O.!" : "TIME!";
@@ -843,12 +906,19 @@ function drawShadow(fighter) {
 
 //JT-2026/11/19 - select the pose from each fighter's transparent sprite atlas
 function drawFighter(fighter) {
-  const img = atlases.get(fighter.profile.id)?.img;
+  // const img = atlases.get(fighter.profile.id)?.img;
+  // if (!img?.complete || !img.naturalWidth) return;
+  // const [row, column] = getPose(fighter);
+  //JT-2026/11/23 - draw the selected pose from the appropriate sprite sheet
+  const [row, column, atlasId = fighter.profile.id] = getPose(fighter);
+  const img = atlases.get(atlasId)?.img;
   if (!img?.complete || !img.naturalWidth) return;
-  const [row, column] = getPose(fighter);
   // const size = view.scale * fighter.profile.size / FRAME.scale;
   //JT-2026/11/19 - draw juan from his expanded atlas without shifting his ground position
-  const frame = fighter === game.player ? HERO_FRAME : FRAME;
+  // const frame = fighter === game.player ? HERO_FRAME : FRAME;
+  //JT-2026/11/23 - use the alternate sheet's cell size for the new hero poses
+  let frame = fighter === game.player ? HERO_FRAME : FRAME;
+  if (atlasId === HERO_ACTIONS.id) frame = HERO_ACTIONS.frame;
   const size = view.scale * fighter.profile.size / frame.scale;
   context.save();
   const x = Math.round(fighter.x * view.scale);
@@ -872,9 +942,21 @@ function getPose(fighter) {
   if (fighter.stun && !fighter.guard) return [POSE.hurt, Math.min(2, Math.floor((.35 - fighter.stun) * 11))];
   if (fighter.attack) {
     const { elapsed, impact, duration, kind } = fighter.attack;
+    //JT-2026/11/23 - sync the nine frame punch sequence with the existing hit timing
+    if (hero && kind === "light") {
+      const column = elapsed < impact
+        ? Math.floor(4 * elapsed / impact)
+        : Math.min(8, 4 + Math.floor(5 * (elapsed - impact) / (duration - impact)));
+      return [HERO_ACTIONS.punch, column, HERO_ACTIONS.id];
+    }
     const column = elapsed < impact * .63 ? 0 : elapsed < impact ? 1 : elapsed < (impact + duration) / 2 ? 2 : 3;
     // The final gasoline frame contains the flame, so show it on impact.
     return [POSE[kind], fighter.profile.id === "gasoline_0" && column >= 2 ? 3 : column];
+  }
+  //JT-2026/11/23 - build the aura before looping its two peak poses
+  if (hero && fighter.auraTime > 0) {
+    const step = Math.floor(fighter.auraTime * 10);
+    return [HERO_ACTIONS.charge, step < 5 ? step : 5 + (step - 5) % 2, HERO_ACTIONS.id];
   }
   // if (fighter.guard) return [hero ? POSE.guard : POSE.hurt, 0];
   //JT-2026/11/19 - keep the opponent guard pose and let juan animate his retreat
@@ -1131,6 +1213,8 @@ function playRecordedSound(name, fallback) {
       source.start(0, recording.offset, recording.duration);
     }
     trackSoundNode(source);
+    //JT-2026/11/23 - let an interrupted pray action stop its active recording
+    if (recording.interruptible) recording.source = source;
   } else if (recording?.clip && !recording.clip.error) {
     const { clip, offset } = recording;
     if (clip.loop && !clip.paused) return;
@@ -1177,4 +1261,61 @@ function enableGameSounds(confirm = false) {
   }
   prepareSoundEffects();
   startFightMusic();
+}
+
+//JT-2026/11/23 - charge super and play the opening cue while juan prays
+function updateAuraCharge(playerMove, dt) {
+  const { player } = game;
+  if (playerMove || player.y || player.velocity || !canAct(player) || !hasInput("auraCharge") || game.superCharge >= SUPER_MAX) {
+    if (player.auraTime > 0) stopPraySound();
+    player.auraTime = 0;
+    return;
+  }
+  if (!player.auraTime && dt > 0) playRecordedSound("auraCharge");
+  // Allow for floating-point drift when a frame lands exactly on a charge unit.
+  const previous = Math.floor(player.auraTime * AURA_CHARGE_RATE + 1e-7);
+  player.auraTime += dt;
+  const gain = Math.floor(player.auraTime * AURA_CHARGE_RATE + 1e-7) - previous;
+  if (gain) setSuperCharge(game.superCharge + gain);
+}
+
+//JT-2026/11/23 - stop the pray cue when the player leaves the charging pose
+function stopPraySound() {
+  const recording = soundRecordings.get("auraCharge");
+  if (!recording) return;
+  if (activeSoundNodes.delete(recording.source)) recording.source.stop();
+  recording.source = null;
+  recording.clip?.pause();
+}
+
+//JT-2026/11/23 - show each arena once with the levels that use it
+function makeArenaPreviews() {
+  const levelsByArena = new Map();
+  OPPONENTS.forEach((opponent, index) => {
+    const backdrop = opponent.backdrop ?? "tondo";
+    if (!levelsByArena.has(backdrop)) levelsByArena.set(backdrop, []);
+    levelsByArena.get(backdrop).push(levelNumber(index + 1));
+  });
+
+  for (const [backdrop, levels] of levelsByArena) {
+    const item = document.createElement("li");
+    const preview = document.createElement("img");
+    preview.alt = "";
+    preview.loading = "lazy";
+    preview.decoding = "async";
+    preview.width = 480;
+    preview.height = 270;
+    preview.src = `assets/arcade/previews/${backdrop}_0.jpg`;
+
+    const caption = document.createElement("div");
+    caption.className = "arena-caption";
+    const name = document.createElement("h3");
+    name.textContent = ARENA_LOCATIONS[backdrop];
+    const stages = document.createElement("p");
+    stages.textContent = `${levels.length === 1 ? "Level" : "Levels"} ${levels.join(", ")}`;
+
+    caption.append(name, stages);
+    item.append(preview, caption);
+    ui.arenaGallery.append(item);
+  }
 }
