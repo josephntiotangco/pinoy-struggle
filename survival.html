@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151617">
+  <meta name="description" content="Fight through 12 waves as Juan in the 2.5D survival arenas of Tondo, EDSA, Bahay, and G. Araneta.">
+  <title>Pinoy Struggle Survival</title>
+  <!-- JT-2026/11/23 - load the survival styles and script from the main project -->
+  <link rel="stylesheet" href="survival.css">
+  <link rel="stylesheet" href="mode-select.css">
+  <link rel="preload" as="image" href="assets/arcade/tondo_0.jpg">
+  <script src="survival.js" defer></script>
+</head>
+<body>
+  <!-- JT-2026/11/23 - give the survival game its own arena hud and controls -->
+  <main class="shell">
+    <header class="topbar">
+      <!-- JT-2026/11/23 - return to mode selection from the survival header -->
+      <a class="brand mode-link" href="./index.html">
+        <span class="brand-mark" aria-hidden="true">PS</span>
+        <div>
+          <h1>Pinoy Struggle <strong>Survival</strong></h1>
+          <span class="mode-link-label">Mode Select</span>
+        </div>
+      </a>
+      <div class="utilities">
+        <button id="sound" class="utility" type="button" aria-pressed="true">Sound on</button>
+        <button id="pause" class="utility" type="button" disabled>Pause</button>
+      </div>
+    </header>
+    <section id="arena" class="arena" aria-label="Tondo, Manila arena map">
+      <canvas id="fight" aria-hidden="true"></canvas>
+      <div class="hud">
+        <div class="player-hud">
+          <div class="hud-label"><strong>Juan</strong><span id="hp-label">100 HP</span></div>
+          <div class="health-meter" id="health" role="meter" aria-label="Juan's health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><span></span></div>
+          <div class="hud-label special-label"><strong>Special</strong><span id="special-label">0 / 3</span></div>
+          <div class="special-meter" id="special" role="meter" aria-label="Special charge" aria-valuemin="0" aria-valuemax="300" aria-valuenow="0">
+            <span><i></i></span><span><i></i></span><span><i></i></span>
+          </div>
+        </div>
+        <div class="wave-hud">
+          <!-- JT-2026/11/23 - show the current arena level and wave -->
+          <span id="level">Level 1 / 4</span>
+          <div class="wave-counter"><span>Wave</span><strong id="wave">01 / 03</strong></div>
+          <span id="remaining">3 threats</span>
+        </div>
+      </div>
+      <div class="notice" id="notice" role="status" hidden></div>
+      <div class="screen" id="screen" aria-labelledby="screen-title">
+        <div class="screen-content">
+          <p id="screen-location" class="location">Tondo, Manila</p>
+          <!-- JT-2026/11/23 - name the game independently of the current map -->
+          <h2 id="screen-title">Pinoy Struggle<br><strong>Survival</strong></h2>
+          <p id="screen-copy">Survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta.</p>
+          <button id="start" class="primary" type="button" disabled>Loading arena…</button>
+        </div>
+      </div>
+      <p class="sr-only" id="status" role="status"></p>
+    </section>
+
+    <section class="controls" aria-label="Game controls">
+      <ul class="key-guide">
+        <li><kbd>W A S D</kbd><span>Move</span></li>
+        <li><kbd>J</kbd><span>Punch</span></li>
+        <li><kbd>K</kbd><span>Kick</span></li>
+        <li><kbd>L</kbd><span>Kamehame Haduken</span></li>
+        <li><kbd>I</kbd><span>Konoha Senpu</span></li>
+      </ul>
+      <div class="touch-controls">
+        <div class="dpad" role="group" aria-label="Movement">
+          <button type="button" class="up" data-input="up" aria-label="Move up">▲</button>
+          <button type="button" class="left" data-input="left" aria-label="Move left">◀</button>
+          <button type="button" class="down" data-input="down" aria-label="Move down">▼</button>
+          <button type="button" class="right" data-input="right" aria-label="Move right">▶</button>
+        </div>
+        <div class="actions" role="group" aria-label="Combat">
+          <button type="button" data-input="punch">Punch</button>
+          <button type="button" data-input="kick">Kick</button>
+          <button type="button" class="special-action" data-input="haduken">Kamehame<br>Haduken</button>
+          <button type="button" class="special-action" data-input="senpu">Konoha<br>Senpu</button>
+        </div>
+      </div>
+      <!-- JT-2026/11/23 - explain how to collect charge and use the area attack -->
+      <p class="control-hint">Pick up a cross-shaped <strong>Charge Token</strong> to fill one Special Bar. Konoha Senpu hits every enemy in its ring.</p>
+    </section>
+
+    <!-- JT-2026/11/23 - show the next monsters and how they attack -->
+    <section class="wave-info" aria-labelledby="wave-guide-title">
+      <h2 id="wave-guide-title">Wave Guide</h2>
+      <div id="wave-guide" class="level-guides"></div>
+    </section>
+
+    <!-- JT-2026/11/23 - show recent survival changes below the wave guide -->
+    <section class="game-updates" aria-labelledby="updates-title">
+      <h2 id="updates-title">Game Updates</h2>
+      <article class="update-entry">
+        <h3><time datetime="2026-11-23">November 23, 2026</time></h3>
+        <ul>
+          <li><strong>Level 4 · G. Araneta.</strong> Defeat Loans to unlock three new waves with Lubak, Traffic, and Baha. Survival now has 12 waves.</li>
+          <li><strong>Juan deals more damage.</strong> Punch deals 30, Kick deals 50, Konoha Senpu deals 80 per enemy hit, and Kamehame Haduken deals 120.</li>
+          <li><strong>Level 3 · Bahay.</strong> Face Bills, Stress, and Emotional Damage, then defeat Loans.</li>
+          <li><strong>Level 2 · EDSA.</strong> Take on Ebike and Traffic, with Mayabang as the boss.</li>
+          <li><strong>Survival mode.</strong> Start in Tondo from Mode Select. Each Charge Token fills one Special Bar.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

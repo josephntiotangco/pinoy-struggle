@@ -1,0 +1,140 @@
+/* JT-2026/11/23 - frame the dex with the same arcade palette as mode select */
+.dex-page {
+  --dex-accent: #f0cf85;
+  --dex-teal: #a4edda;
+  --dex-line: #544b3b;
+  --dex-muted: #d1c5b1;
+}
+.dex-shell { padding-top: clamp(18px, 4vw, 38px); }
+.dex-topbar { align-items: center; }
+.dex-back {
+  margin-inline-start: auto;
+  padding: 9px 12px;
+  border: 1px solid var(--dex-line);
+  background: #262219;
+  color: var(--dex-accent);
+  font: 700 .875rem/1.25 var(--mode-mono);
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.dex-back:hover { border-color: var(--dex-accent); }
+
+/* JT-2026/11/23 - introduce the catalog with the original tondo backdrop */
+.dex-banner {
+  position: relative;
+  isolation: isolate;
+  margin-top: 18px;
+  padding: clamp(24px, 5.5vw, 64px) clamp(18px, 4vw, 46px);
+  overflow: hidden;
+  border: 1px solid #776140;
+  background: #211e17;
+}
+.dex-banner img {
+  position: absolute;
+  z-index: -2;
+  inset: 0 0 0 auto;
+  width: 68%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 53%;
+}
+.dex-banner::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg, #211e17 25%, #211e17df 43%, #211e1733 82%);
+}
+.dex-banner-copy { max-width: 38rem; }
+.dex-banner h1 { margin: 0 0 12px; font-size: clamp(2.6rem, 7vw, 5.55rem); }
+.dex-banner p { max-width: 37ch; margin: 0; color: #f0e5d1; }
+
+/* JT-2026/11/23 - keep category links and search usable on narrow screens */
+.dex-page [hidden] { display: none !important; }
+.dex-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--dex-line);
+}
+.dex-tools nav, .dex-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.dex-tools a, .dex-search input {
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--dex-line);
+  background: #242119;
+  color: #faf0d9;
+  font: inherit;
+}
+.dex-tools a { color: var(--dex-accent); text-decoration: none; }
+.dex-tools a:hover { border-color: var(--dex-accent); text-decoration: underline; }
+.dex-tools a:focus-visible, .dex-search input:focus-visible { outline: 2px solid var(--dex-accent); outline-offset: 2px; }
+.dex-search label { color: var(--dex-muted); font-size: .875rem; }
+.dex-search input { min-width: 0; width: min(100%, 17rem); }
+.dex-search input::placeholder { color: #bcad91; }
+.dex-status { margin: 10px 0 0; color: var(--dex-muted); }
+.dex-status:empty { margin: 0; }
+
+/* JT-2026/11/23 - present portraits, map previews, and encounter levels on catalog cards */
+.dex-section { margin-top: 24px; scroll-margin-top: 15px; }
+.dex-section h2 {
+  margin: 0 0 12px;
+  color: var(--dex-accent);
+  font: 400 clamp(1.75rem, 4vw, 2.65rem)/1 var(--mode-display);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.dex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 215px), 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dex-map-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.dex-entry {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--dex-line);
+  background: #1d1d18;
+}
+.dex-entry img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--dex-line);
+  background: radial-gradient(ellipse at 50% 74%, #454235 0%, #2c2a22 49%, #22211b 100%);
+}
+.dex-map-grid img { object-fit: cover; padding: 0; }
+.dex-entry-copy { display: flex; flex: 1; flex-direction: column; padding: 13px 14px 14px; }
+.dex-entry h3 { margin: 0; font-size: 1.125rem; line-height: 1.25; }
+.dex-entry p { margin: 7px 0 14px; color: var(--dex-muted); }
+.dex-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+  font: 700 .875rem/1.25 var(--mode-mono);
+}
+.dex-levels li { padding: 4px 6px; border: 1px solid #6a5738; color: var(--dex-accent); }
+.dex-levels .dex-survival { border-color: #4e695d; color: var(--dex-teal); }
+
+@media (max-width: 530px) {
+  .dex-topbar { gap: 7px; }
+  .dex-back { padding-inline: 7px; }
+  .dex-banner img { width: 100%; }
+  .dex-banner::after { background: linear-gradient(90deg, #211e17f5, #211e177f), linear-gradient(0deg, #211e17ef, transparent); }
+  .dex-search { width: 100%; }
+  .dex-search input { flex: 1; }
+}

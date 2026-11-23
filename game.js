@@ -489,7 +489,9 @@ function announce(message) {
 function keyDown(event) {
   if (event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.code === "Escape" && !event.repeat) togglePause();
-  if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound) {
+  // if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound) {
+  //JT-2026/11/23 - let enter follow the mode select link when it has focus
+  if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound && !event.target?.closest?.("a")) {
     event.preventDefault();
     activate();
     return;

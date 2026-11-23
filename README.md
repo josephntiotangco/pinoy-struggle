@@ -11,17 +11,23 @@
 <!-- JT-2026/11/22 - describe the expanded sixteen challenger campaign -->
 <!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat sixteen challengers to clear the game. -->
 <!-- JT-2026/11/23 - describe the eighteen challenger campaign -->
-Play as Juan in a single-player arcade fighter set in Metro Manila. Beat eighteen challengers to clear the game.
+<!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat eighteen challengers to clear the game. -->
+<!-- JT-2026/11/23 - introduce the two ways to play as juan -->
+Play as Juan in Metro Manila. Face 18 opponents in **Arena** or survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta in **Survival**.
 
 ## Play locally
 
-Open [index.html](index.html) in a browser and choose **Start Fight**.
+<!-- Open [index.html](index.html) in a browser and choose **Start Fight**. -->
+<!-- JT-2026/11/23 - launch both games from the mode selection screen -->
+Open [index.html](index.html) in a browser and choose **Arena** or **Survival**. Choose **Dex** to look up monsters and maps from both modes. Use **Mode Select** in the header to return to the menu.
 
 <!-- Each round lasts up to 60 seconds. Win by knockout or by finishing the round with more health than your opponent. Choose **Next Level** after a win or **Retry Level** after a loss or draw. -->
 <!-- JT-2026/11/19 - explain the timeout rule with different health totals -->
 Each round lasts up to 60 seconds. Win by knockout or by finishing with a higher percentage of your full health. Choose **Next Level** after a win or **Retry Level** after a loss or draw.
 
-## Controls
+<!-- ## Controls -->
+<!-- JT-2026/11/23 - distinguish arena controls from survival controls -->
+## Arena controls
 
 <!-- | Guard | `↓` or `S` | -->
 <!-- JT-2026/11/19 - document the retreat guard and both special attacks -->
@@ -204,6 +210,17 @@ Below the opponent ladder, **Arena Previews** shows each backdrop and the levels
 16. `stress` — 460 HP
 17. `emotional_damage` — 480 HP
 18. `loans` — 500 HP
+
+<!-- JT-2026/11/23 - explain the controls and progression in survival -->
+## Survival controls
+
+Use `W A S D` or the arrow keys to move around the arena. Press `J` to punch, `K` to kick, `L` for Kamehame Haduken, `I` for the Konoha Senpu area attack, and `Esc` to pause. On a phone, use the touch controls.
+
+Pick up cross-shaped **Charge Tokens** to fill one Special Bar each. Land punches and kicks to earn more charge. Juan starts each new arena at full health and keeps his Special charge.
+
+Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, and **Loans** to unlock G. Araneta. At G. Araneta, fight Lubak and Traffic before taking on **Baha** in the final wave.
+
+The **Wave Guide** shows the maps, enemy portraits, and attack tips for each wave.
 
 ## Host on Vercel
 

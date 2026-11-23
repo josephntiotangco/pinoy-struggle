@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171613">
+  <meta name="description" content="Browse all Pinoy Struggle monsters and maps, with attack descriptions and where to find them.">
+  <title>Pinoy Struggle · Dex</title>
+  <link rel="stylesheet" href="mode-select.css">
+  <link rel="stylesheet" href="dex.css">
+  <script src="dex.js" defer></script>
+</head>
+<body class="mode-home dex-page">
+  <main class="mode-shell dex-shell">
+    <!-- JT-2026/11/23 - give the dex the pinoy struggle header and a way back to mode select -->
+    <header class="mode-brand dex-topbar">
+      <span class="mode-mark" aria-hidden="true">PS</span>
+      <span>Pinoy <strong>Struggle</strong></span>
+      <a class="mode-link dex-back" href="./index.html">Mode Select</a>
+    </header>
+
+    <div class="dex-banner">
+      <img src="assets/arcade/tondo_0.jpg" alt="">
+      <div class="dex-banner-copy">
+        <h1>Monster &amp; Map <strong>Dex</strong></h1>
+        <p>Look up opponents, their attacks, and where to find them in Arena and Survival.</p>
+      </div>
+    </div>
+
+    <!-- JT-2026/11/23 - let players jump between categories and search both lists -->
+    <div class="dex-tools">
+      <nav aria-label="Dex categories">
+        <a href="#monsters">Monsters</a>
+        <a href="#maps">Maps</a>
+      </nav>
+      <div role="search" class="dex-search">
+        <label for="dex-search">Search Dex</label>
+        <input id="dex-search" type="search" placeholder="Try Baha or EDSA" autocomplete="off">
+      </div>
+    </div>
+    <p id="dex-status" class="dex-status" role="status"></p>
+
+    <section id="monsters" class="dex-section" aria-labelledby="monsters-title">
+      <h2 id="monsters-title">Monsters</h2>
+      <ul id="monsters-grid" class="dex-grid"></ul>
+    </section>
+    <section id="maps" class="dex-section" aria-labelledby="maps-title">
+      <h2 id="maps-title">Maps</h2>
+      <ul id="maps-grid" class="dex-grid dex-map-grid"></ul>
+    </section>
+
+    <template id="dex-card">
+      <li>
+        <article class="dex-entry">
+          <img alt="" loading="lazy" decoding="async">
+          <div class="dex-entry-copy">
+            <h3></h3>
+            <p></p>
+            <ul class="dex-levels" aria-label="Appears in"></ul>
+          </div>
+        </article>
+      </li>
+    </template>
+    <noscript><p>Enable JavaScript to browse the Dex.</p></noscript>
+  </main>
+</body>
+</html>
