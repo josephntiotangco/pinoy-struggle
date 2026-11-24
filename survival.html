@@ -4,12 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#151617">
-  <meta name="description" content="Fight through 12 waves as Juan in the 2.5D survival arenas of Tondo, EDSA, Bahay, and G. Araneta.">
+  <!-- <meta name="description" content="Fight through 12 waves as Juan in the 2.5D survival arenas of Tondo, EDSA, Bahay, and G. Araneta."> -->
+  <!-- JT-2026/11/24 - include balintawak in the five-arena survival run -->
+  <meta name="description" content="Fight through 15 waves as Juan across five 2.5D survival arenas from Tondo to Balintawak.">
   <title>Pinoy Struggle Survival</title>
   <!-- JT-2026/11/23 - load the survival styles and script from the main project -->
   <link rel="stylesheet" href="survival.css">
   <link rel="stylesheet" href="mode-select.css">
   <link rel="preload" as="image" href="assets/arcade/tondo_0.jpg">
+  <!-- JT-2026/11/24 - load the shared monster cues before survival starts -->
+  <script src="monster-audio.js" defer></script>
+  <!-- JT-2026/11/24 - load the shared almighty push timing before survival starts -->
+  <script src="almighty-push.js" defer></script>
   <script src="survival.js" defer></script>
 </head>
 <body>
@@ -42,7 +48,9 @@
         </div>
         <div class="wave-hud">
           <!-- JT-2026/11/23 - show the current arena level and wave -->
-          <span id="level">Level 1 / 4</span>
+          <!-- <span id="level">Level 1 / 4</span> -->
+          <!-- JT-2026/11/24 - initialize the hud with five levels -->
+          <span id="level">Level 1 / 5</span>
           <div class="wave-counter"><span>Wave</span><strong id="wave">01 / 03</strong></div>
           <span id="remaining">3 threats</span>
         </div>
@@ -53,7 +61,9 @@
           <p id="screen-location" class="location">Tondo, Manila</p>
           <!-- JT-2026/11/23 - name the game independently of the current map -->
           <h2 id="screen-title">Pinoy Struggle<br><strong>Survival</strong></h2>
-          <p id="screen-copy">Survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta.</p>
+          <!-- <p id="screen-copy">Survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta.</p> -->
+          <!-- JT-2026/11/24 - show the new survival objective before the run begins -->
+          <p id="screen-copy">Survive 15 waves across five arenas.</p>
           <button id="start" class="primary" type="button" disabled>Loading arena…</button>
         </div>
       </div>
@@ -67,6 +77,8 @@
         <li><kbd>K</kbd><span>Kick</span></li>
         <li><kbd>L</kbd><span>Kamehame Haduken</span></li>
         <li><kbd>I</kbd><span>Konoha Senpu</span></li>
+        <!-- JT-2026/11/24 - show the keyboard shortcut and two-bar cast requirement -->
+        <li><kbd>O</kbd><span>Almighty Push · 2 bars to cast</span></li>
       </ul>
       <div class="touch-controls">
         <div class="dpad" role="group" aria-label="Movement">
@@ -80,10 +92,14 @@
           <button type="button" data-input="kick">Kick</button>
           <button type="button" class="special-action" data-input="haduken">Kamehame<br>Haduken</button>
           <button type="button" class="special-action" data-input="senpu">Konoha<br>Senpu</button>
+          <!-- JT-2026/11/24 - give touch players the same blast attack -->
+          <button type="button" class="special-action" data-input="almightyPush">Almighty Push</button>
         </div>
       </div>
       <!-- JT-2026/11/23 - explain how to collect charge and use the area attack -->
-      <p class="control-hint">Pick up a cross-shaped <strong>Charge Token</strong> to fill one Special Bar. Konoha Senpu hits every enemy in its ring.</p>
+      <!-- <p class="control-hint">Pick up a cross-shaped <strong>Charge Token</strong> to fill one Special Bar. Konoha Senpu hits every enemy in its ring.</p> -->
+      <!-- JT-2026/11/24 - explain the two-bar blast that reaches the whole arena -->
+      <p class="control-hint">Pick up a cross-shaped <strong>Charge Token</strong> to fill one Special Bar. Konoha Senpu hits every enemy in its ring. <strong>Almighty Push</strong> needs two full bars, empties the meter, and knocks out every enemy on the field.</p>
     </section>
 
     <!-- JT-2026/11/23 - show the next monsters and how they attack -->
@@ -95,6 +111,15 @@
     <!-- JT-2026/11/23 - show recent survival changes below the wave guide -->
     <section class="game-updates" aria-labelledby="updates-title">
       <h2 id="updates-title">Game Updates</h2>
+      <!-- JT-2026/11/24 - announce balintawak and the monster attack sounds -->
+      <article class="update-entry">
+        <h3><time datetime="2026-11-24">November 24, 2026</time></h3>
+        <ul>
+          <li><strong>Level 5 · Balintawak.</strong> Beat Baha to unlock three more waves with Ebike, Petrolyo, and Traffic. Taas Presyo is the final boss.</li>
+          <li>Monster attacks now have sound cues, from vehicle effects to Taas Presyo's cash register.</li>
+          <li><strong>Almighty Push.</strong> Press <kbd>O</kbd> or tap Almighty Push with two full Special Bars to knock out every enemy on the field on the spoken cue. The cast empties the meter.</li>
+        </ul>
+      </article>
       <article class="update-entry">
         <h3><time datetime="2026-11-23">November 23, 2026</time></h3>
         <ul>

@@ -13,7 +13,9 @@
 <!-- JT-2026/11/23 - describe the eighteen challenger campaign -->
 <!-- Play as Juan in a single-player arcade fighter set in Metro Manila. Beat eighteen challengers to clear the game. -->
 <!-- JT-2026/11/23 - introduce the two ways to play as juan -->
-Play as Juan in Metro Manila. Face 18 opponents in **Arena** or survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta in **Survival**.
+<!-- Play as Juan in Metro Manila. Face 18 opponents in **Arena** or survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta in **Survival**. -->
+<!-- JT-2026/11/24 - describe the twenty arena opponents and five survival levels -->
+Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 15 waves across Tondo, EDSA, Bahay, G. Araneta, and Balintawak in **Survival**.
 
 ## Play locally
 
@@ -51,6 +53,7 @@ Each round lasts up to 60 seconds. Win by knockout or by finishing with a higher
 | Kick | `K` |
 | Kamehame Haduken | `L` |
 | Konoha Senpu | `I` |
+| Almighty Push | `O` |
 | Pray (Aura Charge) | Hold `U` |
 | Pause or resume | `Esc` |
 
@@ -64,6 +67,9 @@ On a phone, use the touch controls below the arena.
 
 <!-- JT-2026/11/22 - explain how default audio begins and how to mute it -->
 Fight music and sound effects are on by default and start with your first fight. Use the **Sound on** button to mute them and **Sound off** to turn them back on.
+
+<!-- JT-2026/11/24 - explain the attack sounds shared by both modes -->
+Monsters have attack sounds in both modes. Listen for Taas Presyo's cash register and Justice Delayed's gavel.
 
 <!-- JT-2026/11/22 - show players where to find recent game changes -->
 Read **Game Updates** below the opponent ladder for recent changes.
@@ -90,6 +96,9 @@ Hold **`U`** or the **Pray** touch button while standing still on the ground to 
 <!-- JT-2026/11/23 - list the renamed specials with their damage and cost -->
 While on the ground, use **Kamehame Haduken (`L`, 100 damage)** or **Konoha Senpu (`I`, 60 damage)** with at least one full bar. Each cast spends **one full bar** and keeps the remaining charge for your next cast.
 
+<!-- JT-2026/11/24 - explain the two-bar arena knockout and its spoken cue -->
+Fill at least two Special Bars, then press **`O`** or tap **Almighty Push**. The cast empties the meter and knocks out your opponent anywhere in the arena as Juan says “Push!”
+
 ## Opponent ladder
 
 <!-- JT-2026/11/22 - explain the three arenas and next opponent previews -->
@@ -97,7 +106,9 @@ While on the ground, use **Kamehame Haduken (`L`, 100 damage)** or **Konoha Senp
 <!-- JT-2026/11/22 - document the arenas in the expanded campaign -->
 <!-- Levels 1 and 5–7 take place in Tondo. Levels 2–4 take place in Maypajo, Caloocan. Levels 8 and 13–16 take place in BGC, Taguig. Levels 9 and 11–12 take place at Malacañang. Level 10 takes place on G. Araneta Avenue, Quezon City. -->
 <!-- JT-2026/11/23 - document the expanded campaign arenas including edsa and bahay -->
-Levels 1 and 5–7 take place in Tondo. Levels 2–3 take place in Maypajo, Caloocan. Levels 4, 8, and 12 take place on EDSA. Levels 9 and 14 take place in BGC, Taguig. Levels 10 and 13 take place at Malacañang. Level 11 takes place on G. Araneta Avenue, Quezon City. Levels 15–18 take place at Bahay.
+<!-- Levels 1 and 5–7 take place in Tondo. Levels 2–3 take place in Maypajo, Caloocan. Levels 4, 8, and 12 take place on EDSA. Levels 9 and 14 take place in BGC, Taguig. Levels 10 and 13 take place at Malacañang. Level 11 takes place on G. Araneta Avenue, Quezon City. Levels 15–18 take place at Bahay. -->
+<!-- JT-2026/11/24 - add balintawak and padre faura to the arena route -->
+Levels 1 and 5–7 take place in Tondo. Levels 2–3 take place in Maypajo, Caloocan. Levels 4, 8, and 13 take place on EDSA. Level 9 takes place in Balintawak. Levels 10 and 16 take place in BGC, Taguig. Levels 11 and 15 take place at Malacañang. Level 12 takes place on G. Araneta Avenue, Quezon City. Level 14 takes place on Padre Faura, Manila. Levels 17–20 take place at Bahay.
 
 Each ladder card shows the opponent's portrait. The **Next** badge marks who follows the current fight.
 
@@ -200,6 +211,7 @@ Below the opponent ladder, **Arena Previews** shows each backdrop and the levels
 6. `adik` — 340 HP
 7. `lipunan` — 345 HP
 8. `traffic` — 350 HP
+<!--
 9. `boss mo` — 355 HP
 10. `politiko` — 360 HP
 11. `baha` — 370 HP
@@ -210,6 +222,20 @@ Below the opponent ladder, **Arena Previews** shows each backdrop and the levels
 16. `stress` — 460 HP
 17. `emotional_damage` — 480 HP
 18. `loans` — 500 HP
+-->
+<!-- JT-2026/11/24 - insert taas presyo and justice delayed into the arena ladder -->
+9. `taas presyo` — 352 HP
+10. `boss mo` — 355 HP
+11. `politiko` — 360 HP
+12. `baha` — 370 HP
+13. `mayabang` — 380 HP
+14. `justice delayed` — 390 HP
+15. `matapobre` — 400 HP
+16. `petrolyo` — 420 HP
+17. `bills` — 440 HP
+18. `stress` — 460 HP
+19. `emotional_damage` — 480 HP
+20. `loans` — 500 HP
 
 <!-- JT-2026/11/23 - explain the controls and progression in survival -->
 ## Survival controls
@@ -218,7 +244,12 @@ Use `W A S D` or the arrow keys to move around the arena. Press `J` to punch, `K
 
 Pick up cross-shaped **Charge Tokens** to fill one Special Bar each. Land punches and kicks to earn more charge. Juan starts each new arena at full health and keeps his Special charge.
 
-Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, and **Loans** to unlock G. Araneta. At G. Araneta, fight Lubak and Traffic before taking on **Baha** in the final wave.
+<!-- JT-2026/11/24 - explain when the survival blast knocks out enemies across the arena -->
+With at least two full Special Bars, press **`O`** or tap **Almighty Push**. The cast empties the meter and knocks out every enemy already on the field as Juan says “Push!”
+
+<!-- Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, and **Loans** to unlock G. Araneta. At G. Araneta, fight Lubak and Traffic before taking on **Baha** in the final wave. -->
+<!-- JT-2026/11/24 - explain how to reach balintawak and face its boss -->
+Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, **Loans** to unlock G. Araneta, and **Baha** to unlock Balintawak. In Balintawak, take on Ebike, Traffic, and Petrolyo before fighting **Taas Presyo** in the final wave.
 
 The **Wave Guide** shows the maps, enemy portraits, and attack tips for each wave.
 

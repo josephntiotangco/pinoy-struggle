@@ -138,6 +138,16 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 4px; }
   background-position: center bottom, center center;
 }
 
+/* JT-2026/11/24 - align the balintawak road and padre faura street beneath the fighters */
+.arena[data-backdrop="balintawak"] {
+  background-image: url("assets/arcade/balintawak_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+.arena[data-backdrop="pfaura"] {
+  background-image: url("assets/arcade/pfaura_0.jpg"), url("assets/arcade/tondo_0.jpg");
+  background-position: center bottom, center center;
+}
+
 #fight, .arena-shade, .panel-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 #fight { display: block; }
 .arena-shade {
@@ -609,7 +619,9 @@ kbd {
   .utilities { gap: 4px; }
   .icon { width: 11px; height: 11px; }
   .arcade { padding-block: 12px 20px; }
-  .arena { aspect-ratio: 1.18; min-height: 279px; }
+  /* .arena { aspect-ratio: 1.18; min-height: 279px; } */
+  /* JT-2026/11/24 - keep the arena and touch controls inside narrow phone viewports */
+  .arena { width: 100%; aspect-ratio: 1.18; min-height: 279px; }
   .hud { top: 10px; }
   .hud-heading { gap: 4px; margin-bottom: 5px; font-size: .58rem; letter-spacing: .035em; }
   .enemy-plate { letter-spacing: .035em; }
@@ -661,6 +673,8 @@ kbd {
   }
   /* JT-2026/11/23 - give the hold to charge control space beneath movement */
   .touch-group button[data-input="auraCharge"] { grid-column: 1 / -1; }
+  /* JT-2026/11/24 - give almighty push its own touch control row */
+  .touch-group button[data-input="almightyPush"] { grid-column: 1 / -1; color: #a6efff; }
   .touch-controls button.is-held { background: #f8ce53; color: #20170b; }
 }
 

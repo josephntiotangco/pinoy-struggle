@@ -7,6 +7,9 @@
   <meta name="description" content="Play Arena or Survival as Juan, or browse monsters and maps in the Pinoy Struggle Dex.">
   <title>Pinoy Struggle · Select Mode</title>
   <link rel="stylesheet" href="mode-select.css">
+  <!-- JT-2026/11/24 - load the shared ultimate animation and the skill preview -->
+  <script src="almighty-push.js" defer></script>
+  <script src="skill-preview.js" defer></script>
 </head>
 <body class="mode-home">
   <!-- JT-2026/11/23 - make mode selection the homepage and keep the arcade in arena.html -->
@@ -15,13 +18,20 @@
       <span class="mode-mark" aria-hidden="true">PS</span>
       <span>Pinoy <strong>Struggle</strong></span>
     </div>
-    <h1 id="mode-heading">Select <strong>Mode</strong></h1>
+    <!-- <h1 id="mode-heading">Select <strong>Mode</strong></h1> -->
+    <!-- JT-2026/11/24 - make the skill preview easy to reach from mode select -->
+    <div class="mode-heading-row">
+      <h1 id="mode-heading">Select <strong>Mode</strong></h1>
+      <a class="skill-jump" href="#skills">Preview skills</a>
+    </div>
     <nav class="mode-grid" aria-labelledby="mode-heading">
       <a class="mode-card arena-card" href="./arena.html">
         <img src="assets/arcade/previews/malacaniang_0.jpg" width="480" height="270" alt="">
         <div class="mode-card-copy">
           <h2>Arena</h2>
-          <p>Face one challenger at a time across 18 stages.</p>
+          <!-- <p>Face one challenger at a time across 18 stages.</p> -->
+          <!-- JT-2026/11/24 - advertise the twenty-stage arena campaign -->
+          <p>Face one challenger at a time across 20 stages.</p>
           <span class="mode-action">Play Arena</span>
         </div>
       </a>
@@ -29,11 +39,14 @@
         <img src="assets/arcade/previews/edsa_0.jpg" width="480" height="270" alt="">
         <div class="mode-card-copy">
           <h2>Survival</h2>
-          <p>Survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta.</p>
+          <!-- <p>Survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta.</p> -->
+          <!-- JT-2026/11/24 - show the expanded survival run from tondo to balintawak -->
+          <p>Survive 15 waves from Tondo to Balintawak.</p>
           <span class="mode-action">Play Survival</span>
         </div>
       </a>
       <!-- JT-2026/11/23 - open the monster and map guide from mode select -->
+      <!--
       <a class="mode-card dex-card" href="./dex.html">
         <img src="assets/arcade/previews/g_araneta_0.jpg" width="480" height="270" alt="">
         <div class="mode-card-copy">
@@ -42,7 +55,55 @@
         </div>
         <span class="mode-action">Open Dex</span>
       </a>
+      -->
     </nav>
+
+    <!-- JT-2026/11/24 - preview juan's moves with their animation, sound, and inspiration -->
+    <section id="skills" class="skill-preview" aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Juan’s <strong>Skills</strong></h2>
+      <p class="skill-intro">Choose a skill to see and hear it in action.</p>
+      <div class="skill-showcase">
+        <div class="skill-options" role="group" aria-label="Choose a skill">
+          <button type="button" data-skill="punch" aria-pressed="true" disabled><span>Punch</span><kbd>J</kbd></button>
+          <button type="button" data-skill="kick" aria-pressed="false" disabled><span>Kick</span><kbd>K</kbd></button>
+          <button type="button" data-skill="haduken" aria-pressed="false" disabled><span>Kamehame Haduken</span><kbd>L</kbd></button>
+          <button type="button" data-skill="senpu" aria-pressed="false" disabled><span>Konoha Senpu</span><kbd>I</kbd></button>
+          <button type="button" data-skill="pray" aria-pressed="false" disabled><span>Pray (Aura Charge)</span><kbd>U</kbd></button>
+          <button type="button" data-skill="almightyPush" aria-pressed="false" disabled><span>Almighty Push</span><kbd>O</kbd></button>
+        </div>
+        <div class="skill-display">
+          <div class="skill-stage">
+            <canvas id="skill-canvas" width="800" height="360" role="img" aria-label="Juan’s skill animation"></canvas>
+            <p id="skill-preview-status" class="skill-preview-status" role="status" hidden></p>
+          </div>
+          <div class="skill-details">
+            <div aria-live="polite">
+              <h3 id="skill-name">Punch</h3>
+              <p id="skill-description"></p>
+              <p class="skill-inspiration" id="skill-inspiration"></p>
+            </div>
+            <button type="button" id="skill-replay" disabled>Replay</button>
+          </div>
+        </div>
+      </div>
+      <noscript><p>Enable JavaScript to play the skill previews.</p></noscript>
+      <p class="skill-credit">No copyright infringement intended.</p>
+    </section>
+
+    <!-- JT-2026/11/24 - place the dex after the skills so the preview follows the game modes -->
+    <a class="mode-card dex-card" href="./dex.html">
+      <img src="assets/arcade/previews/g_araneta_0.jpg" width="480" height="270" alt="">
+      <div class="mode-card-copy">
+        <h2>Dex</h2>
+        <p>Explore the monsters and maps of Pinoy Struggle.</p>
+      </div>
+      <span class="mode-action">Open Dex</span>
+    </a>
+
+    <!-- JT-2026/11/24 - credit the creator at the bottom of the landing page -->
+    <footer class="mode-footer">
+      <p>&copy; Created by <a href="https://www.jnt-side.quest">www.jnt-side.quest</a></p>
+    </footer>
   </main>
 </body>
 </html>

@@ -51,6 +51,8 @@ const OPPONENTS = [
   // { id: "traffic_0", backdrop: "bgc", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
   //JT-2026/11/23 - move traffic's fight to edsa
   { id: "traffic_0", backdrop: "edsa", maxHealth: 350, size: 1.23, body: 69, speed: 135, reach: 118, power: 12, interval: 1.02, heavy: .32, guard: .11 },
+  //JT-2026/11/24 - put taas presyo in balintawak at level nine
+  { id: "inflation_0", displayName: "Taas Presyo", backdrop: "balintawak", maxHealth: 352, size: 1.2, body: 48, speed: 130, reach: 104, power: 12, interval: .87, heavy: .39, guard: .13 },
   //JT-2026/11/23 - fight boss mo in bgc before politiko
   { id: "bossy_0", displayName: "boss mo", backdrop: "bgc", maxHealth: 355, size: 1.16, body: 40, speed: 145, reach: 104, power: 12, interval: .89, heavy: .38, guard: .15 },
   // { id: "congressman_0", displayName: "politiko", maxHealth: 360, size: 1.16, body: 33, speed: 127, reach: 91, power: 11, interval: .92, heavy: .46, guard: .19 },
@@ -63,6 +65,8 @@ const OPPONENTS = [
   // { id: "mayabang_0", backdrop: "malacaniang", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
   //JT-2026/11/23 - move mayabang's fight to edsa
   { id: "mayabang_0", backdrop: "edsa", maxHealth: 380, size: 1.88, body: 118, edge: 170, speed: 108, reach: 164, power: 11, interval: 1.16, heavy: .16, guard: .09 },
+  //JT-2026/11/24 - put justice delayed on padre faura at level fourteen
+  { id: "injustice_0", displayName: "Justice Delayed", backdrop: "pfaura", maxHealth: 390, size: 1.21, body: 46, speed: 136, reach: 108, power: 13, interval: .91, heavy: .51, guard: .19 },
   { id: "matapobre_0", backdrop: "malacaniang", maxHealth: 400, size: 1.15, body: 28, speed: 160, reach: 80, power: 12, interval: .76, heavy: .29, guard: .26 },
   // { id: "gasoline_0", maxHealth: 420, size: 1.19, body: 48, speed: 152, reach: 107, power: 16, interval: .7, heavy: .56, guard: .21 },
   // { id: "billing_0", maxHealth: 440, size: 1.14, body: 37, speed: 145, reach: 94, power: 13, interval: .79, heavy: .45, guard: .15 },
@@ -95,6 +99,9 @@ const ARENA_LOCATIONS = {
   bahay: "BAHAY",
   //JT-2026/11/23 - show the edsa label during the road fights
   edsa: "EDSA",
+  //JT-2026/11/24 - label the new market and courthouse backdrops
+  balintawak: "BALINTAWAK, QUEZON CITY",
+  pfaura: "PADRE FAURA, MANILA",
 };
 // const HERO = { id: "hero_0", size: 1.21, body: 25, speed: 263 };
 //JT-2026/11/19 - give juan an explicit health maximum for timeout comparisons
@@ -139,6 +146,8 @@ const MOVES = {
   //JT-2026/11/23 - raise both specials' damage for tougher opponents
   energyWave: { duration: .72, impact: .29, damage: 100, reach: 0, push: 185, stun: .25 },
   superUpperCut: { duration: .8, impact: .16, damage: 60, reach: 89, push: 246, stun: .34 },
+  //JT-2026/11/24 - use the shared cast timing for the full-meter knockout
+  almightyPush: { duration: ALMIGHTY_PUSH.duration, impact: ALMIGHTY_PUSH.impact, reach: 0, push: 350, stun: .34 },
 };
 const KEYS = {
   ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right",
@@ -151,6 +160,8 @@ const KEYS = {
   KeyJ: "light", KeyK: "heavy", KeyL: "energyWave", KeyI: "superUpperCut",
   //JT-2026/11/23 - bind the hold to charge action to u
   KeyU: "auraCharge",
+  //JT-2026/11/24 - let players cast almighty push with o
+  KeyO: "almightyPush",
 };
 
 //JT-2026/11/22 - set the timing and volume of the recordings and fight music
@@ -165,6 +176,8 @@ const GAME_AUDIO = {
   energyWave: { file: "hadouken.mp3", offset: 0, duration: .84, volume: .7 },
   superUpperCut: { file: "konoha_senpu.mp3", offset: 0, duration: 1.64, volume: .7 },
   auraCharge: { file: "super_saiyan_god.mp3", offset: .1, duration: 3.75, volume: .8, interruptible: true },
+  //JT-2026/11/24 - preload the shared monster attack clips with the arena effects
+  ...MONSTER_AUDIO,
 };
 const VEHICLE_OPPONENTS = new Set(["kamote_rider_0", "ebike_0", "traffic_0", "mayabang_0"]);
 
@@ -226,6 +239,8 @@ document.addEventListener("visibilitychange", () => {
   // if (document.hidden && canFight()) togglePause();
   //JT-2026/11/22 - stop recorded effects when a background tab is showing a result
   if (!document.hidden) return;
+  //JT-2026/11/24 - silence the active cast when the tab is hidden
+  pauseAlmightyPushVoice(game.player?.attack);
   if (canFight()) togglePause();
   else stopGameSounds();
 });
@@ -301,6 +316,8 @@ function makeFighter(profile, x, direction) {
 
 //JT-2026/11/19 - reset the round and update the opponent nameplate
 function resetRound() {
+  //JT-2026/11/24 - clear any voice still attached to the previous round
+  pauseAlmightyPushVoice(game.player?.attack);
   //JT-2026/11/22 - stop any result sounds before the next round
   stopGameSounds();
   // game.player = makeFighter(HERO, view.world * .225, 1);
@@ -387,7 +404,9 @@ async function loadMatch() {
   const next = OPPONENTS[game.level + 1];
   // const ids = [HERO.id, game.enemy.profile.id];
   //JT-2026/11/23 - keep both hero sprite sheets ready throughout the campaign
-  const ids = [HERO.id, HERO_ACTIONS.id, game.enemy.profile.id];
+  // const ids = [HERO.id, HERO_ACTIONS.id, game.enemy.profile.id];
+  //JT-2026/11/24 - keep the almighty push atlas loaded alongside juan's other poses
+  const ids = [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id, game.enemy.profile.id];
   for (const id of atlases.keys()) {
     if (!ids.includes(id) && id !== next?.id) atlases.delete(id);
   }
@@ -441,8 +460,17 @@ async function startRound() {
 function setMode(mode) {
   game.mode = mode;
   //JT-2026/11/22 - play music only during combat and stop audio on pause
-  if (mode === "paused") stopGameSounds();
-  if (mode === "fight") startFightMusic();
+  // if (mode === "paused") stopGameSounds();
+  // if (mode === "fight") startFightMusic();
+  //JT-2026/11/24 - pause and resume the cast voice with the fight
+  if (mode === "paused") {
+    stopGameSounds();
+    pauseAlmightyPushVoice(game.player.attack);
+  }
+  if (mode === "fight") {
+    startFightMusic();
+    if (ui.sound.getAttribute("aria-pressed") === "true") resumeAlmightyPushVoice(game.player.attack);
+  }
   ui.arena.dataset.mode = mode;
   ui.panel.hidden = ["ready", "fight", "round-end"].includes(mode);
   if (mode !== "ready" && mode !== "fight" && mode !== "round-end") ui.announcement.textContent = "";
@@ -548,10 +576,17 @@ function tick(dt) {
     updateFight(dt);
   } else if (game.mode === "round-end") {
     game.phase -= dt;
+    //JT-2026/11/24 - finish the cast and its voice before the result screen
+    if (game.player.attack?.kind === "almightyPush") {
+      advanceAlmightyPush(game.player.attack, dt);
+      if (game.player.attack.elapsed >= ALMIGHTY_PUSH.duration) game.player.attack = null;
+    }
     if (game.player.down) game.player.down += dt;
     if (game.enemy.down) game.enemy.down += dt;
     updateEffects(dt);
-    if (game.phase <= 0) showResult();
+    // if (game.phase <= 0) showResult();
+    //JT-2026/11/24 - let the recovery finish when sound playback takes longer than the result delay
+    if (game.phase <= 0 && game.player.attack?.kind !== "almightyPush") showResult();
   }
 }
 
@@ -580,7 +615,11 @@ function updateFight(dt) {
     // const superReady = grounded && game.superCharge === SUPER_MAX;
     //JT-2026/11/19 - let either special start with one charged bar
     const superReady = grounded && game.superCharge >= SUPER_COST;
-    if (superReady && pressed.has("superUpperCut")) {
+    // if (superReady && pressed.has("superUpperCut")) {
+    //JT-2026/11/24 - prioritize almighty push once two bars are full
+    if (grounded && pressed.has("almightyPush") && game.superCharge >= ALMIGHTY_PUSH.bars * SUPER_COST) {
+      attack(player, "almightyPush");
+    } else if (superReady && pressed.has("superUpperCut")) {
       attack(player, "superUpperCut");
     // } else if (superReady && !game.projectile && pressed.has("energyWave")) {
     //JT-2026/11/19 - let a charged energy wave start while another is in flight
@@ -683,7 +722,12 @@ function attack(fighter, kind) {
   if (isPlayer) tone(heavy ? "swing" : "jab");
   */
   //JT-2026/11/23 - play the matching sound when juan spends a bar on a special
-  if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
+  // if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
+  //JT-2026/11/24 - empty the meter and start the full voice at the beginning of the cast
+  if (isPlayer && kind === "almightyPush") {
+    setSuperCharge(0);
+    if (ui.sound.getAttribute("aria-pressed") === "true") resumeAlmightyPushVoice(fighter.attack);
+  } else if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
     setSuperCharge(game.superCharge - SUPER_COST);
     playRecordedSound(kind, "jab");
   } else if (isPlayer) {
@@ -721,10 +765,17 @@ function separateFighters() {
 function hitFrom(attacker, target, dt) {
   const action = attacker.attack;
   if (!action) return null;
-  action.elapsed += dt;
+  // action.elapsed += dt;
+  //JT-2026/11/24 - time the knockout to the spoken push cue
+  if (action.kind === "almightyPush") advanceAlmightyPush(action, dt);
+  else action.elapsed += dt;
   if (action.elapsed >= action.duration) attacker.attack = null;
   if (action.spent || action.elapsed < action.impact) return null;
   action.spent = true;
+  //JT-2026/11/24 - apply the knockout at the cast's impact regardless of distance or height
+  if (action.kind === "almightyPush") return { ...action, damage: target.health };
+  //JT-2026/11/24 - play the monster cue once at the strike frame
+  if (attacker !== game.player) playRecordedSound(MONSTER_ATTACK_CUES[attacker.profile.id], "swing");
   //JT-2026/11/19 - release the fireball or launch juan when a special reaches its strike frame
   // if (action.kind === "hadouken") {
   //JT-2026/11/19 - release the projectile for energy wave
@@ -752,13 +803,17 @@ function hitFrom(attacker, target, dt) {
 
 //JT-2026/11/19 - apply damage, hit stun, and guard feedback
 function applyHit(target, attacker, action, meter) {
+  //JT-2026/11/24 - keep the full-meter cast from being interrupted by a hit
+  if (target === game.player && target.attack?.kind === "almightyPush") return;
   //JT-2026/11/19 - block all damage and recoil while juan is retreating
   if (target === game.player && target.guard) {
     sparks((target.x + attacker.x) / 2, 70 + Math.max(attacker.y, target.y), true);
     tone("guard");
     return;
   }
-  const blocked = target.guard && (attacker.x - target.x) * target.direction >= 0;
+  // const blocked = target.guard && (attacker.x - target.x) * target.direction >= 0;
+  //JT-2026/11/24 - let almighty push knock out even a guarding opponent
+  const blocked = action.kind !== "almightyPush" && target.guard && (attacker.x - target.x) * target.direction >= 0;
   target.health = Math.max(0, target.health - (blocked ? Math.floor(action.damage * .21) : action.damage));
   target.stun = blocked ? .1 : action.stun;
   target.knockback = attacker.direction * action.push * (blocked ? .26 : 1);
@@ -808,6 +863,12 @@ function showTimer() {
 function finishRound() {
   const { player, enemy } = game;
   const knockout = !player.health || !enemy.health;
+  //JT-2026/11/24 - retain the voice only when the push delivered the knockout
+  const pushKnockout = !enemy.health && player.attack?.kind === "almightyPush" && player.attack.spent;
+  if (player.attack?.kind === "almightyPush" && !pushKnockout) {
+    pauseAlmightyPushVoice(player.attack);
+    player.attack = null;
+  }
   // game.winner = player.health > enemy.health ? "player" : player.health < enemy.health ? "enemy" : "draw";
   //JT-2026/11/19 - compare remaining health percentages when maximum health differs
   const healthDifference = player.health * enemy.profile.maxHealth - enemy.health * player.profile.maxHealth;
@@ -828,6 +889,8 @@ function finishRound() {
   // tone(knockout ? "ko" : "start");
   //JT-2026/11/22 - play the loss cue or the vehicle crash at the end of a round
   stopGameSounds();
+  //JT-2026/11/24 - let the voice clip finish without competing knockout effects
+  if (pushKnockout) return;
   const resultTone = knockout ? "ko" : "start";
   if (game.winner === "enemy") {
     playRecordedSound("defeat", resultTone);
@@ -921,11 +984,16 @@ function drawFighter(fighter) {
   //JT-2026/11/23 - use the alternate sheet's cell size for the new hero poses
   let frame = fighter === game.player ? HERO_FRAME : FRAME;
   if (atlasId === HERO_ACTIONS.id) frame = HERO_ACTIONS.frame;
+  //JT-2026/11/24 - use the almighty push frame with its centered pivot
+  if (atlasId === ALMIGHTY_PUSH.id) frame = ALMIGHTY_PUSH.frame;
   const size = view.scale * fighter.profile.size / frame.scale;
   context.save();
   const x = Math.round(fighter.x * view.scale);
   const y = Math.round(view.floor - fighter.y * view.scale);
-  context.translate(x, y);
+  // context.translate(x, y);
+  //JT-2026/11/24 - show the delayed landing without moving juan's ground position
+  const lift = atlasId === ALMIGHTY_PUSH.id ? almightyPushLift(fighter.attack.elapsed) * size : 0;
+  context.translate(x, y - lift);
   context.scale(fighter.direction, 1);
   context.imageSmoothingEnabled = true;
   if (fighter.guard && !fighter.down) context.filter = "brightness(1.14)";
@@ -944,6 +1012,8 @@ function getPose(fighter) {
   if (fighter.stun && !fighter.guard) return [POSE.hurt, Math.min(2, Math.floor((.35 - fighter.stun) * 11))];
   if (fighter.attack) {
     const { elapsed, impact, duration, kind } = fighter.attack;
+    //JT-2026/11/24 - animate almighty push from juan's third sprite sheet
+    if (hero && kind === "almightyPush") return [...almightyPushPose(elapsed), ALMIGHTY_PUSH.id];
     //JT-2026/11/23 - sync the nine frame punch sequence with the existing hit timing
     if (hero && kind === "light") {
       const column = elapsed < impact
@@ -1059,8 +1129,16 @@ function toggleSound() {
   const enabled = ui.sound.getAttribute("aria-pressed") !== "true";
   ui.sound.setAttribute("aria-pressed", enabled);
   ui.soundLabel.textContent = enabled ? "Sound on" : "Sound off";
-  if (enabled) enableGameSounds(true);
-  else stopGameSounds();
+  // if (enabled) enableGameSounds(true);
+  // else stopGameSounds();
+  //JT-2026/11/24 - let players mute or rejoin the voice without resetting the cast
+  if (enabled) {
+    enableGameSounds(true);
+    if (game.mode === "fight" || game.mode === "round-end") resumeAlmightyPushVoice(game.player.attack);
+  } else {
+    stopGameSounds();
+    pauseAlmightyPushVoice(game.player.attack);
+  }
 }
 
 //JT-2026/11/19 - synthesize lightweight fight cues with browser audio
@@ -1253,6 +1331,8 @@ function stopGameSounds() {
 //JT-2026/11/22 - prepare sound on start or unmute without bypassing a mute choice
 function enableGameSounds(confirm = false) {
   if (ui.sound.getAttribute("aria-pressed") !== "true") return;
+  //JT-2026/11/24 - warm up the voice clip before the first cast
+  prepareAlmightyPushVoice();
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (AudioContext) {
     soundContext ??= new AudioContext();

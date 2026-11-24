@@ -14,7 +14,9 @@
   <!-- JT-2026/11/22 - describe the sixteen stage campaign -->
   <!-- <meta name="description" content="A sixteen-stage arcade fighter set in Metro Manila."> -->
   <!-- JT-2026/11/23 - describe the eighteen stage campaign -->
-  <meta name="description" content="An eighteen-stage arcade fighter set in Metro Manila.">
+  <!-- <meta name="description" content="An eighteen-stage arcade fighter set in Metro Manila."> -->
+  <!-- JT-2026/11/24 - describe the expanded twenty-stage campaign -->
+  <meta name="description" content="A twenty-stage arcade fighter set in Metro Manila.">
   <!-- JT-2026/11/19 - show the new game name in the browser tab -->
   <!-- <title>Pinoy Struggle</title> -->
   <!-- JT-2026/11/23 - distinguish arena from the shared mode selection page -->
@@ -22,6 +24,10 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="mode-select.css">
   <link rel="preload" as="image" href="assets/arcade/tondo_0.jpg">
+  <!-- JT-2026/11/24 - load the shared monster cues before arena starts -->
+  <script src="monster-audio.js" defer></script>
+  <!-- JT-2026/11/24 - load the shared almighty push timing before arena starts -->
+  <script src="almighty-push.js" defer></script>
   <script src="game.js" defer></script>
 </head>
 <body>
@@ -106,7 +112,9 @@
             <!-- JT-2026/11/22 - start the hud at level one of sixteen -->
             <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 16</span> -->
             <!-- JT-2026/11/23 - start the hud at level one of eighteen -->
-            <span class="stage-counter" id="stage-counter">LEVEL 01 / 18</span>
+            <!-- <span class="stage-counter" id="stage-counter">LEVEL 01 / 18</span> -->
+            <!-- JT-2026/11/24 - show the twenty-stage total before the first fight -->
+            <span class="stage-counter" id="stage-counter">LEVEL 01 / 20</span>
             <span class="seconds" id="seconds" aria-label="Seconds left">60</span>
           </div>
           <div class="fighter-hud enemy-hud">
@@ -138,7 +146,9 @@
             <!-- JT-2026/11/22 - show the sixteen challenger objective -->
             <!-- <p class="panel-copy" id="panel-copy">Defeat all sixteen challengers.</p> -->
             <!-- JT-2026/11/23 - show the eighteen challenger objective -->
-            <p class="panel-copy" id="panel-copy">Defeat all eighteen challengers.</p>
+            <!-- <p class="panel-copy" id="panel-copy">Defeat all eighteen challengers.</p> -->
+            <!-- JT-2026/11/24 - update the start screen goal for twenty opponents -->
+            <p class="panel-copy" id="panel-copy">Defeat all twenty challengers.</p>
             <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
             <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
           </div>
@@ -159,7 +169,9 @@
         <!-- JT-2026/11/22 - initialize progress for sixteen opponents -->
         <!-- <span id="cleared">0 / 16 CLEARED</span> -->
         <!-- JT-2026/11/23 - initialize progress for eighteen opponents -->
-        <span id="cleared">0 / 18 CLEARED</span>
+        <!-- <span id="cleared">0 / 18 CLEARED</span> -->
+        <!-- JT-2026/11/24 - initialize progress for twenty opponents -->
+        <span id="cleared">0 / 20 CLEARED</span>
       </div>
     </section>
 
@@ -184,6 +196,8 @@
         <!-- JT-2026/11/23 - name the specials kamehame haduken and konoha senpu -->
         <li><kbd>L</kbd><span>Kamehame Haduken</span></li>
         <li><kbd>I</kbd><span>Konoha Senpu</span></li>
+        <!-- JT-2026/11/24 - show the keyboard shortcut and two-bar cast requirement -->
+        <li><kbd>O</kbd><span>Almighty Push · 2 bars to cast</span></li>
         <!-- JT-2026/11/23 - label the keyboard charge action as pray -->
         <li><kbd>U</kbd><span>Pray (Aura Charge)</span></li>
       </ul>
@@ -209,6 +223,8 @@
           <!-- JT-2026/11/23 - fit the renamed specials on the touch buttons -->
           <button type="button" data-input="energyWave">Kamehame<br>Haduken</button>
           <button type="button" data-input="superUpperCut">Konoha<br>Senpu</button>
+          <!-- JT-2026/11/24 - let touch players cast almighty push -->
+          <button type="button" data-input="almightyPush">Almighty Push</button>
         </div>
         <!-- JT-2026/11/19 - explain guard on touch screens -->
         <!-- <p class="touch-hint">Move away from your opponent to guard.</p> -->
@@ -217,7 +233,9 @@
         <!-- JT-2026/11/19 - explain hold back guard and super charge to touch players -->
         <!-- <p class="touch-hint">Hold back to guard, even at the wall. Land punches and kicks to charge Super.</p> -->
         <!-- JT-2026/11/23 - explain both ways to charge super on touch screens -->
-        <p class="touch-hint">Hold back to guard, even at the wall. Hold Pray to fill the Special meter. Punches and kicks add a small amount.</p>
+        <!-- <p class="touch-hint">Hold back to guard, even at the wall. Hold Pray to fill the Special meter. Punches and kicks add a small amount.</p> -->
+        <!-- JT-2026/11/24 - explain the two-bar requirement and meter drain -->
+        <p class="touch-hint">Hold back to guard, even at the wall. Hold Pray to fill the Special meter. Punches and kicks add a small amount. Almighty Push requires two full bars and empties the meter for a one-hit knockout.</p>
       </div>
     </section>
 
@@ -236,6 +254,15 @@
     <section class="game-updates" aria-labelledby="updates-title">
       <h2 id="updates-title">Game Updates</h2>
       <div class="update-entries">
+        <!-- JT-2026/11/24 - announce the two challengers and monster attack sounds -->
+        <article class="update-entry">
+          <h3><time datetime="2026-11-24">November 24, 2026</time></h3>
+          <ul>
+            <li>Taas Presyo fights at Balintawak in Level 9. Justice Delayed fights on Padre Faura in Level 14. Arena now has 20 levels.</li>
+            <li>Monster attacks have sounds matched to the roster, including Taas Presyo's cash register and Justice Delayed's gavel.</li>
+            <li>Almighty Push requires two full Special Bars and empties the meter. Press <kbd>O</kbd> or tap Almighty Push to knock out your opponent on the spoken cue.</li>
+          </ul>
+        </article>
         <!-- JT-2026/11/23 - announce the hero and opponent updates -->
         <article class="update-entry">
           <h3><time datetime="2026-11-23">November 23, 2026</time></h3>

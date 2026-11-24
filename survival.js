@@ -39,6 +39,16 @@ const LEVELS = [
       ["baha", "lubak", "traffic", "lubak", "traffic"],
     ],
   },
+  //JT-2026/11/24 - add three balintawak waves ending with taas presyo
+  {
+    name: "Balintawak", backdrop: "balintawak", boss: "inflation",
+    spawns: [[1.5, 2.35], [14.1, 2.2], [2.9, 7.9], [13.8, 7.7], [8.1, 1.45], [10.75, 8.55]],
+    waves: [
+      ["ebike", "petrolyo", "traffic", "ebike"],
+      ["petrolyo", "traffic", "petrolyo", "ebike", "petrolyo"],
+      ["inflation", "petrolyo", "traffic", "ebike", "petrolyo"],
+    ],
+  },
 ];
 const ENEMIES = {
   snatcher: {
@@ -92,6 +102,15 @@ const ENEMIES = {
     sprite: "baha", name: "Baha", hint: "Surges down the marked lane. Dodge sideways.", boss: true,
     health: 480, radius: .77, size: 1.34, speed: 1.65, trigger: 5.4, reach: 1.03, windup: .94, duration: 1.55, delay: 1.3, damage: 29, dash: 8.9,
   },
+  //JT-2026/11/24 - give the balintawak enemies strong close-range attacks
+  petrolyo: {
+    sprite: "petrolyo", name: "Petrolyo", hint: "Attacks at close range after a short warning ring.",
+    health: 164, radius: .58, size: 1.16, speed: 1.82, trigger: 1.85, reach: 2.17, windup: .59, duration: 1.07, delay: .92, damage: 20,
+  },
+  inflation: {
+    sprite: "inflation", name: "Taas Presyo", hint: "Its Price Crush hits the whole warning ring. Back away before it lands.", boss: true,
+    health: 550, radius: .82, size: 1.36, speed: 1.57, trigger: 2.62, reach: 3.12, windup: .92, duration: 1.47, delay: 1.16, damage: 30,
+  },
 };
 const MOVES = {
   //JT-2026/11/23 - raise attack damage and award special charge on melee hits
@@ -99,13 +118,19 @@ const MOVES = {
   kick: { damage: 50, reach: 1.89, impact: .29, duration: .58, charge: 50 },
   haduken: { damage: 120, impact: .29, duration: .68, special: true },
   senpu: { damage: 80, reach: 2.8, impact: .22, duration: .74, special: true },
+  //JT-2026/11/24 - make almighty push a two-bar knockout across the arena
+  almightyPush: { impact: ALMIGHTY_PUSH.impact, duration: ALMIGHTY_PUSH.duration, special: true, bars: ALMIGHTY_PUSH.bars },
 };
 const KEYS = {
   KeyA: "left", ArrowLeft: "left", KeyD: "right", ArrowRight: "right",
   KeyW: "up", ArrowUp: "up", KeyS: "down", ArrowDown: "down",
   KeyJ: "punch", KeyK: "kick", KeyL: "haduken", KeyI: "senpu",
+  //JT-2026/11/24 - bind almighty push to o in survival
+  KeyO: "almightyPush",
 };
-const ATTACK_KEYS = ["haduken", "senpu", "kick", "punch"];
+// const ATTACK_KEYS = ["haduken", "senpu", "kick", "punch"];
+//JT-2026/11/24 - resolve a requested almighty push before other attacks
+const ATTACK_KEYS = ["almightyPush", "haduken", "senpu", "kick", "punch"];
 const FRAME = { width: 504, height: 201, x: 156, y: 192 };
 const HERO_FRAME = { ...FRAME, height: 234, y: 225 };
 const ACTION_FRAME = { width: 192, height: 250, x: 72, y: 241 };
@@ -114,6 +139,8 @@ const ART = {
   edsa: "edsa_0.jpg",
   hero: "hero_0.png",
   actions: "hero_1.png",
+  //JT-2026/11/24 - load juan's almighty push animation
+  almightyPush: ALMIGHTY_PUSH.id + ".png",
   snatcher: "snatcher_0.png",
   rider: "kamote_rider_0.png",
   boss: "bossy_0.png",
@@ -130,6 +157,10 @@ const ART = {
   araneta: "g_araneta_0.jpg",
   lubak: "lubak_sa_daan_0.png",
   baha: "baha_0.png",
+  //JT-2026/11/24 - use the shared market backdrop and challenger sprites
+  balintawak: "balintawak_0.jpg",
+  petrolyo: "gasoline_0.png",
+  inflation: "inflation_0.png",
 };
 const SOUNDS = {
   music: ["freesound_community-video-game-music-loop-27629.mp3", .14, 0],
@@ -140,6 +171,8 @@ const SOUNDS = {
   hit: ["freesound_community-ough-47202.mp3", .48, .36],
   crash: ["rsf_studios-car-crash-swerving-and-crash-592672.mp3", .44, .36],
   loss: ["make_more_sound-8-bit-video-game-fail-version-2-145478.mp3", .44, .18],
+  //JT-2026/11/24 - load the same monster attack clips used in arena
+  ...Object.fromEntries(Object.entries(MONSTER_AUDIO).map(([name, { file, volume, offset, duration }]) => [name, [file, volume, offset, duration]])),
 };
 const BAR = 100;
 const MAX_CHARGE = 3 * BAR;
@@ -299,6 +332,8 @@ function togglePause() {
     ui.screen.hidden = true;
     ui.pause.textContent = "Pause";
     playSound("music");
+    //JT-2026/11/24 - resume an active push from the same voice position
+    if (soundEnabled) resumeAlmightyPushVoice(state.player.attack);
     return;
   }
   if (!isPlaying()) return;
@@ -401,6 +436,8 @@ function updateGame(dt) {
   separateFighters();
   updateChargeTokens(dt);
   if (state.spawnQueue.length || state.enemies.some(enemy => enemy.health)) return;
+  //JT-2026/11/24 - finish the cast before advancing a cleared wave
+  if (state.player.attack?.kind === "almightyPush") return;
   if (state.wave === LEVELS[state.level].waves.length) {
     finishRun(true);
     return;
@@ -420,7 +457,10 @@ function updatePlayer(dt) {
   player.moving = false;
   if (player.attack) {
     const attack = player.attack;
-    attack.elapsed += dt;
+    // attack.elapsed += dt;
+    //JT-2026/11/24 - time the push impact to its spoken cue
+    if (attack.kind === "almightyPush") advanceAlmightyPush(attack, dt);
+    else attack.elapsed += dt;
     if (!attack.spent && attack.elapsed >= attack.move.impact) {
       attack.spent = true;
       resolvePlayerAttack(player, attack);
@@ -452,8 +492,14 @@ function updatePlayer(dt) {
 //JT-2026/11/23 - aim a move and spend one full bar for a special
 function startAttack(player, kind) {
   const move = MOVES[kind];
-  if (move.special && player.charge + 1e-7 < BAR) {
-    showNotice("Need one full Special Bar", 1.15);
+  // if (move.special && player.charge + 1e-7 < BAR) {
+  //   showNotice("Need one full Special Bar", 1.15);
+  //   return false;
+  // }
+  //JT-2026/11/24 - check the selected move's charge without a distance requirement
+  const cost = (move.bars ?? 1) * BAR;
+  if (move.special && player.charge + 1e-7 < cost) {
+    showNotice(move.bars ? "Need two full Special Bars" : "Need one full Special Bar", 1.15);
     return false;
   }
   const target = closestEnemy(player);
@@ -465,8 +511,16 @@ function startAttack(player, kind) {
   }
   player.attack = { kind, move, elapsed: 0, spent: false };
   if (move.special) {
-    player.charge = Math.max(0, player.charge - BAR);
-    playSound(kind);
+    // player.charge = Math.max(0, player.charge - BAR);
+    // playSound(kind);
+    //JT-2026/11/24 - empty the meter and start the voice at the beginning of the cast
+    if (kind === "almightyPush") {
+      player.charge = 0;
+      if (soundEnabled) resumeAlmightyPushVoice(player.attack);
+    } else {
+      player.charge = Math.max(0, player.charge - cost);
+      playSound(kind);
+    }
   }
   return true;
 }
@@ -489,6 +543,14 @@ function closestEnemy(player, reach = Infinity) {
 //JT-2026/11/23 - launch the projectile or apply a melee strike
 function resolvePlayerAttack(player, attack) {
   const { kind, move } = attack;
+  //JT-2026/11/24 - knock out every living enemy on the field at impact
+  if (kind === "almightyPush") {
+    const targets = state.enemies.filter(enemy => enemy.health > 0);
+    for (const enemy of targets) hitEnemy(enemy, player, enemy.health, .95, false);
+    burst(player.x, player.z, "#a6efff", 30);
+    showNotice("Almighty Push · " + targets.length + " K.O.", 1.4);
+    return;
+  }
   if (kind === "haduken") {
     state.shots.push({ x: player.x + player.aimX * .55, z: player.z + player.aimZ * .55, dx: player.aimX, dz: player.aimZ, life: 1.62 });
     burst(player.x, player.z, "#81f4d9", 6);
@@ -574,7 +636,14 @@ function updateEnemies(dt) {
 function updateEnemyAttack(enemy, dt) {
   const { attack, profile } = enemy;
   const player = state.player;
+  // attack.time += dt;
+  //JT-2026/11/24 - sound the attack once when it crosses the windup threshold
+  const previousTime = attack.time;
   attack.time += dt;
+  if (previousTime < profile.windup && attack.time >= profile.windup) {
+    const spriteId = ART[profile.sprite].slice(0, -4);
+    playSound(MONSTER_ATTACK_CUES[spriteId]);
+  }
   if (attack.time >= profile.windup && attack.time < profile.duration) {
     if (profile.dash) {
       move(enemy, attack.dx * profile.dash * dt, attack.dz * profile.dash * dt);
@@ -593,7 +662,9 @@ function updateEnemyAttack(enemy, dt) {
 }
 
 //JT-2026/11/23 - apply damage to an enemy and interrupt its windup
-function hitEnemy(enemy, source, damage, push) {
+// function hitEnemy(enemy, source, damage, push) {
+//JT-2026/11/24 - allow a shared blast cue to replace individual hit sounds
+function hitEnemy(enemy, source, damage, push, playImpact = true) {
   enemy.health = Math.max(0, enemy.health - damage);
   enemy.attack = null;
   enemy.stun = push >= .5 ? .37 : .22;
@@ -602,12 +673,16 @@ function hitEnemy(enemy, source, damage, push) {
   const length = Math.hypot(dx, dz) || 1;
   move(enemy, dx / length * push, dz / length * push);
   burst(enemy.x, enemy.z, "#ffe09a", 7);
-  playSound(!enemy.health && enemy.profile.vehicle ? "crash" : "hit");
+  // playSound(!enemy.health && enemy.profile.vehicle ? "crash" : "hit");
+  //JT-2026/11/24 - keep individual hit sounds for ordinary attacks
+  if (playImpact) playSound(!enemy.health && enemy.profile.vehicle ? "crash" : "hit");
 }
 
 //JT-2026/11/23 - take a hit and allow a short window to escape
 function hurtPlayer(damage, source) {
   const player = state.player;
+  //JT-2026/11/24 - shield juan while almighty push is active through release and landing
+  if (player.attack?.kind === "almightyPush") return;
   if (player.invulnerable || !player.health) return;
   player.health = Math.max(0, player.health - damage);
   player.attack = null;
@@ -757,6 +832,13 @@ function drawArena() {
   context.strokeStyle = "#f6d08c55";
   context.lineWidth = 1;
   context.stroke();
+  //JT-2026/11/24 - flash the entire floor when almighty push lands
+  const attack = state.player.attack;
+  if (attack?.kind === "almightyPush" && attack.spent && attack.elapsed < ALMIGHTY_PUSH.soundEnd) {
+    const fade = (ALMIGHTY_PUSH.soundEnd - attack.elapsed) / (ALMIGHTY_PUSH.soundEnd - ALMIGHTY_PUSH.impact);
+    context.fillStyle = `rgba(154, 231, 255, ${.32 * fade})`;
+    context.fill();
+  }
   for (const segment of [[.85, 3.2], [4.1, 6], [7.2, 9.1]]) {
     const start = project(segment[0], 6.15);
     const end = project(segment[1], 6.15);
@@ -836,6 +918,8 @@ function fighterPose(fighter) {
     }
     const progress = attack.elapsed / attack.move.duration;
     const column = Math.min(3, Math.floor(progress * 4));
+    //JT-2026/11/24 - show the third hero sheet through the full cast
+    if (attack.kind === "almightyPush") return ["almightyPush", ...almightyPushPose(attack.elapsed)];
     if (attack.kind === "punch") return ["actions", 0, Math.min(8, Math.floor(progress * 9))];
     return [sprite, { kick: 3, haduken: 7, senpu: 8 }[attack.kind], column];
   }
@@ -852,7 +936,10 @@ function drawFighter(fighter) {
   const image = images.get(name);
   if (!image?.complete || !image.naturalWidth) return;
   const { x, y, scale } = project(fighter.x, fighter.z);
-  const frame = name === "actions" ? ACTION_FRAME : name === "hero" ? HERO_FRAME : FRAME;
+  // const frame = name === "actions" ? ACTION_FRAME : name === "hero" ? HERO_FRAME : FRAME;
+  //JT-2026/11/24 - keep the almighty push sprite anchored to juan's ground position
+  let frame = name === "actions" ? ACTION_FRAME : name === "hero" ? HERO_FRAME : FRAME;
+  if (name === "almightyPush") frame = ALMIGHTY_PUSH.frame;
   const size = scale * (fighter.profile?.size ?? 1);
   context.fillStyle = "#0c10109c";
   context.beginPath();
@@ -861,7 +948,12 @@ function drawFighter(fighter) {
   context.save();
   if (fighter.death > .55) context.globalAlpha = (1 - fighter.death / .9);
   else if (fighter.invulnerable && Math.floor(state.clock * 18) % 2) context.globalAlpha = .62;
-  const lift = fighter.attack?.kind === "senpu" ? Math.sin(Math.PI * fighter.attack.elapsed / fighter.attack.move.duration) * 24 * size : 0;
+  // const lift = fighter.attack?.kind === "senpu" ? Math.sin(Math.PI * fighter.attack.elapsed / fighter.attack.move.duration) * 24 * size : 0;
+  //JT-2026/11/24 - hold juan in the air before lowering him to the floor
+  const attack = fighter.attack;
+  let lift = 0;
+  if (name === "almightyPush") lift = almightyPushLift(attack.elapsed) * size;
+  else if (attack?.kind === "senpu") lift = Math.sin(Math.PI * attack.elapsed / attack.move.duration) * 24 * size;
   context.translate(x, y - lift);
   context.scale(fighter.direction, 1);
   context.imageSmoothingEnabled = true;
@@ -951,12 +1043,21 @@ function syncHud() {
 
 //JT-2026/11/23 - load the original music and cues from local project assets
 function prepareSounds() {
+  //JT-2026/11/24 - warm up the voice clip before the first cast
+  prepareAlmightyPushVoice();
   if (recordings.size) return;
-  for (const [name, [file, volume]] of Object.entries(SOUNDS)) {
+  // for (const [name, [file, volume]] of Object.entries(SOUNDS)) {
+  //JT-2026/11/24 - stop monster clips after the selected excerpt
+  for (const [name, [file, volume, offset, duration]] of Object.entries(SOUNDS)) {
     const recording = new Audio("assets/" + file);
     recording.preload = "auto";
     recording.volume = volume;
     recording.loop = name === "music";
+    if (duration) {
+      recording.addEventListener("timeupdate", () => {
+        if (recording.currentTime >= offset + duration) recording.pause();
+      });
+    }
     recordings.set(name, recording);
   }
 }
@@ -972,6 +1073,8 @@ function playSound(name) {
 //JT-2026/11/23 - stop playback when a run ends or is interrupted
 function stopSounds() {
   for (const recording of recordings.values()) recording.pause();
+  //JT-2026/11/24 - stop the cast voice with pause, mute, and run transitions
+  pauseAlmightyPushVoice(state.player.attack);
 }
 
 //JT-2026/11/23 - retain the player's sound preference throughout the session
@@ -980,7 +1083,12 @@ function toggleSound() {
   ui.sound.textContent = soundEnabled ? "Sound on" : "Sound off";
   ui.sound.setAttribute("aria-pressed", soundEnabled);
   if (!soundEnabled) stopSounds();
-  else if (isPlaying()) playSound("music");
+  // else if (isPlaying()) playSound("music");
+  //JT-2026/11/24 - rejoin the current voice position after unmuting
+  else if (isPlaying()) {
+    playSound("music");
+    resumeAlmightyPushVoice(state.player.attack);
+  }
 }
 
 //JT-2026/11/23 - bound position and meter values
@@ -1112,7 +1220,9 @@ function makeWaveCard(wave, waveNumber) {
 //JT-2026/11/23 - load only the backdrop and combat sprites used in the selected level
 function prepareLevelArt(index) {
   const level = LEVELS[index];
-  const names = new Set(["hero", "actions", level.backdrop]);
+  // const names = new Set(["hero", "actions", level.backdrop]);
+  //JT-2026/11/24 - have the almighty push atlas ready in every arena
+  const names = new Set(["hero", "actions", "almightyPush", level.backdrop]);
   level.waves.flat().forEach(kind => names.add(ENEMIES[kind].sprite));
   return Promise.all([...names].map(async name => {
     if (images.has(name)) return;

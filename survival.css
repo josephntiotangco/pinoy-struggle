@@ -147,6 +147,8 @@ kbd {
 .update-entry ul { margin: 8px 0 0; padding-inline-start: 18px; color: var(--muted); font-size: .86rem; }
 .update-entry li + li { margin-top: 4px; }
 .update-entry strong { color: var(--paper); }
+/* JT-2026/11/24 - leave a gap between dated game updates */
+.update-entry + .update-entry { margin-top: 8px; }
 
 @media (max-width: 740px) {
   .shell { width: calc(100% - 20px); }
@@ -180,6 +182,8 @@ kbd {
     font: 750 .8rem/1.05 var(--mono);
   }
   .touch-controls .special-action { color: var(--amber); }
+  /* JT-2026/11/24 - give almighty push the full width of its touch group */
+  .actions button[data-input="almightyPush"] { grid-column: 1 / -1; color: #a6efff; }
   .touch-controls button.is-held { background: var(--amber); color: #22180d; }
 }
 @media (max-width: 348px) {
