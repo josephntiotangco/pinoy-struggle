@@ -920,8 +920,12 @@ function showResult() {
     // announce("Tondo champion. All nine levels cleared.");
     //JT-2026/11/19 - use the roster total in the campaign victory screen
     const total = OPPONENTS.length;
-    showPanel(`${total} / ${total} CLEARED`, "Tondo champion", `You defeated all ${total} challengers.`, "Play again");
-    announce(`Tondo champion. All ${total} levels cleared.`);
+    // showPanel(`${total} / ${total} CLEARED`, "Tondo champion", `You defeated all ${total} challengers.`, "Play again");
+    // announce(`Tondo champion. All ${total} levels cleared.`);
+    //JT-2026/11/24 - congratulate players after their final arena victory
+    const victoryMessage = "Congrats nagtagumpay ka bilang Pilipino!";
+    showPanel(`${total} / ${total} CLEARED`, "Arena conquered", victoryMessage, "Play again");
+    announce(`${victoryMessage} All ${total} levels cleared.`);
   } else {
     setMode("won");
     const next = fighterName(OPPONENTS[game.level + 1].id);

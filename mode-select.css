@@ -227,3 +227,45 @@
   .skill-details { grid-template-columns: minmax(0, 1fr); }
   #skill-replay { justify-self: start; }
 }
+
+/* JT-2026/11/24 - highlight the offline android download and draw its robot icon */
+.android-download {
+  --android-download-bg: #c8ef87;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  max-width: 100%;
+  min-height: 48px;
+  margin-top: 16px;
+  padding: 10px 15px;
+  border: 1px solid var(--android-download-bg);
+  background: var(--android-download-bg);
+  color: #19280e;
+  box-shadow: 0 3px 0 #486b31;
+  font: 800 .875rem/1.3 var(--mode-mono);
+  text-decoration: none;
+}
+.android-download:hover { --android-download-bg: #dcffa3; }
+.android-download:focus-visible { outline: 2px solid var(--android-download-bg); outline-offset: 3px; }
+.android-download-icon {
+  position: relative;
+  flex: 0 0 24px;
+  height: 14px;
+  margin-top: 5px;
+  border-radius: 12px 12px 2px 2px;
+  background:
+    radial-gradient(circle at 31% 64%, var(--android-download-bg) 1.1px, transparent 1.6px),
+    radial-gradient(circle at 69% 64%, var(--android-download-bg) 1.1px, transparent 1.6px),
+    currentColor;
+}
+.android-download-icon::before, .android-download-icon::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.android-download-icon::before { left: 5px; transform: rotate(-30deg); }
+.android-download-icon::after { right: 5px; transform: rotate(30deg); }

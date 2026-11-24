@@ -15,7 +15,9 @@
 <!-- JT-2026/11/23 - introduce the two ways to play as juan -->
 <!-- Play as Juan in Metro Manila. Face 18 opponents in **Arena** or survive 12 waves across Tondo, EDSA, Bahay, and G. Araneta in **Survival**. -->
 <!-- JT-2026/11/24 - describe the twenty arena opponents and five survival levels -->
-Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 15 waves across Tondo, EDSA, Bahay, G. Araneta, and Balintawak in **Survival**.
+<!-- Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 15 waves across Tondo, EDSA, Bahay, G. Araneta, and Balintawak in **Survival**. -->
+<!-- JT-2026/11/24 - include the twenty-four survival waves through maypajo -->
+Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**.
 
 ## Play locally
 
@@ -249,7 +251,9 @@ With at least two full Special Bars, press **`O`** or tap **Almighty Push**. The
 
 <!-- Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, and **Loans** to unlock G. Araneta. At G. Araneta, fight Lubak and Traffic before taking on **Baha** in the final wave. -->
 <!-- JT-2026/11/24 - explain how to reach balintawak and face its boss -->
-Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, **Loans** to unlock G. Araneta, and **Baha** to unlock Balintawak. In Balintawak, take on Ebike, Traffic, and Petrolyo before fighting **Taas Presyo** in the final wave.
+<!-- Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, **Loans** to unlock G. Araneta, and **Baha** to unlock Balintawak. In Balintawak, take on Ebike, Traffic, and Petrolyo before fighting **Taas Presyo** in the final wave. -->
+<!-- JT-2026/11/24 - explain how to reach maypajo and face adik -->
+Defeat **Boss Mo** to unlock EDSA, **Mayabang** to unlock Bahay, **Loans** to unlock G. Araneta, and **Baha** to unlock Balintawak. Beat **Taas Presyo** to reach Padre Faura, **Justice Delayed** to unlock Malacañang, and **Politiko** to reach Maypajo. In Maypajo, face Lubak, Ebike, and Snatcher before fighting **Adik**, the final boss.
 
 The **Wave Guide** shows the maps, enemy portraits, and attack tips for each wave.
 

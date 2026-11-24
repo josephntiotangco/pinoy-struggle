@@ -49,6 +49,36 @@ const LEVELS = [
       ["inflation", "petrolyo", "traffic", "ebike", "petrolyo"],
     ],
   },
+  //JT-2026/11/24 - add three padre faura waves ending with justice delayed
+  {
+    name: "Padre Faura", backdrop: "pfaura", boss: "injustice",
+    spawns: [[1.6, 2.15], [14.2, 2.45], [2.5, 8.1], [13.65, 8.15], [8.35, 1.35], [8.8, 8.75]],
+    waves: [
+      ["matapobre", "lipunan", "matapobre", "lipunan"],
+      ["politiko", "matapobre", "lipunan", "matapobre", "politiko"],
+      ["injustice", "politiko", "matapobre", "lipunan", "matapobre", "politiko"],
+    ],
+  },
+  //JT-2026/11/24 - add three malacanang waves ending with politiko
+  {
+    name: "Malacañang", backdrop: "malacaniang", boss: "politikoBoss",
+    spawns: [[1.55, 2.6], [14.25, 2.35], [2.3, 8.2], [13.8, 8.55], [8.15, 1.25], [10.6, 8.4]],
+    waves: [
+      ["matapobre", "stress", "kahirapan", "matapobre", "stress"],
+      ["kahirapan", "matapobre", "stress", "kahirapan", "matapobre"],
+      ["politikoBoss", "matapobre", "kahirapan", "stress", "matapobre", "kahirapan"],
+    ],
+  },
+  //JT-2026/11/24 - introduce adik in the three maypajo waves
+  {
+    name: "Maypajo", backdrop: "maypajo", boss: "adik",
+    spawns: [[1.45, 2.25], [14.35, 2.6], [2.4, 8.45], [13.65, 8.2], [7.75, 1.4], [11.1, 8.7]],
+    waves: [
+      ["lubak", "ebike", "snatcher", "lubak", "ebike"],
+      ["ebike", "lubak", "snatcher", "lubak", "ebike", "lubak"],
+      ["adik", "ebike", "lubak", "snatcher", "lubak", "ebike"],
+    ],
+  },
 ];
 const ENEMIES = {
   snatcher: {
@@ -111,6 +141,37 @@ const ENEMIES = {
     sprite: "inflation", name: "Taas Presyo", hint: "Its Price Crush hits the whole warning ring. Back away before it lands.", boss: true,
     health: 550, radius: .82, size: 1.36, speed: 1.57, trigger: 2.62, reach: 3.12, windup: .92, duration: 1.47, delay: 1.16, damage: 30,
   },
+  //JT-2026/11/24 - mix quick chasers and wide strikes before the final gavel attack
+  matapobre: {
+    sprite: "matapobre", name: "Matapobre", hint: "Chases Juan quickly and strikes at close range.",
+    health: 114, radius: .45, size: 1.09, speed: 2.6, trigger: 1.43, reach: 1.67, windup: .38, duration: .78, delay: .72, damage: 15,
+  },
+  lipunan: {
+    sprite: "lipunan", name: "Lipunan", hint: "Reaches farther than Matapobre. Step outside the warning ring.",
+    health: 168, radius: .52, size: 1.13, speed: 1.63, trigger: 1.92, reach: 2.36, windup: .7, duration: 1.11, delay: .96, damage: 20,
+  },
+  politiko: {
+    sprite: "politiko", name: "Politiko", hint: "Winds up for a heavy strike that covers a wide ring.",
+    health: 180, radius: .56, size: 1.17, speed: 1.72, trigger: 2.3, reach: 2.59, windup: .83, duration: 1.26, delay: 1.02, damage: 22,
+  },
+  injustice: {
+    sprite: "injustice", name: "Justice Delayed", hint: "Slams its gavel across a wide warning ring. Move away during its windup.", boss: true,
+    health: 630, radius: .86, size: 1.38, speed: 1.55, trigger: 2.76, reach: 3.35, windup: 1, duration: 1.52, delay: 1.24, damage: 32,
+  },
+  //JT-2026/11/24 - give kahirapan and the malacanang boss distinct heavy strikes
+  kahirapan: {
+    sprite: "kahirapan", name: "Kahirapan", hint: "Moves slowly and hits hard. Step out of its warning ring before it strikes.",
+    health: 200, radius: .63, size: 1.21, speed: 1.35, trigger: 2.07, reach: 2.54, windup: .79, duration: 1.24, delay: 1.09, damage: 23,
+  },
+  politikoBoss: {
+    sprite: "politiko", name: "Politiko", hint: "Its heavy strike covers a wide ring. Use the long windup to get clear.", boss: true,
+    health: 710, radius: .88, size: 1.43, speed: 1.45, trigger: 2.88, reach: 3.55, windup: 1.1, duration: 1.66, delay: 1.34, damage: 33,
+  },
+  //JT-2026/11/24 - give the maypajo boss a fast chase and short windup
+  adik: {
+    sprite: "adik", name: "Adik", hint: "Chases quickly and strikes after a short warning. Keep moving outside the ring.", boss: true,
+    health: 765, radius: .71, size: 1.36, speed: 2.24, trigger: 2.1, reach: 2.65, windup: .6, duration: 1.02, delay: .86, damage: 30,
+  },
 };
 const MOVES = {
   //JT-2026/11/23 - raise attack damage and award special charge on melee hits
@@ -161,6 +222,18 @@ const ART = {
   balintawak: "balintawak_0.jpg",
   petrolyo: "gasoline_0.png",
   inflation: "inflation_0.png",
+  //JT-2026/11/24 - reuse the padre faura backdrop and arena opponent art
+  pfaura: "pfaura_0.jpg",
+  matapobre: "matapobre_0.png",
+  lipunan: "lipunan_0.png",
+  politiko: "congressman_0.png",
+  injustice: "injustice_0.png",
+  //JT-2026/11/24 - load malacanang and kahirapan for level seven
+  malacaniang: "malacaniang_0.jpg",
+  kahirapan: "kahirapan_0.png",
+  //JT-2026/11/24 - reuse the maypajo backdrop and adik fighter art
+  maypajo: "maypajo_0.jpg",
+  adik: "adik_0.png",
 };
 const SOUNDS = {
   music: ["freesound_community-video-game-music-loop-27629.mp3", .14, 0],
@@ -391,7 +464,11 @@ function finishRun(won) {
   if (won && next) {
     showScreen("Level " + (state.level + 1) + " cleared", ENEMIES[boss].name + " is down. You unlocked " + next.name + ".", "Enter " + next.name);
   } else if (won) {
-    showScreen("Run cleared", ENEMIES[boss].name + " is down. You survived all " + LEVELS.length + " arenas.", "Play again");
+    // showScreen("Run cleared", ENEMIES[boss].name + " is down. You survived all " + LEVELS.length + " arenas.", "Play again");
+    //JT-2026/11/24 - congratulate players after the final survival wave
+    const victoryMessage = "Congrats nagtagumpay ka bilang Pilipino!";
+    showScreen("Run cleared", victoryMessage, "Play again");
+    ui.status.textContent = victoryMessage;
   } else {
     showScreen("Run over", "Juan fell in " + name + " during wave " + state.wave + " of " + waves.length + ".", "Try again");
     playSound("loss");
