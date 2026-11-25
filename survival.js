@@ -177,7 +177,9 @@ const MOVES = {
   //JT-2026/11/23 - raise attack damage and award special charge on melee hits
   punch: { damage: 30, reach: 1.35, impact: .15, duration: .35, charge: 30 },
   kick: { damage: 50, reach: 1.89, impact: .29, duration: .58, charge: 50 },
-  haduken: { damage: 120, impact: .29, duration: .68, special: true },
+  // haduken: { damage: 120, impact: .29, duration: .68, special: true },
+  //JT-2026/11/25 - match the survival projectile release to the shared hand pose
+  haduken: { damage: 120, impact: JUAN_HADUKEN.impact, duration: .68, special: true },
   senpu: { damage: 80, reach: 2.8, impact: .22, duration: .74, special: true },
   //JT-2026/11/24 - make almighty push a two-bar knockout across the arena
   almightyPush: { impact: ALMIGHTY_PUSH.impact, duration: ALMIGHTY_PUSH.duration, special: true, bars: ALMIGHTY_PUSH.bars },
@@ -234,6 +236,8 @@ const ART = {
   //JT-2026/11/24 - reuse the maypajo backdrop and adik fighter art
   maypajo: "maypajo_0.jpg",
   adik: "adik_0.png",
+  //JT-2026/11/25 - register gloria's atlases with the survival art loader
+  ...Object.fromEntries(Object.values(GLORIA_ATLASES).map(id => [id, id + ".png"])),
 };
 const SOUNDS = {
   music: ["freesound_community-video-game-music-loop-27629.mp3", .14, 0],
@@ -245,7 +249,9 @@ const SOUNDS = {
   crash: ["rsf_studios-car-crash-swerving-and-crash-592672.mp3", .44, .36],
   loss: ["make_more_sound-8-bit-video-game-fail-version-2-145478.mp3", .44, .18],
   //JT-2026/11/24 - load the same monster attack clips used in arena
-  ...Object.fromEntries(Object.entries(MONSTER_AUDIO).map(([name, { file, volume, offset, duration }]) => [name, [file, volume, offset, duration]])),
+  // ...Object.fromEntries(Object.entries(MONSTER_AUDIO).map(([name, { file, volume, offset, duration }]) => [name, [file, volume, offset, duration]])),
+  //JT-2026/11/25 - load gloria's strike effects alongside the existing clips
+  ...Object.fromEntries(Object.entries({ ...MONSTER_AUDIO, ...GLORIA_EFFECTS }).map(([name, { file, volume, offset, duration }]) => [name, [file, volume, offset, duration]])),
 };
 const BAR = 100;
 const MAX_CHARGE = 3 * BAR;
@@ -254,6 +260,8 @@ const TOKEN_POINTS = [[3.7, 6.9], [12.3, 5.4], [7.7, 2.6], [6.6, 8.4], [11.8, 8.
 const TOKEN_INTERVAL = 7;
 const TOKEN_LIMIT = 2;
 const CHARGE_ANIMATION_TIME = .58;
+//JT-2026/11/25 - keep the selected fighter through the whole survival run
+const playingGloria = selectedFighter() === "gloria";
 const byId = id => document.getElementById(id);
 const ui = {
   arena: byId("arena"), canvas: byId("fight"), start: byId("start"), pause: byId("pause"), sound: byId("sound"),
@@ -284,6 +292,14 @@ let lastCharge;
 let lastWave;
 let lastLevel;
 
+//JT-2026/11/25 - show gloria's name and controls in survival
+if (playingGloria) {
+  labelGloriaControls();
+  ui.health.previousElementSibling.querySelector("strong").textContent = "Gloria";
+  ui.health.setAttribute("aria-label", "Gloria's health");
+  const controlHint = document.querySelector(".control-hint");
+  if (controlHint) controlHint.textContent = "Pick up Charge Tokens to gain one Special Bar. Kick Barrage hits nearby enemies and Basooka hits enemies in a lane. Spirit Bomb needs two full bars and clears every enemy on the field.";
+}
 ui.start.addEventListener("click", activate);
 ui.pause.addEventListener("click", togglePause);
 ui.sound.addEventListener("click", toggleSound);
@@ -470,7 +486,9 @@ function finishRun(won) {
     showScreen("Run cleared", victoryMessage, "Play again");
     ui.status.textContent = victoryMessage;
   } else {
-    showScreen("Run over", "Juan fell in " + name + " during wave " + state.wave + " of " + waves.length + ".", "Try again");
+    // showScreen("Run over", "Juan fell in " + name + " during wave " + state.wave + " of " + waves.length + ".", "Try again");
+    //JT-2026/11/25 - name the active fighter in the defeat screen
+    showScreen("Run over", (playingGloria ? "Gloria" : "Juan") + " fell in " + name + " during wave " + state.wave + " of " + waves.length + ".", "Try again");
     playSound("loss");
   }
 }
@@ -538,9 +556,12 @@ function updatePlayer(dt) {
     //JT-2026/11/24 - time the push impact to its spoken cue
     if (attack.kind === "almightyPush") advanceAlmightyPush(attack, dt);
     else attack.elapsed += dt;
-    if (!attack.spent && attack.elapsed >= attack.move.impact) {
+    // if (!attack.spent && attack.elapsed >= attack.move.impact) {
+    //JT-2026/11/25 - apply kick barrage at each of its strike frames
+    if (!attack.spent && attack.elapsed >= (attack.nextImpact ?? attack.move.impact)) {
       attack.spent = true;
       resolvePlayerAttack(player, attack);
+      queueGloriaFollowUp(attack, attack.move.followUps);
     }
     if (attack.elapsed >= attack.move.duration) player.attack = null;
     return;
@@ -568,7 +589,10 @@ function updatePlayer(dt) {
 
 //JT-2026/11/23 - aim a move and spend one full bar for a special
 function startAttack(player, kind) {
-  const move = MOVES[kind];
+  // const move = MOVES[kind];
+  //JT-2026/11/25 - select the survival damage and timing for the active fighter
+  const skill = playingGloria ? GLORIA_SKILLS[kind] : null;
+  const move = skill ? { ...skill, ...skill.survival } : MOVES[kind];
   // if (move.special && player.charge + 1e-7 < BAR) {
   //   showNotice("Need one full Special Bar", 1.15);
   //   return false;
@@ -581,12 +605,20 @@ function startAttack(player, kind) {
   }
   const target = closestEnemy(player);
   if (target) {
-    const length = Math.hypot(target.x - player.x, target.z - player.z) || 1;
-    player.aimX = (target.x - player.x) / length;
-    player.aimZ = (target.z - player.z) / length;
+    // const length = Math.hypot(target.x - player.x, target.z - player.z) || 1;
+    // player.aimX = (target.x - player.x) / length;
+    // player.aimZ = (target.z - player.z) / length;
+    //JT-2026/11/25 - keep a valid shot direction when a target overlaps the fighter
+    const dx = target.x - player.x;
+    const dz = target.z - player.z;
+    const length = Math.hypot(dx, dz);
+    player.aimX = length ? dx / length : player.direction;
+    player.aimZ = length ? dz / length : 0;
     if (Math.abs(player.aimX) > .07) player.direction = Math.sign(player.aimX);
   }
-  player.attack = { kind, move, elapsed: 0, spent: false };
+  // player.attack = { kind, move, elapsed: 0, spent: false };
+  //JT-2026/11/25 - let spirit bomb follow its own voice timeline
+  player.attack = { kind, move, elapsed: 0, spent: false, cast: move.soundEnd ? move : undefined };
   if (move.special) {
     // player.charge = Math.max(0, player.charge - BAR);
     // playSound(kind);
@@ -596,7 +628,9 @@ function startAttack(player, kind) {
       if (soundEnabled) resumeAlmightyPushVoice(player.attack);
     } else {
       player.charge = Math.max(0, player.charge - cost);
-      playSound(kind);
+      // playSound(kind);
+      //JT-2026/11/25 - reserve juan's voiced specials for his moves
+      if (!playingGloria) playSound(kind);
     }
   }
   return true;
@@ -620,23 +654,38 @@ function closestEnemy(player, reach = Infinity) {
 //JT-2026/11/23 - launch the projectile or apply a melee strike
 function resolvePlayerAttack(player, attack) {
   const { kind, move } = attack;
+  //JT-2026/11/25 - play gloria's sounds at the release or each barrage hit
+  if (move.effect) playSound(move.effect);
   //JT-2026/11/24 - knock out every living enemy on the field at impact
   if (kind === "almightyPush") {
     const targets = state.enemies.filter(enemy => enemy.health > 0);
     for (const enemy of targets) hitEnemy(enemy, player, enemy.health, .95, false);
     burst(player.x, player.z, "#a6efff", 30);
-    showNotice("Almighty Push · " + targets.length + " K.O.", 1.4);
+    // showNotice("Almighty Push · " + targets.length + " K.O.", 1.4);
+    //JT-2026/11/25 - announce the selected ultimate at its knockout cue
+    showNotice((move.label ?? "Almighty Push") + " · " + targets.length + " K.O.", 1.4);
     return;
   }
-  if (kind === "haduken") {
-    state.shots.push({ x: player.x + player.aimX * .55, z: player.z + player.aimZ * .55, dx: player.aimX, dz: player.aimZ, life: 1.62 });
+  //JT-2026/11/25 - resolve the basooka beam or launch the selected projectile
+  if (move.beamEnd) {
+    resolveGloriaBeam(player, move.reach, move.damage);
+    return;
+  }
+  // if (kind === "haduken") {
+  if (kind === "haduken" || move.thrown) {
+    // state.shots.push({ x: player.x + player.aimX * .55, z: player.z + player.aimZ * .55, dx: player.aimX, dz: player.aimZ, life: 1.62 });
+    const shot = { x: player.x + player.aimX * .55, z: player.z + player.aimZ * .55, dx: player.aimX, dz: player.aimZ, life: 1.62 };
+    if (move.thrown) shot.move = move;
+    state.shots.push(shot);
     burst(player.x, player.z, "#81f4d9", 6);
     return;
   }
   if (kind === "senpu") {
     for (const enemy of state.enemies) {
       if (enemy.health && Math.hypot(enemy.x - player.x, enemy.z - player.z) <= move.reach + enemy.profile.radius) {
-        hitEnemy(enemy, player, move.damage, .55);
+        // hitEnemy(enemy, player, move.damage, .55);
+        //JT-2026/11/25 - keep nearby enemies within the barrage for later kicks
+        hitEnemy(enemy, player, move.damage, move.followUps ? .12 : .55);
       }
     }
     burst(player.x, player.z, "#ffdb82", 16);
@@ -657,7 +706,10 @@ function updateShots(dt) {
     if (shot.life <= 0 || shot.x < -1 || shot.x > WORLD.width + 1 || shot.z < -1 || shot.z > WORLD.depth + 1) return false;
     const target = closestEnemy(shot, .48);
     if (!target) return true;
-    hitEnemy(target, { x: shot.x - shot.dx, z: shot.z - shot.dz }, MOVES.haduken.damage, .7);
+    // hitEnemy(target, { x: shot.x - shot.dx, z: shot.z - shot.dz }, MOVES.haduken.damage, .7);
+    //JT-2026/11/25 - award throw charge only after the projectile connects
+    hitEnemy(target, { x: shot.x - shot.dx, z: shot.z - shot.dz }, (shot.move ?? MOVES.haduken).damage, .7);
+    if (shot.move?.charge) state.player.charge = Math.min(MAX_CHARGE, state.player.charge + shot.move.charge);
     return false;
   });
 }
@@ -857,6 +909,8 @@ function render() {
   //JT-2026/11/23 - show pickups and the full area covered by konoha senpu
   state.tokens.forEach(drawChargeToken);
   const attack = state.player.attack;
+  //JT-2026/11/25 - draw the basooka in the same direction used to resolve hits
+  if (attack?.move.beamEnd) drawGloriaBeam(state.player, attack);
   if (attack?.kind === "senpu") {
     const { x, z } = state.player;
     drawGroundRing(x, z, attack.move.reach, "#ffde8d", attack.spent ? "#fbcb5970" : "#fbcb5936", 2.5);
@@ -911,8 +965,12 @@ function drawArena() {
   context.stroke();
   //JT-2026/11/24 - flash the entire floor when almighty push lands
   const attack = state.player.attack;
-  if (attack?.kind === "almightyPush" && attack.spent && attack.elapsed < ALMIGHTY_PUSH.soundEnd) {
-    const fade = (ALMIGHTY_PUSH.soundEnd - attack.elapsed) / (ALMIGHTY_PUSH.soundEnd - ALMIGHTY_PUSH.impact);
+  // if (attack?.kind === "almightyPush" && attack.spent && attack.elapsed < ALMIGHTY_PUSH.soundEnd) {
+  //   const fade = (ALMIGHTY_PUSH.soundEnd - attack.elapsed) / (ALMIGHTY_PUSH.soundEnd - ALMIGHTY_PUSH.impact);
+  //JT-2026/11/25 - time the field flash to the selected ultimate
+  const flashEnd = attack?.move.flashEnd ?? ALMIGHTY_PUSH.soundEnd;
+  if (attack?.kind === "almightyPush" && attack.spent && attack.elapsed < flashEnd) {
+    const fade = (flashEnd - attack.elapsed) / (flashEnd - attack.move.impact);
     context.fillStyle = `rgba(154, 231, 255, ${.32 * fade})`;
     context.fill();
   }
@@ -984,7 +1042,10 @@ function drawGroundRing(x, z, radius, stroke, fill, width) {
 //JT-2026/11/23 - select a sprite frame without changing the source artwork
 function fighterPose(fighter) {
   const isPlayer = !fighter.profile;
-  const sprite = isPlayer ? "hero" : fighter.profile.sprite;
+  // const sprite = isPlayer ? "hero" : fighter.profile.sprite;
+  //JT-2026/11/25 - use gloria's base sheet for her movement and recovery poses
+  const playerSprite = playingGloria ? GLORIA_ATLASES.base : "hero";
+  const sprite = isPlayer ? playerSprite : fighter.profile.sprite;
   if (!fighter.health) return [sprite, 5, Math.min(3, Math.floor((fighter.death ?? 1) * 6))];
   if (fighter.stun) return [sprite, 4, fighter.stun > .18 ? 0 : 1];
   if (fighter.attack) {
@@ -993,15 +1054,22 @@ function fighterPose(fighter) {
       const ratio = attack.time / fighter.profile.duration;
       return [sprite, fighter.kind === "snatcher" ? 2 : 3, Math.min(3, Math.floor(ratio * 4))];
     }
+    //JT-2026/11/25 - render each of gloria's attacks from its own atlas
+    if (playingGloria) return gloriaSkillPose(attack.kind, attack.elapsed);
     const progress = attack.elapsed / attack.move.duration;
     const column = Math.min(3, Math.floor(progress * 4));
     //JT-2026/11/24 - show the third hero sheet through the full cast
     if (attack.kind === "almightyPush") return ["almightyPush", ...almightyPushPose(attack.elapsed)];
     if (attack.kind === "punch") return ["actions", 0, Math.min(8, Math.floor(progress * 9))];
-    return [sprite, { kick: 3, haduken: 7, senpu: 8 }[attack.kind], column];
+    // return [sprite, { kick: 3, haduken: 7, senpu: 8 }[attack.kind], column];
+    //JT-2026/11/25 - show the release pose as soon as the haduken leaves juan's hands
+    if (attack.kind === "haduken") return [sprite, ...juanHadukenPose(attack.elapsed, attack.move.duration)];
+    return [sprite, { kick: 3, senpu: 8 }[attack.kind], column];
   }
   if (fighter.chargeAnimation > 0) {
     const progress = 1 - fighter.chargeAnimation / CHARGE_ANIMATION_TIME;
+    //JT-2026/11/25 - show gloria's prayer when she picks up a charge token
+    if (playingGloria) return gloriaSkillPose("pray", progress * .67);
     return ["actions", 1, clamp(Math.floor(progress * 7), 0, 6)];
   }
   return [sprite, fighter.moving ? 1 : 0, Math.floor(fighter.age * (fighter.moving ? 10 : 3.6)) % 4];
@@ -1017,6 +1085,8 @@ function drawFighter(fighter) {
   //JT-2026/11/24 - keep the almighty push sprite anchored to juan's ground position
   let frame = name === "actions" ? ACTION_FRAME : name === "hero" ? HERO_FRAME : FRAME;
   if (name === "almightyPush") frame = ALMIGHTY_PUSH.frame;
+  //JT-2026/11/25 - align gloria's cells while drawing the whole descending blast
+  if (!fighter.profile && playingGloria) frame = name === GLORIA_ATLASES.spirit ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME;
   const size = scale * (fighter.profile?.size ?? 1);
   context.fillStyle = "#0c10109c";
   context.beginPath();
@@ -1029,8 +1099,19 @@ function drawFighter(fighter) {
   //JT-2026/11/24 - hold juan in the air before lowering him to the floor
   const attack = fighter.attack;
   let lift = 0;
-  if (name === "almightyPush") lift = almightyPushLift(attack.elapsed) * size;
-  else if (attack?.kind === "senpu") lift = Math.sin(Math.PI * attack.elapsed / attack.move.duration) * 24 * size;
+  // if (name === "almightyPush") lift = almightyPushLift(attack.elapsed) * size;
+  //JT-2026/11/25 - center the push wave on juan as the survival camera projects his position
+  if (name === "almightyPush") {
+    lift = almightyPushLift(attack.elapsed) * size;
+    drawAlmightyPushWave(context, x, y - lift, size, attack.elapsed);
+  }
+  // else if (attack?.kind === "senpu") lift = Math.sin(Math.PI * attack.elapsed / attack.move.duration) * 24 * size;
+  //JT-2026/11/25 - draw the orb above gloria as she hovers and gathers energy
+  else if (name === GLORIA_ATLASES.spirit) {
+    lift = gloriaSpiritLift(attack.elapsed) * size;
+    drawGloriaSpiritOrb(context, image, x, y - lift, size, attack.elapsed, view.width);
+  }
+  else if (attack?.kind === "senpu" && !attack.move.followUps) lift = Math.sin(Math.PI * attack.elapsed / attack.move.duration) * 24 * size;
   context.translate(x, y - lift);
   context.scale(fighter.direction, 1);
   context.imageSmoothingEnabled = true;
@@ -1058,15 +1139,23 @@ function drawFighter(fighter) {
 
 //JT-2026/11/23 - use the existing haduken frame at the projectile's ground position
 function drawShot(shot) {
-  const image = images.get("hero");
+  // const image = images.get("hero");
+  //JT-2026/11/25 - render the thrown stapler or juan's fireball
+  const image = images.get(shot.move ? GLORIA_ATLASES.base : "hero");
   if (!image?.complete || !image.naturalWidth) return;
   const point = project(shot.x, shot.z);
   const scale = point.scale * .58;
   context.save();
-  context.translate(point.x, point.y - 43 * point.scale);
+  // context.translate(point.x, point.y - 43 * point.scale);
+  //JT-2026/11/25 - keep the haduken at hand height as it travels through the projected arena
+  const elevation = shot.move ? 43 : JUAN_HADUKEN.handHeight;
+  context.translate(point.x, point.y - elevation * point.scale);
   context.scale(shot.dx < 0 ? -1 : 1, 1);
-  context.drawImage(image, 0, HERO_FRAME.height * 9, HERO_FRAME.width, HERO_FRAME.height,
-    -HERO_FRAME.x * scale, -HERO_FRAME.height * scale / 2, HERO_FRAME.width * scale, HERO_FRAME.height * scale);
+  // context.drawImage(image, 0, HERO_FRAME.height * 9, HERO_FRAME.width, HERO_FRAME.height,
+  //   -HERO_FRAME.x * scale, -HERO_FRAME.height * scale / 2, HERO_FRAME.width * scale, HERO_FRAME.height * scale);
+  const { width, height, x, y } = shot.move ? GLORIA_FRAME : HERO_FRAME;
+  context.drawImage(image, 0, height * (shot.move ? 8 : 9), width, height,
+    -x * scale, -(shot.move ? y : height / 2) * scale, width * scale, height * scale);
   context.restore();
 }
 
@@ -1121,7 +1210,9 @@ function syncHud() {
 //JT-2026/11/23 - load the original music and cues from local project assets
 function prepareSounds() {
   //JT-2026/11/24 - warm up the voice clip before the first cast
-  prepareAlmightyPushVoice();
+  // prepareAlmightyPushVoice();
+  //JT-2026/11/25 - warm up the active fighter's ultimate voice
+  prepareAlmightyPushVoice(playingGloria ? GLORIA_SKILLS.almightyPush : ALMIGHTY_PUSH);
   if (recordings.size) return;
   // for (const [name, [file, volume]] of Object.entries(SOUNDS)) {
   //JT-2026/11/24 - stop monster clips after the selected excerpt
@@ -1299,7 +1390,10 @@ function prepareLevelArt(index) {
   const level = LEVELS[index];
   // const names = new Set(["hero", "actions", level.backdrop]);
   //JT-2026/11/24 - have the almighty push atlas ready in every arena
-  const names = new Set(["hero", "actions", "almightyPush", level.backdrop]);
+  // const names = new Set(["hero", "actions", "almightyPush", level.backdrop]);
+  //JT-2026/11/25 - load only the chosen fighter's atlases and the current arena
+  const heroArt = playingGloria ? Object.values(GLORIA_ATLASES) : ["hero", "actions", "almightyPush"];
+  const names = new Set([...heroArt, level.backdrop]);
   level.waves.flat().forEach(kind => names.add(ENEMIES[kind].sprite));
   return Promise.all([...names].map(async name => {
     if (images.has(name)) return;
@@ -1347,4 +1441,34 @@ function startLevel(index, charge = 0) {
   ui.pause.disabled = false;
   beginWave();
   playSound("music");
+}
+
+//JT-2026/11/25 - hit living enemies in front of the cannon and inside its lane
+function resolveGloriaBeam(player, reach, damage) {
+  for (const enemy of state.enemies) {
+    if (!enemy.health) continue;
+    const dx = enemy.x - player.x;
+    const dz = enemy.z - player.z;
+    const forward = dx * player.aimX + dz * player.aimZ;
+    const across = Math.abs(dx * player.aimZ - dz * player.aimX);
+    if (forward >= 0 && forward <= reach + enemy.radius && across <= .72 + enemy.radius) {
+      hitEnemy(enemy, player, damage, .78, false);
+    }
+  }
+}
+
+//JT-2026/11/25 - project the cannon beam from gloria to the edge of its lane
+function drawGloriaBeam(player, attack) {
+  const edge = (position, direction, bound) => direction ? ((direction > 0 ? bound : 0) - position) / direction : Infinity;
+  const distance = Math.min(attack.move.reach, edge(player.x, player.aimX, WORLD.width), edge(player.z, player.aimZ, WORLD.depth));
+  const from = project(player.x, player.z);
+  const to = project(player.x + player.aimX * distance, player.z + player.aimZ * distance);
+  const dx = to.x - from.x;
+  const dy = to.y - from.y - 65 * (to.scale - from.scale);
+  context.save();
+  context.translate(from.x, from.y - 65 * from.scale);
+  context.rotate(Math.atan2(dy, dx));
+  context.translate(24 * from.scale, 0);
+  drawBasookaBeam(context, Math.max(0, Math.hypot(dx, dy) - 24 * from.scale), attack.elapsed, 12 * from.scale);
+  context.restore();
 }

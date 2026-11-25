@@ -8,7 +8,9 @@
   <!-- JT-2026/11/24 - include balintawak in the five-arena survival run -->
   <!-- <meta name="description" content="Fight through 15 waves as Juan across five 2.5D survival arenas from Tondo to Balintawak."> -->
   <!-- JT-2026/11/24 - include maypajo in the eight-arena survival run -->
-  <meta name="description" content="Fight through 24 waves as Juan across eight 2.5D survival arenas from Tondo to Maypajo.">
+  <!-- <meta name="description" content="Fight through 24 waves as Juan across eight 2.5D survival arenas from Tondo to Maypajo."> -->
+  <!-- JT-2026/11/25 - mention both playable fighters in survival -->
+  <meta name="description" content="Fight through 24 waves as Juan or Gloria across eight 2.5D survival arenas from Tondo to Maypajo.">
   <title>Pinoy Struggle Survival</title>
   <!-- JT-2026/11/24 - use the pinoy struggle icon in the browser tab -->
   <link rel="icon" type="image/png" sizes="48x48" href="assets/ps-favicon.png">
@@ -20,6 +22,8 @@
   <script src="monster-audio.js" defer></script>
   <!-- JT-2026/11/24 - load the shared almighty push timing before survival starts -->
   <script src="almighty-push.js" defer></script>
+  <!-- JT-2026/11/25 - load the shared fighter selection and gloria's moves -->
+  <script src="playable-fighters.js" defer></script>
   <script src="survival.js" defer></script>
 </head>
 <body>
@@ -119,6 +123,13 @@
     <!-- JT-2026/11/23 - show recent survival changes below the wave guide -->
     <section class="game-updates" aria-labelledby="updates-title">
       <h2 id="updates-title">Game Updates</h2>
+      <!-- JT-2026/11/25 - introduce gloria's crowd attacks in survival -->
+      <article class="update-entry">
+        <h3><time datetime="2026-11-25">November 25, 2026</time></h3>
+        <ul>
+          <li>Gloria joins Survival. Kick Barrage hits nearby enemies, Basooka hits enemies in its lane, and Spirit Bomb clears the field.</li>
+        </ul>
+      </article>
       <!-- JT-2026/11/24 - announce balintawak and the monster attack sounds -->
       <article class="update-entry">
         <h3><time datetime="2026-11-24">November 24, 2026</time></h3>

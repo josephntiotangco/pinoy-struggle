@@ -144,7 +144,9 @@ const MOVES = {
   // energyWave: { duration: .72, impact: .29, damage: 35, reach: 0, push: 185, stun: .25 },
   // superUpperCut: { duration: .8, impact: .16, damage: 45, reach: 89, push: 246, stun: .34 },
   //JT-2026/11/23 - raise both specials' damage for tougher opponents
-  energyWave: { duration: .72, impact: .29, damage: 100, reach: 0, push: 185, stun: .25 },
+  // energyWave: { duration: .72, impact: .29, damage: 100, reach: 0, push: 185, stun: .25 },
+  //JT-2026/11/25 - reuse the launch timing from juan's haduken animation
+  energyWave: { duration: JUAN_HADUKEN.duration, impact: JUAN_HADUKEN.impact, damage: 100, reach: 0, push: 185, stun: .25 },
   superUpperCut: { duration: .8, impact: .16, damage: 60, reach: 89, push: 246, stun: .34 },
   //JT-2026/11/24 - use the shared cast timing for the full-meter knockout
   almightyPush: { duration: ALMIGHTY_PUSH.duration, impact: ALMIGHTY_PUSH.impact, reach: 0, push: 350, stun: .34 },
@@ -178,8 +180,12 @@ const GAME_AUDIO = {
   auraCharge: { file: "super_saiyan_god.mp3", offset: .1, duration: 3.75, volume: .8, interruptible: true },
   //JT-2026/11/24 - preload the shared monster attack clips with the arena effects
   ...MONSTER_AUDIO,
+  //JT-2026/11/25 - preload gloria's timed combat effects
+  ...GLORIA_EFFECTS,
 };
 const VEHICLE_OPPONENTS = new Set(["kamote_rider_0", "ebike_0", "traffic_0", "mayabang_0"]);
+//JT-2026/11/25 - lock the selected hero in for the arena run
+const playingGloria = selectedFighter() === "gloria";
 
 //JT-2026/11/19 - connect the arcade ui and initialize the first matchup
 const byId = id => document.getElementById(id);
@@ -216,6 +222,14 @@ const activeSoundNodes = new Set();
 let soundContext;
 let previousTime = 0;
 
+//JT-2026/11/25 - name gloria and show her arena controls when she is selected
+if (playingGloria) {
+  labelGloriaControls();
+  ui.playerPlate.textContent = "Gloria";
+  ui.playerSuper.setAttribute("aria-label", "Gloria's Special charge");
+  const touchHint = ui.touch.querySelector(".touch-hint");
+  if (touchHint) touchHint.textContent = "Hold back to guard or hold Pray to charge. Slap and Throw also build Special on hit. Spirit Bomb needs two full bars and empties the meter for a one-hit knockout.";
+}
 makeRoster();
 //JT-2026/11/23 - show the arena gallery alongside the opponent ladder
 makeArenaPreviews();
@@ -323,7 +337,9 @@ function resetRound() {
   // game.player = makeFighter(HERO, view.world * .225, 1);
   // game.enemy = makeFighter(OPPONENTS[game.level], view.world * .775, -1);
   //JT-2026/11/23 - start juan on the right facing the opponent on the left
-  game.player = makeFighter(HERO, view.world * .775, -1);
+  // game.player = makeFighter(HERO, view.world * .775, -1);
+  //JT-2026/11/25 - start each arena round with the selected hero
+  game.player = makeFighter(playingGloria ? GLORIA_PROFILE : HERO, view.world * .775, -1);
   game.enemy = makeFighter(OPPONENTS[game.level], view.world * .225, 1);
   //JT-2026/11/23 - start each round outside the aura charge pose
   game.player.auraTime = 0;
@@ -406,7 +422,10 @@ async function loadMatch() {
   //JT-2026/11/23 - keep both hero sprite sheets ready throughout the campaign
   // const ids = [HERO.id, HERO_ACTIONS.id, game.enemy.profile.id];
   //JT-2026/11/24 - keep the almighty push atlas loaded alongside juan's other poses
-  const ids = [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id, game.enemy.profile.id];
+  // const ids = [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id, game.enemy.profile.id];
+  //JT-2026/11/25 - preload only the active fighter's four or three atlases
+  const heroIds = playingGloria ? Object.values(GLORIA_ATLASES) : [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id];
+  const ids = [...heroIds, game.enemy.profile.id];
   for (const id of atlases.keys()) {
     if (!ids.includes(id) && id !== next?.id) atlases.delete(id);
   }
@@ -579,7 +598,9 @@ function tick(dt) {
     //JT-2026/11/24 - finish the cast and its voice before the result screen
     if (game.player.attack?.kind === "almightyPush") {
       advanceAlmightyPush(game.player.attack, dt);
-      if (game.player.attack.elapsed >= ALMIGHTY_PUSH.duration) game.player.attack = null;
+      // if (game.player.attack.elapsed >= ALMIGHTY_PUSH.duration) game.player.attack = null;
+      //JT-2026/11/25 - let the selected hero finish their own knockout animation
+      if (game.player.attack.elapsed >= game.player.attack.duration) game.player.attack = null;
     }
     if (game.player.down) game.player.down += dt;
     if (game.enemy.down) game.enemy.down += dt;
@@ -617,7 +638,10 @@ function updateFight(dt) {
     const superReady = grounded && game.superCharge >= SUPER_COST;
     // if (superReady && pressed.has("superUpperCut")) {
     //JT-2026/11/24 - prioritize almighty push once two bars are full
-    if (grounded && pressed.has("almightyPush") && game.superCharge >= ALMIGHTY_PUSH.bars * SUPER_COST) {
+    // if (grounded && pressed.has("almightyPush") && game.superCharge >= ALMIGHTY_PUSH.bars * SUPER_COST) {
+    //JT-2026/11/25 - check the selected ultimate's bar requirement
+    const knockoutBars = playingGloria ? GLORIA_SKILLS.almightyPush.bars : ALMIGHTY_PUSH.bars;
+    if (grounded && pressed.has("almightyPush") && game.superCharge >= knockoutBars * SUPER_COST) {
       attack(player, "almightyPush");
     } else if (superReady && pressed.has("superUpperCut")) {
       attack(player, "superUpperCut");
@@ -699,8 +723,11 @@ function canAct(fighter) {
 
 //JT-2026/11/19 - start a punch or kick with the fighter's reach and timing
 function attack(fighter, kind) {
-  const move = MOVES[kind];
+  // const move = MOVES[kind];
   const isPlayer = fighter === game.player;
+  //JT-2026/11/25 - use gloria's arena attack behind the same input slot
+  const skill = isPlayer && playingGloria ? GLORIA_SKILLS[ARENA_SKILL_SLOTS[kind] ?? kind] : null;
+  const move = skill ? { ...skill, ...skill.arena } : MOVES[kind];
   const heavy = kind === "heavy";
   const reach = isPlayer
     ? move.reach + Math.max(0, game.enemy.profile.body - 40)
@@ -726,11 +753,18 @@ function attack(fighter, kind) {
   //JT-2026/11/24 - empty the meter and start the full voice at the beginning of the cast
   if (isPlayer && kind === "almightyPush") {
     setSuperCharge(0);
+    //JT-2026/11/25 - sync spirit bomb to gloria's own voice clip
+    if (skill) fighter.attack.cast = skill;
     if (ui.sound.getAttribute("aria-pressed") === "true") resumeAlmightyPushVoice(fighter.attack);
   } else if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
     setSuperCharge(game.superCharge - SUPER_COST);
-    playRecordedSound(kind, "jab");
-  } else if (isPlayer) {
+    // playRecordedSound(kind, "jab");
+    //JT-2026/11/25 - keep juan's recorded voice effects on his own specials
+    if (!playingGloria) playRecordedSound(kind, "jab");
+  // } else if (isPlayer) {
+  //   tone(heavy ? "swing" : "jab");
+  //JT-2026/11/25 - leave gloria's normal attack sounds at the strike frames
+  } else if (isPlayer && !playingGloria) {
     tone(heavy ? "swing" : "jab");
   }
 }
@@ -770,8 +804,12 @@ function hitFrom(attacker, target, dt) {
   if (action.kind === "almightyPush") advanceAlmightyPush(action, dt);
   else action.elapsed += dt;
   if (action.elapsed >= action.duration) attacker.attack = null;
-  if (action.spent || action.elapsed < action.impact) return null;
+  // if (action.spent || action.elapsed < action.impact) return null;
+  //JT-2026/11/25 - allow later barrage strikes to fire during the same cast
+  if (action.spent || action.elapsed < (action.nextImpact ?? action.impact)) return null;
   action.spent = true;
+  queueGloriaFollowUp(action, action.followUps);
+  if (action.effect) playRecordedSound(action.effect, "swing");
   //JT-2026/11/24 - apply the knockout at the cast's impact regardless of distance or height
   if (action.kind === "almightyPush") return { ...action, damage: target.health };
   //JT-2026/11/24 - play the monster cue once at the strike frame
@@ -779,7 +817,9 @@ function hitFrom(attacker, target, dt) {
   //JT-2026/11/19 - release the fireball or launch juan when a special reaches its strike frame
   // if (action.kind === "hadouken") {
   //JT-2026/11/19 - release the projectile for energy wave
-  if (action.kind === "energyWave") {
+  // if (action.kind === "energyWave") {
+  //JT-2026/11/25 - launch gloria's thrown stapler through the projectile hit path
+  if (action.thrown || (action.kind === "energyWave" && !action.beamEnd)) {
     // game.projectile = {
     //JT-2026/11/19 - add this energy wave to the active projectiles
     game.projectiles.push({
@@ -790,12 +830,16 @@ function hitFrom(attacker, target, dt) {
       action,
     // };
     });
-    tone("swing");
+    // tone("swing");
+    //JT-2026/11/25 - let the throw use its own release sound
+    if (!action.thrown) tone("swing");
     return null;
   }
   // if (action.kind === "shoryuken") attacker.velocity = 406;
   //JT-2026/11/19 - start the rise for super upper cut
-  if (action.kind === "superUpperCut") attacker.velocity = 406;
+  // if (action.kind === "superUpperCut") attacker.velocity = 406;
+  //JT-2026/11/25 - keep kick barrage grounded
+  if (action.kind === "superUpperCut" && !action.followUps) attacker.velocity = 406;
 
   const distance = (target.x - attacker.x) * attacker.direction;
   return distance >= 0 && distance <= action.reach && Math.abs(attacker.y - target.y) <= 59 ? action : null;
@@ -822,7 +866,9 @@ function applyHit(target, attacker, action, meter) {
   //JT-2026/11/19 - charge juan's meter only from unblocked punches and kicks
   setHealth(meter, target);
   const gain = SUPER_GAIN[action.kind];
-  if (attacker === game.player && !blocked && gain) setSuperCharge(game.superCharge + gain);
+  // if (attacker === game.player && !blocked && gain) setSuperCharge(game.superCharge + gain);
+  //JT-2026/11/25 - award throw charge only when the projectile lands unblocked
+  if ((attacker === game.player || action.thrown) && !blocked && gain) setSuperCharge(game.superCharge + gain);
   sparks((target.x + attacker.x) / 2, 70 + Math.max(attacker.y, target.y), blocked);
   // tone(blocked ? "guard" : "hit");
   //JT-2026/11/22 - play a recorded hit reaction or special impact
@@ -990,15 +1036,36 @@ function drawFighter(fighter) {
   if (atlasId === HERO_ACTIONS.id) frame = HERO_ACTIONS.frame;
   //JT-2026/11/24 - use the almighty push frame with its centered pivot
   if (atlasId === ALMIGHTY_PUSH.id) frame = ALMIGHTY_PUSH.frame;
+  //JT-2026/11/25 - preserve gloria's floor anchor while leaving room for the descending blast
+  if (fighter === game.player && playingGloria) frame = atlasId === GLORIA_ATLASES.spirit ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME;
   const size = view.scale * fighter.profile.size / frame.scale;
   context.save();
   const x = Math.round(fighter.x * view.scale);
   const y = Math.round(view.floor - fighter.y * view.scale);
   // context.translate(x, y);
   //JT-2026/11/24 - show the delayed landing without moving juan's ground position
-  const lift = atlasId === ALMIGHTY_PUSH.id ? almightyPushLift(fighter.attack.elapsed) * size : 0;
+  // const lift = atlasId === ALMIGHTY_PUSH.id ? almightyPushLift(fighter.attack.elapsed) * size : 0;
+  //JT-2026/11/25 - draw the centered push wave at juan's lifted position
+  let lift = 0;
+  if (atlasId === ALMIGHTY_PUSH.id) {
+    const elapsed = fighter.attack.elapsed;
+    lift = almightyPushLift(elapsed) * size;
+    drawAlmightyPushWave(context, x, y - lift, size, elapsed);
+  }
+  if (atlasId === GLORIA_ATLASES.spirit) {
+    const elapsed = fighter.attack.elapsed;
+    lift = gloriaSpiritLift(elapsed) * size;
+    drawGloriaSpiritOrb(context, img, x, y - lift, size, elapsed, view.width);
+  }
   context.translate(x, y - lift);
   context.scale(fighter.direction, 1);
+  //JT-2026/11/25 - extend the basooka blast beyond the atlas cell
+  if (fighter.attack?.beamEnd) {
+    context.save();
+    context.translate(165 * size, -81 * size);
+    drawBasookaBeam(context, view.width, fighter.attack.elapsed, 15 * size);
+    context.restore();
+  }
   context.imageSmoothingEnabled = true;
   if (fighter.guard && !fighter.down) context.filter = "brightness(1.14)";
   // context.drawImage(img, column * FRAME.width, row * FRAME.height, FRAME.width, FRAME.height,
@@ -1014,6 +1081,13 @@ function getPose(fighter) {
   const hero = fighter === game.player;
   if (fighter.down) return [POSE.down, Math.min(3, Math.floor(fighter.down * 6))];
   if (fighter.stun && !fighter.guard) return [POSE.hurt, Math.min(2, Math.floor((.35 - fighter.stun) * 11))];
+  //JT-2026/11/25 - render gloria's attack or prayer without changing juan's pose selection
+  if (hero && playingGloria && (fighter.attack || fighter.auraTime > 0)) {
+    const kind = fighter.attack?.kind;
+    const slot = kind ? ARENA_SKILL_SLOTS[kind] ?? kind : "pray";
+    const [id, row, column] = gloriaSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
+    return [row, column, id];
+  }
   if (fighter.attack) {
     const { elapsed, impact, duration, kind } = fighter.attack;
     //JT-2026/11/24 - animate almighty push from juan's third sprite sheet
@@ -1025,6 +1099,8 @@ function getPose(fighter) {
         : Math.min(8, 4 + Math.floor(5 * (elapsed - impact) / (duration - impact)));
       return [HERO_ACTIONS.punch, column, HERO_ACTIONS.id];
     }
+    //JT-2026/11/25 - use the shared release pose for juan's haduken
+    if (hero && kind === "energyWave") return juanHadukenPose(elapsed, duration);
     const column = elapsed < impact * .63 ? 0 : elapsed < impact ? 1 : elapsed < (impact + duration) / 2 ? 2 : 3;
     // The final gasoline frame contains the flame, so show it on impact.
     return [POSE[kind], fighter.profile.id === "gasoline_0" && column >= 2 ? 3 : column];
@@ -1212,15 +1288,24 @@ function advanceProjectile(shot, dt) {
 
 //JT-2026/11/19 - draw the supplied fireball sprite in its travel direction
 function drawProjectile(shot) {
-  const img = atlases.get(HERO.id)?.img;
+  // const img = atlases.get(HERO.id)?.img;
+  //JT-2026/11/25 - draw the stapler from gloria's atlas and keep juan's fireball
+  const thrown = shot.action.thrown;
+  const img = atlases.get(thrown ? GLORIA_ATLASES.base : HERO.id)?.img;
   if (!img?.complete || !img.naturalWidth) return;
-  const { width, height, x, scale } = HERO_FRAME;
+  // const { width, height, x, scale } = HERO_FRAME;
+  const { width, height, x, y, scale } = thrown ? GLORIA_FRAME : HERO_FRAME;
   const size = view.scale * FIREBALL.scale / scale;
   context.save();
-  context.translate(shot.x * view.scale, view.floor - (shot.y + FIREBALL.elevation) * view.scale);
+  // context.translate(shot.x * view.scale, view.floor - (shot.y + FIREBALL.elevation) * view.scale);
+  //JT-2026/11/25 - draw the haduken at juan's hand height throughout its flight
+  const elevation = thrown ? FIREBALL.elevation : JUAN_HADUKEN.handHeight * HERO.size / HERO_FRAME.scale;
+  context.translate(shot.x * view.scale, view.floor - (shot.y + elevation) * view.scale);
   context.scale(shot.direction, 1);
-  context.drawImage(img, 0, FIREBALL.row * height, width, height,
-    -x * size, -height * size / 2, width * size, height * size);
+  // context.drawImage(img, 0, FIREBALL.row * height, width, height,
+  //   -x * size, -height * size / 2, width * size, height * size);
+  context.drawImage(img, 0, (thrown ? 8 : FIREBALL.row) * height, width, height,
+    -x * size, -(thrown ? y : height / 2) * size, width * size, height * size);
   context.restore();
 }
 
@@ -1336,7 +1421,9 @@ function stopGameSounds() {
 function enableGameSounds(confirm = false) {
   if (ui.sound.getAttribute("aria-pressed") !== "true") return;
   //JT-2026/11/24 - warm up the voice clip before the first cast
-  prepareAlmightyPushVoice();
+  // prepareAlmightyPushVoice();
+  //JT-2026/11/25 - warm up the selected ultimate's voice before combat
+  prepareAlmightyPushVoice(playingGloria ? GLORIA_SKILLS.almightyPush : ALMIGHTY_PUSH);
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (AudioContext) {
     soundContext ??= new AudioContext();

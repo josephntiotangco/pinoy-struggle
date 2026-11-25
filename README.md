@@ -17,7 +17,9 @@
 <!-- JT-2026/11/24 - describe the twenty arena opponents and five survival levels -->
 <!-- Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 15 waves across Tondo, EDSA, Bahay, G. Araneta, and Balintawak in **Survival**. -->
 <!-- JT-2026/11/24 - include the twenty-four survival waves through maypajo -->
-Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**.
+<!-- Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**. -->
+<!-- JT-2026/11/25 - introduce the fighter choice in both modes -->
+Play as **Juan** or **Gloria** in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**.
 
 ## Play locally
 
@@ -100,6 +102,21 @@ While on the ground, use **Kamehame Haduken (`L`, 100 damage)** or **Konoha Senp
 
 <!-- JT-2026/11/24 - explain the two-bar arena knockout and its spoken cue -->
 Fill at least two Special Bars, then press **`O`** or tap **Almighty Push**. The cast empties the meter and knocks out your opponent anywhere in the arena as Juan says “Push!”
+
+<!-- JT-2026/11/25 - list gloria's controls and the cost of each special -->
+## Gloria’s moves
+
+Choose **Gloria** on the Mode Select page before entering Arena or Survival. Her skills are available to try on the same page.
+
+| Key | Move | Effect |
+| --- | --- | --- |
+| `J` | Slap | Close-range strike that builds Special on hit |
+| `K` | Throw | Throws a stapler that builds Special on hit |
+| `L` | Basooka | Fires a beam straight ahead for one Special Bar |
+| `I` | Kick Barrage | Lands three rapid kicks for one Special Bar |
+| `O` | Spirit Bomb | Requires two full Special Bars and empties the meter for a one-hit knockout |
+
+Spirit Bomb takes 2.7 seconds to charge overhead before Gloria calls out and releases it downward. It protects her through landing and knocks out the Arena opponent from anywhere or clears all active enemies in Survival. Hold `U` to Pray in Arena or collect Charge Tokens to build Special in Survival.
 
 ## Opponent ladder
 

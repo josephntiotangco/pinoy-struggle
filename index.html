@@ -4,13 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171613">
-  <meta name="description" content="Play Arena or Survival as Juan, or browse monsters and maps in the Pinoy Struggle Dex.">
+  <!--<meta name="description" content="Play Arena or Survival as Juan, or browse monsters and maps in the Pinoy Struggle Dex.">-->
+  <!-- JT-2026/11/25 - introduce the two playable fighters -->
+  <meta name="description" content="Choose Juan or Gloria for Arena or Survival, or explore monsters and maps in the Pinoy Struggle Dex.">
   <title>Pinoy Struggle · Select Mode</title>
   <!-- JT-2026/11/24 - use the pinoy struggle icon in the browser tab -->
   <link rel="icon" type="image/png" sizes="48x48" href="assets/ps-favicon.png">
   <link rel="stylesheet" href="mode-select.css">
   <!-- JT-2026/11/24 - load the shared ultimate animation and the skill preview -->
   <script src="almighty-push.js" defer></script>
+  <!-- JT-2026/11/25 - load the fighter roster before the skill previews -->
+  <script src="playable-fighters.js" defer></script>
   <script src="skill-preview.js" defer></script>
 </head>
 <body class="mode-home">
@@ -20,6 +24,21 @@
       <span class="mode-mark" aria-hidden="true">PS</span>
       <span>Pinoy <strong>Struggle</strong></span>
     </div>
+    <!-- JT-2026/11/25 - choose the fighter by name and in-game appearance -->
+    <section class="fighter-select" aria-labelledby="fighter-heading">
+      <h2 id="fighter-heading">Choose your fighter</h2>
+      <div class="fighter-options" role="group" aria-labelledby="fighter-heading">
+        <button type="button" data-fighter="juan" aria-pressed="true">
+          <img src="assets/arcade/previews/hero_0.png" alt="" width="128" height="160">
+          <span>Juan</span>
+        </button>
+        <button type="button" data-fighter="gloria" aria-pressed="false">
+          <img src="assets/arcade/previews/hero_girl_0.png" alt="" width="128" height="160">
+          <span>Gloria</span>
+        </button>
+      </div>
+    </section>
+
     <!-- <h1 id="mode-heading">Select <strong>Mode</strong></h1> -->
     <!-- JT-2026/11/24 - make the skill preview easy to reach from mode select -->
     <div class="mode-heading-row">
@@ -70,7 +89,9 @@
 
     <!-- JT-2026/11/24 - preview juan's moves with their animation, sound, and inspiration -->
     <section id="skills" class="skill-preview" aria-labelledby="skills-heading">
-      <h2 id="skills-heading">Juan’s <strong>Skills</strong></h2>
+      <!-- <h2 id="skills-heading">Juan’s <strong>Skills</strong></h2> -->
+      <!-- JT-2026/11/25 - name the selected fighter in the skill preview -->
+      <h2 id="skills-heading"><span id="skills-fighter">Juan’s</span> <strong>Skills</strong></h2>
       <p class="skill-intro">Choose a skill to see and hear it in action.</p>
       <div class="skill-showcase">
         <div class="skill-options" role="group" aria-label="Choose a skill">
