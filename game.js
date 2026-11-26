@@ -442,6 +442,10 @@ function showAssetError(error) {
 
 //JT-2026/11/19 - dispatch the primary action for each campaign screen
 function activate() {
+  //JT-2026/11/26 - start a ranked arena run when the web player begins a campaign
+  if (game.mode === "menu" || game.mode === "complete") {
+    globalThis.pinoyLeaderboard?.start("arena", playingGloria ? "gloria" : "juan");
+  }
   if (game.mode === "paused") {
     togglePause();
   } else if (game.mode === "won") {
@@ -538,7 +542,9 @@ function keyDown(event) {
   if (event.code === "Escape" && !event.repeat) togglePause();
   // if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound) {
   //JT-2026/11/23 - let enter follow the mode select link when it has focus
-  if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound && !event.target?.closest?.("a")) {
+  // if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound && !event.target?.closest?.("a")) {
+  //JT-2026/11/26 - let the web retry button receive its own enter key activation
+  if (event.code === "Enter" && !ui.panel.hidden && !ui.action.disabled && !event.repeat && event.target !== ui.sound && !event.target?.closest?.("a, [data-rank-retry]")) {
     event.preventDefault();
     activate();
     return;
@@ -613,6 +619,8 @@ function tick(dt) {
 
 //JT-2026/11/19 - resolve movement and simultaneous hits before judging the round
 function updateFight(dt) {
+  //JT-2026/11/26 - count fight time including retries for web rankings
+  globalThis.pinoyLeaderboard?.tick(dt);
   const { player, enemy } = game;
   game.seconds = Math.max(0, game.seconds - dt);
   showTimer();
@@ -959,6 +967,8 @@ function showResult() {
     return;
   }
   game.cleared = game.level + 1;
+  //JT-2026/11/26 - record each arena win for the web leaderboard
+  globalThis.pinoyLeaderboard?.clear();
   showProgress();
   if (game.cleared === OPPONENTS.length) {
     setMode("complete");

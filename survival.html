@@ -24,6 +24,9 @@
   <script src="almighty-push.js" defer></script>
   <!-- JT-2026/11/25 - load the shared fighter selection and gloria's moves -->
   <script src="playable-fighters.js" defer></script>
+  <!-- JT-2026/11/26 - track survival scores only in the web page -->
+  <link rel="stylesheet" href="leaderboard.css">
+  <script src="leaderboard.js" defer></script>
   <script src="survival.js" defer></script>
 </head>
 <body>
@@ -77,6 +80,12 @@
           <!-- JT-2026/11/24 - show the twenty-four-wave survival goal -->
           <p id="screen-copy">Survive 24 waves across eight arenas.</p>
           <button id="start" class="primary" type="button" disabled>Loading arena…</button>
+          <!-- JT-2026/11/26 - show score save status and the web leaderboard on the result panel -->
+          <div class="rank-result" data-rank-result="survival">
+            <p data-rank-message role="status"></p>
+            <button class="rank-button rank-secondary" type="button" data-rank-retry hidden>Retry saving</button>
+            <a href="./index.html#leaderboard-survival">Leaderboard</a>
+          </div>
         </div>
       </div>
       <p class="sr-only" id="status" role="status"></p>

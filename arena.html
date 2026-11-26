@@ -32,6 +32,9 @@
   <script src="almighty-push.js" defer></script>
   <!-- JT-2026/11/25 - load the shared fighter selection and gloria's moves -->
   <script src="playable-fighters.js" defer></script>
+  <!-- JT-2026/11/26 - track arena scores only in the web page -->
+  <link rel="stylesheet" href="leaderboard.css">
+  <script src="leaderboard.js" defer></script>
   <script src="game.js" defer></script>
 </head>
 <body>
@@ -155,6 +158,12 @@
             <p class="panel-copy" id="panel-copy">Defeat all twenty challengers.</p>
             <button class="action-button" id="primary-action" type="button" disabled>Start fight</button>
             <p class="panel-hint" id="panel-hint">Press <kbd>Enter</kbd></p>
+            <!-- JT-2026/11/26 - show score save status and the web leaderboard on the result panel -->
+            <div class="rank-result" data-rank-result="arena">
+              <p data-rank-message role="status"></p>
+              <button class="rank-button rank-secondary" type="button" data-rank-retry hidden>Retry saving</button>
+              <a href="./index.html#leaderboard">Leaderboard</a>
+            </div>
           </div>
         </div>
         <p class="sr-only" id="status" role="status" aria-live="polite"></p>

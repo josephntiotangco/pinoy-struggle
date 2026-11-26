@@ -411,6 +411,8 @@ function activate() {
     return;
   }
   prepareSounds();
+  //JT-2026/11/26 - start a ranked survival run from the first level on the web
+  globalThis.pinoyLeaderboard?.start("survival", playingGloria ? "gloria" : "juan");
   startLevel(0);
 }
 
@@ -507,6 +509,8 @@ function frame(now) {
 
 //JT-2026/11/23 - resolve the current fight or the breathing room between waves
 function updateGame(dt) {
+  //JT-2026/11/26 - count combat time while a survival wave is active
+  if (state.phase === "wave") globalThis.pinoyLeaderboard?.tick(dt);
   if (state.notice > 0) {
     state.notice -= dt;
     if (state.notice <= 0) ui.notice.hidden = true;
@@ -533,6 +537,8 @@ function updateGame(dt) {
   if (state.spawnQueue.length || state.enemies.some(enemy => enemy.health)) return;
   //JT-2026/11/24 - finish the cast before advancing a cleared wave
   if (state.player.attack?.kind === "almightyPush") return;
+  //JT-2026/11/26 - record each cleared wave including the final wave of a level
+  globalThis.pinoyLeaderboard?.clear();
   if (state.wave === LEVELS[state.level].waves.length) {
     finishRun(true);
     return;

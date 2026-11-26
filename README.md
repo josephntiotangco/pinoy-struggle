@@ -282,3 +282,14 @@ The **Wave Guide** shows the maps, enemy portraits, and attack tips for each wav
 4. Click **Deploy**. The included [vercel.json](vercel.json) serves the game files directly. Open the URL Vercel provides to play online.
 
 [Vercel's Git deployment guide](https://vercel.com/docs/git)
+
+<!-- JT-2026/11/26 - document the web leaderboard and its first deployment -->
+### Web leaderboard
+
+Enter a nickname to join the public leaderboard. Arena ranks levels cleared, and Survival ranks waves cleared across the full run. Faster active play time breaks ties. The site keeps each player's best result per mode in the same browser profile.
+
+1. Connect a Neon database to the Vercel project and confirm `DATABASE_URL` is available in Production.
+2. In the Neon SQL Editor, run [database/leaderboard.sql](database/leaderboard.sql) on the branch connected to Production. This creates the tables.
+3. Deploy the updated web project. Open the site, enter a nickname, clear the first level or wave, and check the corresponding leaderboard tab.
+
+The Android app uses its own menus and runs offline. The web game can be played unranked when the leaderboard service is unavailable.

@@ -16,14 +16,40 @@
   <!-- JT-2026/11/25 - load the fighter roster before the skill previews -->
   <script src="playable-fighters.js" defer></script>
   <script src="skill-preview.js" defer></script>
+  <!-- JT-2026/11/26 - load the web player entry and public leaderboard -->
+  <link rel="stylesheet" href="leaderboard.css">
+  <script src="leaderboard.js" defer></script>
 </head>
-<body class="mode-home">
+<!-- <body class="mode-home"> -->
+<!-- JT-2026/11/26 - put player entry before the web mode selection -->
+<body class="mode-home" data-rank-home="locked">
   <!-- JT-2026/11/23 - make mode selection the homepage and keep the arcade in arena.html -->
   <main class="mode-shell">
     <div class="mode-brand">
       <span class="mode-mark" aria-hidden="true">PS</span>
       <span>Pinoy <strong>Struggle</strong></span>
     </div>
+    <!-- JT-2026/11/26 - ask for a public nickname before ranked play -->
+    <section id="player-entry" class="rank-entry" aria-labelledby="entry-heading">
+      <h1 id="entry-heading">Enter your <strong>nickname</strong></h1>
+      <form id="nickname-form">
+        <label for="nickname">Nickname</label>
+        <p id="nickname-hint">Your nickname appears on the public leaderboard.</p>
+        <div class="rank-actions">
+          <input id="nickname" name="nickname" aria-describedby="nickname-hint" autocomplete="nickname" minlength="2" maxlength="20" required>
+          <button class="rank-button" type="submit">Start Game</button>
+        </div>
+      </form>
+      <div class="rank-actions" id="player-welcome" hidden>
+        <strong id="player-nickname"></strong>
+        <button class="rank-button rank-secondary" id="edit-nickname" type="button">Change nickname</button>
+      </div>
+      <p id="nickname-status" class="rank-status" role="status"></p>
+      <div class="rank-actions">
+        <a class="rank-button rank-secondary" href="#leaderboard">View Leaderboard</a>
+        <button class="rank-button rank-secondary" id="play-unranked" type="button" hidden>Play unranked</button>
+      </div>
+    </section>
     <!-- JT-2026/11/25 - choose the fighter by name and in-game appearance -->
     <section class="fighter-select" aria-labelledby="fighter-heading">
       <h2 id="fighter-heading">Choose your fighter</h2>
@@ -42,7 +68,9 @@
     <!-- <h1 id="mode-heading">Select <strong>Mode</strong></h1> -->
     <!-- JT-2026/11/24 - make the skill preview easy to reach from mode select -->
     <div class="mode-heading-row">
-      <h1 id="mode-heading">Select <strong>Mode</strong></h1>
+      <!-- <h1 id="mode-heading">Select <strong>Mode</strong></h1> -->
+      <!-- JT-2026/11/26 - focus mode selection after saving the player nickname -->
+      <h1 id="mode-heading" tabindex="-1">Select <strong>Mode</strong></h1>
       <a class="skill-jump" href="#skills">Preview skills</a>
     </div>
     <nav class="mode-grid" aria-labelledby="mode-heading">
@@ -130,6 +158,24 @@
       </div>
       <span class="mode-action">Open Dex</span>
     </a>
+
+    <!-- JT-2026/11/26 - show the top twenty and the players own rank by mode -->
+    <section id="leaderboard" class="rank-board" aria-labelledby="rank-heading" hidden>
+      <h2 id="rank-heading">Leaderboard</h2>
+      <div class="rank-actions" role="group" aria-label="Leaderboard mode">
+        <button class="rank-button" type="button" data-rank-mode="arena" aria-pressed="true">Arena</button>
+        <button class="rank-button" type="button" data-rank-mode="survival" aria-pressed="false">Survival</button>
+      </div>
+      <p id="rank-status" class="rank-status" role="status"></p>
+      <p id="rank-personal-best" class="rank-best" hidden></p>
+      <div class="rank-table-scroll">
+        <table id="rank-table" hidden>
+          <caption class="rank-caption">Top 20 by clears, then by active play time.</caption>
+          <thead><tr><th scope="col">Rank</th><th scope="col">Player</th><th scope="col">Fighter</th><th scope="col" id="rank-progress">Levels</th><th scope="col">Time</th></tr></thead>
+          <tbody id="rank-entries"></tbody>
+        </table>
+      </div>
+    </section>
 
     <!-- JT-2026/11/24 - credit the creator at the bottom of the landing page -->
     <footer class="mode-footer">

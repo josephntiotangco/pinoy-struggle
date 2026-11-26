@@ -1,0 +1,57 @@
+/* JT-2026/11/26 - match the web entry and leaderboard to the arcade menu */
+.mode-home[data-rank-home="locked"] :is(.fighter-select, .mode-heading-row, .mode-grid, #skills, .dex-card) {
+  display: none;
+}
+.rank-entry { padding: 12px 0 22px; }
+.rank-entry label { font-weight: 700; }
+#nickname-hint { margin: 3px 0 10px; color: #d4c7aa; }
+.rank-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.rank-actions[hidden] { display: none; }
+#nickname {
+  flex: 0 1 280px;
+  min-width: 0;
+  padding: 8px 11px;
+  border: 1px solid #826b45;
+  background: #161410;
+  color: #fff4dc;
+  font: inherit;
+}
+.rank-button, #nickname { min-height: 42px; }
+.rank-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border: 1px solid #a88a4f;
+  background: #f5c65d;
+  color: #241b0f;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.rank-button[hidden] { display: none; }
+.rank-secondary, .rank-button[aria-pressed="false"] { background: #241e16; color: #fae2aa; }
+.rank-button:disabled { cursor: wait; opacity: .65; }
+.rank-button:focus-visible, #nickname:focus-visible { outline: 2px solid #ffe6a1; outline-offset: 3px; }
+.rank-status { color: #fae2aa; }
+.rank-status:empty { display: none; }
+.rank-entry > .rank-actions { margin-top: 10px; }
+
+/* JT-2026/11/26 - keep both ranking modes readable on narrow screens */
+.rank-board { margin-top: 26px; padding: 16px clamp(10px, 3vw, 28px); border: 1px solid #826b45; background: #1a1814; }
+.rank-board h2 { margin: 0 0 12px; color: #f5c65d; }
+.rank-table-scroll { overflow-x: auto; }
+.rank-board table { width: 100%; border-collapse: collapse; text-align: left; }
+.rank-caption { padding: 12px 0 7px; color: #d4c7aa; text-align: left; }
+.rank-board td, .rank-board th { padding: 7px 8px; border-bottom: 1px solid #55462e; }
+.rank-board td:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rank-best, .rank-you { color: #ffe3a0; }
+.rank-you { background: #352918; }
+
+/* JT-2026/11/26 - keep the web score status compact inside match panels */
+.rank-result { margin-top: 6px; color: #fae2aa; font: 600 .8rem/1.25 system-ui, sans-serif; }
+.rank-result p { margin: 0 0 4px; }
+.rank-result p:empty { display: none; }
+.rank-result a { color: inherit; }
+.rank-result button { min-height: 30px; margin-inline-end: 6px; }
