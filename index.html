@@ -6,19 +6,30 @@
   <meta name="theme-color" content="#171613">
   <!--<meta name="description" content="Play Arena or Survival as Juan, or browse monsters and maps in the Pinoy Struggle Dex.">-->
   <!-- JT-2026/11/25 - introduce the two playable fighters -->
-  <meta name="description" content="Choose Juan or Gloria for Arena or Survival, or explore monsters and maps in the Pinoy Struggle Dex.">
+  <!-- <meta name="description" content="Choose Juan or Gloria for Arena or Survival, or explore monsters and maps in the Pinoy Struggle Dex."> -->
+  <!-- JT-2026/11/27 - include jose in the public fighter lineup -->
+  <!-- JT-2026/11/27 - include maria in the public fighter lineup -->
+  <meta name="description" content="Choose Juan, Ana, Jose, or Maria for Arena or Survival, or explore monsters and maps in the Pinoy Struggle Dex.">
   <title>Pinoy Struggle · Select Mode</title>
   <!-- JT-2026/11/24 - use the pinoy struggle icon in the browser tab -->
   <link rel="icon" type="image/png" sizes="48x48" href="assets/ps-favicon.png">
-  <link rel="stylesheet" href="mode-select.css">
+  <!-- <link rel="stylesheet" href="mode-select.css"> -->
+  <!-- JT-2026/11/28 - load the fighter description layout -->
+  <link rel="stylesheet" href="mode-select.css?v=20261128-fighter-bios">
   <!-- JT-2026/11/24 - load the shared ultimate animation and the skill preview -->
-  <script src="almighty-push.js" defer></script>
+  <!-- <script src="almighty-push.js" defer></script> -->
   <!-- JT-2026/11/25 - load the fighter roster before the skill previews -->
-  <script src="playable-fighters.js" defer></script>
-  <script src="skill-preview.js" defer></script>
+  <!-- <script src="playable-fighters.js" defer></script> -->
+  <!-- <script src="skill-preview.js" defer></script> -->
+  <!-- JT-2026/11/28 - load the current fighter and preview scripts together -->
+  <script src="almighty-push.js?v=20261128-gondola" defer></script>
+  <script src="playable-fighters.js?v=20261128-ana" defer></script>
+  <script src="skill-preview.js?v=20261128-ana" defer></script>
   <!-- JT-2026/11/26 - load the web player entry and public leaderboard -->
   <link rel="stylesheet" href="leaderboard.css">
-  <script src="leaderboard.js" defer></script>
+  <!-- <script src="leaderboard.js" defer></script> -->
+  <!-- JT-2026/11/28 - update the leaderboard display for ana -->
+  <script src="leaderboard.js?v=20261128-ana" defer></script>
 </head>
 <!-- <body class="mode-home"> -->
 <!-- JT-2026/11/26 - put player entry before the web mode selection -->
@@ -58,10 +69,26 @@
           <img src="assets/arcade/previews/hero_0.png" alt="" width="128" height="160">
           <span>Juan</span>
         </button>
-        <button type="button" data-fighter="gloria" aria-pressed="false">
+        <!-- <button type="button" data-fighter="gloria" aria-pressed="false"> -->
+        <!-- JT-2026/11/28 - use ana as the fighter name -->
+        <button type="button" data-fighter="ana" aria-pressed="false">
           <img src="assets/arcade/previews/hero_girl_0.png" alt="" width="128" height="160">
-          <span>Gloria</span>
+          <!-- <span>Gloria</span> -->
+          <!-- JT-2026/11/28 - use ana as the fighter name -->
+          <span>Ana</span>
         </button>
+        <button type="button" data-fighter="jose" aria-pressed="false">
+          <img src="assets/arcade/previews/hero_jose.png" alt="" width="128" height="160">
+          <span>Jose</span>
+        </button>
+        <button type="button" data-fighter="maria" aria-pressed="false">
+          <img src="assets/arcade/previews/hero_maria.png" alt="" width="128" height="160">
+          <span>Maria</span>
+        </button>
+      </div>
+      <!-- JT-2026/11/28 - show the selected fighter's background below the portraits -->
+      <div class="fighter-details">
+        <p id="fighter-description" aria-live="polite" aria-atomic="true"></p>
       </div>
     </section>
 

@@ -10,7 +10,9 @@ CREATE TABLE IF NOT EXISTS leaderboard_runs (
   id uuid PRIMARY KEY,
   player_key text NOT NULL REFERENCES leaderboard_players(player_key),
   mode text NOT NULL CHECK (mode IN ('arena', 'survival')),
-  fighter text NOT NULL CHECK (fighter IN ('juan', 'gloria')),
+  -- fighter text NOT NULL CHECK (fighter IN ('juan', 'gloria')),
+  -- JT-2026/11/28 - accept all four fighters on new ranked runs
+  fighter text NOT NULL CHECK (fighter IN ('juan', 'ana', 'jose', 'maria')),
   cleared integer NOT NULL DEFAULT 0 CHECK (cleared BETWEEN 0 AND 24),
   active_ms integer NOT NULL DEFAULT 0 CHECK (active_ms BETWEEN 0 AND 86400000),
   created_at timestamptz NOT NULL DEFAULT now()
@@ -22,7 +24,9 @@ CREATE INDEX IF NOT EXISTS leaderboard_runs_player_created
 CREATE TABLE IF NOT EXISTS leaderboard_bests (
   player_key text NOT NULL REFERENCES leaderboard_players(player_key),
   mode text NOT NULL CHECK (mode IN ('arena', 'survival')),
-  fighter text NOT NULL CHECK (fighter IN ('juan', 'gloria')),
+  -- fighter text NOT NULL CHECK (fighter IN ('juan', 'gloria')),
+  -- JT-2026/11/28 - preserve any selected fighter on personal bests
+  fighter text NOT NULL CHECK (fighter IN ('juan', 'ana', 'jose', 'maria')),
   cleared integer NOT NULL CHECK (cleared BETWEEN 1 AND 24),
   active_ms integer NOT NULL CHECK (active_ms BETWEEN 1 AND 86400000),
   achieved_at timestamptz NOT NULL DEFAULT now(),

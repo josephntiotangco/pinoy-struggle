@@ -180,12 +180,24 @@ const GAME_AUDIO = {
   auraCharge: { file: "super_saiyan_god.mp3", offset: .1, duration: 3.75, volume: .8, interruptible: true },
   //JT-2026/11/24 - preload the shared monster attack clips with the arena effects
   ...MONSTER_AUDIO,
-  //JT-2026/11/25 - preload gloria's timed combat effects
-  ...GLORIA_EFFECTS,
+  //JT-2026/11/25 - preload ana's timed combat effects
+  // ...GLORIA_EFFECTS,
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  ...ANA_EFFECTS,
+  //JT-2026/11/27 - preload jose's strike and ranged sounds
+  ...JOSE_EFFECTS,
+  //JT-2026/11/27 - preload maria's strike and ranged sounds
+  ...MARIA_EFFECTS,
 };
 const VEHICLE_OPPONENTS = new Set(["kamote_rider_0", "ebike_0", "traffic_0", "mayabang_0"]);
 //JT-2026/11/25 - lock the selected hero in for the arena run
-const playingGloria = selectedFighter() === "gloria";
+// const playingGloria = selectedFighter() === "gloria";
+//JT-2026/11/27 - lock the arena run to one of the four fighters
+const selectedFighterId = selectedFighter();
+const playingAna = selectedFighterId === "ana";
+const playingJose = selectedFighterId === "jose";
+const playingMaria = selectedFighterId === "maria";
+const alternateSkills = playingJose ? JOSE_SKILLS : playingAna ? ANA_SKILLS : playingMaria ? MARIA_SKILLS : null;
 
 //JT-2026/11/19 - connect the arcade ui and initialize the first matchup
 const byId = id => document.getElementById(id);
@@ -222,13 +234,24 @@ const activeSoundNodes = new Set();
 let soundContext;
 let previousTime = 0;
 
-//JT-2026/11/25 - name gloria and show her arena controls when she is selected
-if (playingGloria) {
-  labelGloriaControls();
-  ui.playerPlate.textContent = "Gloria";
-  ui.playerSuper.setAttribute("aria-label", "Gloria's Special charge");
+//JT-2026/11/25 - name ana and show her arena controls when she is selected
+// if (playingGloria) {
+//   labelGloriaControls();
+//   ui.playerPlate.textContent = "Gloria";
+//   ui.playerSuper.setAttribute("aria-label", "Gloria's Special charge");
+//   const touchHint = ui.touch.querySelector(".touch-hint");
+//   if (touchHint) touchHint.textContent = "Hold back to guard or hold Pray to charge. Slap and Throw also build Special on hit. Spirit Bomb needs two full bars and empties the meter for a one-hit knockout.";
+// }
+//JT-2026/11/27 - show the arena fighter's name and current moves
+if (alternateSkills) {
+  const name = FIGHTER_NAMES[selectedFighterId];
+  labelFighterControls(selectedFighterId, alternateSkills);
+  ui.playerPlate.textContent = name;
+  ui.playerSuper.setAttribute("aria-label", name + "'s Special charge");
   const touchHint = ui.touch.querySelector(".touch-hint");
-  if (touchHint) touchHint.textContent = "Hold back to guard or hold Pray to charge. Slap and Throw also build Special on hit. Spirit Bomb needs two full bars and empties the meter for a one-hit knockout.";
+  if (touchHint) touchHint.textContent = "Hold back to guard or hold Pray to charge. " +
+    alternateSkills.punch.label + " and " + alternateSkills.kick.label + " build Special on hit. " +
+    alternateSkills.almightyPush.label + " needs two full bars and empties the meter for a one-hit knockout.";
 }
 makeRoster();
 //JT-2026/11/23 - show the arena gallery alongside the opponent ladder
@@ -339,7 +362,10 @@ function resetRound() {
   //JT-2026/11/23 - start juan on the right facing the opponent on the left
   // game.player = makeFighter(HERO, view.world * .775, -1);
   //JT-2026/11/25 - start each arena round with the selected hero
-  game.player = makeFighter(playingGloria ? GLORIA_PROFILE : HERO, view.world * .775, -1);
+  // game.player = makeFighter(playingGloria ? GLORIA_PROFILE : HERO, view.world * .775, -1);
+  //JT-2026/11/27 - spawn jose with his own combat atlas
+  const playerProfile = playingJose ? JOSE_PROFILE : playingAna ? ANA_PROFILE : playingMaria ? MARIA_PROFILE : HERO;
+  game.player = makeFighter(playerProfile, view.world * .775, -1);
   game.enemy = makeFighter(OPPONENTS[game.level], view.world * .225, 1);
   //JT-2026/11/23 - start each round outside the aura charge pose
   game.player.auraTime = 0;
@@ -424,7 +450,9 @@ async function loadMatch() {
   //JT-2026/11/24 - keep the almighty push atlas loaded alongside juan's other poses
   // const ids = [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id, game.enemy.profile.id];
   //JT-2026/11/25 - preload only the active fighter's four or three atlases
-  const heroIds = playingGloria ? Object.values(GLORIA_ATLASES) : [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id];
+  // const heroIds = playingGloria ? Object.values(GLORIA_ATLASES) : [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id];
+  //JT-2026/11/27 - prepare the selected fighter before starting the arena
+  const heroIds = playingJose ? [JOSE_PROFILE.id] : playingAna ? Object.values(ANA_ATLASES) : playingMaria ? Object.values(MARIA_ATLASES) : [HERO.id, HERO_ACTIONS.id, ALMIGHTY_PUSH.id];
   const ids = [...heroIds, game.enemy.profile.id];
   for (const id of atlases.keys()) {
     if (!ids.includes(id) && id !== next?.id) atlases.delete(id);
@@ -444,7 +472,9 @@ function showAssetError(error) {
 function activate() {
   //JT-2026/11/26 - start a ranked arena run when the web player begins a campaign
   if (game.mode === "menu" || game.mode === "complete") {
-    globalThis.pinoyLeaderboard?.start("arena", playingGloria ? "gloria" : "juan");
+    // globalThis.pinoyLeaderboard?.start("arena", playingGloria ? "gloria" : "juan");
+    //JT-2026/11/27 - record the actual arena fighter on the leaderboard
+    globalThis.pinoyLeaderboard?.start("arena", selectedFighterId);
   }
   if (game.mode === "paused") {
     togglePause();
@@ -648,7 +678,9 @@ function updateFight(dt) {
     //JT-2026/11/24 - prioritize almighty push once two bars are full
     // if (grounded && pressed.has("almightyPush") && game.superCharge >= ALMIGHTY_PUSH.bars * SUPER_COST) {
     //JT-2026/11/25 - check the selected ultimate's bar requirement
-    const knockoutBars = playingGloria ? GLORIA_SKILLS.almightyPush.bars : ALMIGHTY_PUSH.bars;
+    // const knockoutBars = playingGloria ? GLORIA_SKILLS.almightyPush.bars : ALMIGHTY_PUSH.bars;
+    //JT-2026/11/27 - use the selected ultimate's special bar cost
+    const knockoutBars = alternateSkills?.almightyPush.bars ?? ALMIGHTY_PUSH.bars;
     if (grounded && pressed.has("almightyPush") && game.superCharge >= knockoutBars * SUPER_COST) {
       attack(player, "almightyPush");
     } else if (superReady && pressed.has("superUpperCut")) {
@@ -733,8 +765,10 @@ function canAct(fighter) {
 function attack(fighter, kind) {
   // const move = MOVES[kind];
   const isPlayer = fighter === game.player;
-  //JT-2026/11/25 - use gloria's arena attack behind the same input slot
-  const skill = isPlayer && playingGloria ? GLORIA_SKILLS[ARENA_SKILL_SLOTS[kind] ?? kind] : null;
+  //JT-2026/11/25 - use ana's arena attack behind the same input slot
+  // const skill = isPlayer && playingGloria ? GLORIA_SKILLS[ARENA_SKILL_SLOTS[kind] ?? kind] : null;
+  //JT-2026/11/27 - use the selected fighter's arena move for each existing control
+  const skill = isPlayer ? alternateSkills?.[ARENA_SKILL_SLOTS[kind] ?? kind] : null;
   const move = skill ? { ...skill, ...skill.arena } : MOVES[kind];
   const heavy = kind === "heavy";
   const reach = isPlayer
@@ -761,18 +795,22 @@ function attack(fighter, kind) {
   //JT-2026/11/24 - empty the meter and start the full voice at the beginning of the cast
   if (isPlayer && kind === "almightyPush") {
     setSuperCharge(0);
-    //JT-2026/11/25 - sync spirit bomb to gloria's own voice clip
+    //JT-2026/11/25 - sync spirit bomb to ana's own voice clip
     if (skill) fighter.attack.cast = skill;
     if (ui.sound.getAttribute("aria-pressed") === "true") resumeAlmightyPushVoice(fighter.attack);
   } else if (isPlayer && (kind === "energyWave" || kind === "superUpperCut")) {
     setSuperCharge(game.superCharge - SUPER_COST);
     // playRecordedSound(kind, "jab");
     //JT-2026/11/25 - keep juan's recorded voice effects on his own specials
-    if (!playingGloria) playRecordedSound(kind, "jab");
+    // if (!playingGloria) playRecordedSound(kind, "jab");
+    //JT-2026/11/27 - play jose's ranged cues at the launch frame
+    if (!alternateSkills) playRecordedSound(kind, "jab");
   // } else if (isPlayer) {
   //   tone(heavy ? "swing" : "jab");
-  //JT-2026/11/25 - leave gloria's normal attack sounds at the strike frames
-  } else if (isPlayer && !playingGloria) {
+  //JT-2026/11/25 - leave ana's normal attack sounds at the strike frames
+  // } else if (isPlayer && !playingGloria) {
+  //JT-2026/11/27 - play jose's normal sound at the attack impact
+  } else if (isPlayer && !alternateSkills) {
     tone(heavy ? "swing" : "jab");
   }
 }
@@ -816,7 +854,11 @@ function hitFrom(attacker, target, dt) {
   //JT-2026/11/25 - allow later barrage strikes to fire during the same cast
   if (action.spent || action.elapsed < (action.nextImpact ?? action.impact)) return null;
   action.spent = true;
-  queueGloriaFollowUp(action, action.followUps);
+  //JT-2026/11/28 - remember the merchandise in this volley before queuing the next
+  const volley = action.followUpIndex ?? 0;
+  // queueGloriaFollowUp(action, action.followUps);
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  queueAttackFollowUp(action, action.followUps);
   if (action.effect) playRecordedSound(action.effect, "swing");
   //JT-2026/11/24 - apply the knockout at the cast's impact regardless of distance or height
   if (action.kind === "almightyPush") return { ...action, damage: target.health };
@@ -826,8 +868,10 @@ function hitFrom(attacker, target, dt) {
   // if (action.kind === "hadouken") {
   //JT-2026/11/19 - release the projectile for energy wave
   // if (action.kind === "energyWave") {
-  //JT-2026/11/25 - launch gloria's thrown stapler through the projectile hit path
-  if (action.thrown || (action.kind === "energyWave" && !action.beamEnd)) {
+  //JT-2026/11/25 - launch ana's thrown stapler through the projectile hit path
+  // if (action.thrown || (action.kind === "energyWave" && !action.beamEnd)) {
+  //JT-2026/11/27 - launch jose's ranged specials from their strike poses
+  if (action.projectile || action.thrown || (action.kind === "energyWave" && !action.beamEnd)) {
     // game.projectile = {
     //JT-2026/11/19 - add this energy wave to the active projectiles
     game.projectiles.push({
@@ -836,11 +880,15 @@ function hitFrom(attacker, target, dt) {
       direction: attacker.direction,
       remaining: FIREBALL.lifetime,
       action,
+      //JT-2026/11/28 - keep each volley sprite tied to its projectile
+      volley,
     // };
     });
     // tone("swing");
     //JT-2026/11/25 - let the throw use its own release sound
-    if (!action.thrown) tone("swing");
+    // if (!action.thrown) tone("swing");
+    //JT-2026/11/27 - use each new projectile's own launch sound
+    if (!action.thrown && !action.projectile) tone("swing");
     return null;
   }
   // if (action.kind === "shoryuken") attacker.velocity = 406;
@@ -1014,6 +1062,11 @@ function paint() {
   // if (game.projectile) drawProjectile(game.projectile);
   //JT-2026/11/19 - draw each energy wave still in flight
   game.projectiles.forEach(drawProjectile);
+  //JT-2026/11/28 - drop the rack over the opponent through the knockout
+  if (playingMaria && player.attack?.kind === "almightyPush") {
+    const art = atlases.get(MARIA_ATLASES.fx)?.img;
+    drawMariaGondolaFall(context, art, enemy.x * view.scale, view.floor, view.scale, player.attack.elapsed);
+  }
   for (const effect of game.effects) drawSpark(effect);
   placeNameplates();
 }
@@ -1046,8 +1099,14 @@ function drawFighter(fighter) {
   if (atlasId === HERO_ACTIONS.id) frame = HERO_ACTIONS.frame;
   //JT-2026/11/24 - use the almighty push frame with its centered pivot
   if (atlasId === ALMIGHTY_PUSH.id) frame = ALMIGHTY_PUSH.frame;
-  //JT-2026/11/25 - preserve gloria's floor anchor while leaving room for the descending blast
-  if (fighter === game.player && playingGloria) frame = atlasId === GLORIA_ATLASES.spirit ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME;
+  //JT-2026/11/25 - preserve ana's floor anchor while leaving room for the descending blast
+  // if (fighter === game.player && playingGloria) frame = atlasId === GLORIA_ATLASES.spirit ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME;
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  if (fighter === game.player && playingAna) frame = atlasId === ANA_ATLASES.spirit ? ANA_SPIRIT_FRAME : ANA_FRAME;
+  //JT-2026/11/27 - draw jose at the same ground anchor as the other fighters
+  if (atlasId === JOSE_PROFILE.id) frame = JOSE_FRAME;
+  //JT-2026/11/28 - use maria's character grid for each of her poses
+  if (atlasId === MARIA_ATLASES.base) frame = MARIA_FRAME;
   const size = view.scale * fighter.profile.size / frame.scale;
   context.save();
   const x = Math.round(fighter.x * view.scale);
@@ -1062,18 +1121,32 @@ function drawFighter(fighter) {
     lift = almightyPushLift(elapsed) * size;
     drawAlmightyPushWave(context, x, y - lift, size, elapsed);
   }
-  if (atlasId === GLORIA_ATLASES.spirit) {
+  // if (atlasId === GLORIA_ATLASES.spirit) {
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  if (atlasId === ANA_ATLASES.spirit) {
     const elapsed = fighter.attack.elapsed;
-    lift = gloriaSpiritLift(elapsed) * size;
-    drawGloriaSpiritOrb(context, img, x, y - lift, size, elapsed, view.width);
+    // lift = gloriaSpiritLift(elapsed) * size;
+    // drawGloriaSpiritOrb(context, img, x, y - lift, size, elapsed, view.width);
+    //JT-2026/11/28 - use ana for the fighter and her moves
+    lift = anaSpiritLift(elapsed) * size;
+    drawAnaSpiritOrb(context, img, x, y - lift, size, elapsed, view.width);
   }
   context.translate(x, y - lift);
   context.scale(fighter.direction, 1);
   //JT-2026/11/25 - extend the basooka blast beyond the atlas cell
-  if (fighter.attack?.beamEnd) {
+  // if (fighter.attack?.beamEnd) {
+  //   context.save();
+  //   context.translate(165 * size, -81 * size);
+  //   drawBasookaBeam(context, view.width, fighter.attack.elapsed, 15 * size);
+  //   context.restore();
+  // }
+  //JT-2026/11/27 - draw the rei gun beam from ana's finger to the arena edge
+  const beam = fighter.attack?.beamEnd && reiGunBeamPose(fighter.attack.elapsed);
+  if (beam) {
+    const edge = fighter.direction > 0 ? view.width - x : x;
     context.save();
-    context.translate(165 * size, -81 * size);
-    drawBasookaBeam(context, view.width, fighter.attack.elapsed, 15 * size);
+    context.translate(beam.x * size, -beam.y * size);
+    drawReiGunBeam(context, img, edge - beam.x * size, size, beam.column);
     context.restore();
   }
   context.imageSmoothingEnabled = true;
@@ -1091,11 +1164,27 @@ function getPose(fighter) {
   const hero = fighter === game.player;
   if (fighter.down) return [POSE.down, Math.min(3, Math.floor(fighter.down * 6))];
   if (fighter.stun && !fighter.guard) return [POSE.hurt, Math.min(2, Math.floor((.35 - fighter.stun) * 11))];
-  //JT-2026/11/25 - render gloria's attack or prayer without changing juan's pose selection
-  if (hero && playingGloria && (fighter.attack || fighter.auraTime > 0)) {
+  //JT-2026/11/27 - select jose's newspaper, megaphone, and ultimate frames
+  if (hero && playingJose && (fighter.attack || fighter.auraTime > 0)) {
     const kind = fighter.attack?.kind;
     const slot = kind ? ARENA_SKILL_SLOTS[kind] ?? kind : "pray";
-    const [id, row, column] = gloriaSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
+    return joseSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
+  }
+  //JT-2026/11/27 - select maria's hanger, gondola, and ultimate frames
+  if (hero && playingMaria && (fighter.attack || fighter.auraTime > 0)) {
+    const kind = fighter.attack?.kind;
+    const slot = kind ? ARENA_SKILL_SLOTS[kind] ?? kind : "pray";
+    return mariaSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
+  }
+  //JT-2026/11/25 - render ana's attack or prayer without changing juan's pose selection
+  // if (hero && playingGloria && (fighter.attack || fighter.auraTime > 0)) {
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  if (hero && playingAna && (fighter.attack || fighter.auraTime > 0)) {
+    const kind = fighter.attack?.kind;
+    const slot = kind ? ARENA_SKILL_SLOTS[kind] ?? kind : "pray";
+    // const [id, row, column] = gloriaSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
+    //JT-2026/11/28 - use ana for the fighter and her moves
+    const [id, row, column] = anaSkillPose(slot, fighter.attack?.elapsed ?? fighter.auraTime);
     return [row, column, id];
   }
   if (fighter.attack) {
@@ -1284,7 +1373,9 @@ function advanceProjectile(dt) {
 //JT-2026/11/19 - advance one energy wave and report whether it is still active
 function advanceProjectile(shot, dt) {
   shot.remaining -= dt;
-  shot.x += shot.direction * FIREBALL.speed * dt;
+  // shot.x += shot.direction * FIREBALL.speed * dt;
+  //JT-2026/11/27 - give the megaphone and crescent different travel speeds
+  shot.x += shot.direction * (shot.action.projectile?.speed ?? FIREBALL.speed) * dt;
   const enemy = game.enemy;
   const hitsEnemy = enemy.health > 0 && Math.abs(enemy.x - shot.x) <= enemy.profile.body + FIREBALL.radius
     && Math.abs(enemy.y - shot.y) <= FIREBALL.elevation - 10;
@@ -1298,13 +1389,41 @@ function advanceProjectile(shot, dt) {
 
 //JT-2026/11/19 - draw the supplied fireball sprite in its travel direction
 function drawProjectile(shot) {
+  //JT-2026/11/28 - route maria's traveling props to her effects atlas
+  const projectile = shot.action.projectile;
+  if (projectile?.atlas === MARIA_ATLASES.fx) {
+    const image = atlases.get(projectile.atlas)?.img;
+    const elevation = projectile.handHeight * MARIA_PROFILE.size / MARIA_FRAME.scale;
+    context.save();
+    context.translate(shot.x * view.scale, view.floor - (shot.y + elevation) * view.scale);
+    context.scale(shot.direction, 1);
+    drawMariaProjectile(context, image, projectile, FIREBALL.lifetime - shot.remaining, view.scale, shot.volley);
+    context.restore();
+    return;
+  }
+  //JT-2026/11/27 - anchor jose's ranged effects at their release heights
+  if (projectile) {
+    const image = atlases.get(JOSE_PROFILE.id)?.img;
+    if (!image?.complete || !image.naturalWidth) return;
+    const elevation = projectile.handHeight * JOSE_PROFILE.size / JOSE_FRAME.scale;
+    context.save();
+    context.translate(shot.x * view.scale, view.floor - (shot.y + elevation) * view.scale);
+    context.scale(shot.direction, 1);
+    drawJoseProjectile(context, image, projectile, view.scale);
+    context.restore();
+    return;
+  }
   // const img = atlases.get(HERO.id)?.img;
-  //JT-2026/11/25 - draw the stapler from gloria's atlas and keep juan's fireball
+  //JT-2026/11/25 - draw the stapler from ana's atlas and keep juan's fireball
   const thrown = shot.action.thrown;
-  const img = atlases.get(thrown ? GLORIA_ATLASES.base : HERO.id)?.img;
+  // const img = atlases.get(thrown ? GLORIA_ATLASES.base : HERO.id)?.img;
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  const img = atlases.get(thrown ? ANA_ATLASES.base : HERO.id)?.img;
   if (!img?.complete || !img.naturalWidth) return;
   // const { width, height, x, scale } = HERO_FRAME;
-  const { width, height, x, y, scale } = thrown ? GLORIA_FRAME : HERO_FRAME;
+  // const { width, height, x, y, scale } = thrown ? GLORIA_FRAME : HERO_FRAME;
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  const { width, height, x, y, scale } = thrown ? ANA_FRAME : HERO_FRAME;
   const size = view.scale * FIREBALL.scale / scale;
   context.save();
   // context.translate(shot.x * view.scale, view.floor - (shot.y + FIREBALL.elevation) * view.scale);
@@ -1433,7 +1552,9 @@ function enableGameSounds(confirm = false) {
   //JT-2026/11/24 - warm up the voice clip before the first cast
   // prepareAlmightyPushVoice();
   //JT-2026/11/25 - warm up the selected ultimate's voice before combat
-  prepareAlmightyPushVoice(playingGloria ? GLORIA_SKILLS.almightyPush : ALMIGHTY_PUSH);
+  // prepareAlmightyPushVoice(playingGloria ? GLORIA_SKILLS.almightyPush : ALMIGHTY_PUSH);
+  //JT-2026/11/27 - preload the selected fighter's knockout audio
+  prepareAlmightyPushVoice(alternateSkills?.almightyPush ?? ALMIGHTY_PUSH);
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (AudioContext) {
     soundContext ??= new AudioContext();

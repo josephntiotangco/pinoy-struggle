@@ -29,13 +29,18 @@
   <!-- JT-2026/11/24 - load the shared monster cues before arena starts -->
   <script src="monster-audio.js" defer></script>
   <!-- JT-2026/11/24 - load the shared almighty push timing before arena starts -->
-  <script src="almighty-push.js" defer></script>
-  <!-- JT-2026/11/25 - load the shared fighter selection and gloria's moves -->
-  <script src="playable-fighters.js" defer></script>
+  <!-- <script src="almighty-push.js" defer></script> -->
+  <!-- JT-2026/11/25 - load the shared fighter selection and ana's moves -->
+  <!-- <script src="playable-fighters.js" defer></script> -->
+  <!-- JT-2026/11/28 - refresh the shared cast and fighter scripts together -->
+  <script src="almighty-push.js?v=20261128-gondola" defer></script>
+  <script src="playable-fighters.js?v=20261128-ana" defer></script>
   <!-- JT-2026/11/26 - track arena scores only in the web page -->
   <link rel="stylesheet" href="leaderboard.css">
   <script src="leaderboard.js" defer></script>
-  <script src="game.js" defer></script>
+  <!-- <script src="game.js" defer></script> -->
+  <!-- JT-2026/11/28 - use the arena script that recognizes ana -->
+  <script src="game.js?v=20261128-ana" defer></script>
 </head>
 <body>
   <!-- JT-2026/11/19 - lay out the arcade arena, controls, and opponent ladder -->
@@ -267,11 +272,22 @@
     <section class="game-updates" aria-labelledby="updates-title">
       <h2 id="updates-title">Game Updates</h2>
       <div class="update-entries">
+        <!-- JT-2026/11/28 - summarize the latest fighter and skill changes for arena -->
+        <article class="update-entry">
+          <h3><time datetime="2026-11-28">November 28, 2026</time></h3>
+          <ul>
+            <li>Maria joins Arena with Hanger Slap, Hanger Throw, Merchandise Barrage, Gondola Push, and the one-hit K.O. Gondola Fall. Press <kbd>O</kbd> with two full Special Bars to drop a rack on your opponent.</li>
+            <li>Jose joins Arena with Newspaper Hack, Kick, Megaphone Blast, Giant Swing, and 3 Sword Style. His ultimate knocks out the opponent as the Santoryu cue starts.</li>
+            <li>Ana’s <kbd>L</kbd> special is now Rei Gun. The beam fires from her fingertip.</li>
+          </ul>
+        </article>
         <!-- JT-2026/11/25 - announce the new selectable fighter in arena -->
         <article class="update-entry">
           <h3><time datetime="2026-11-25">November 25, 2026</time></h3>
           <ul>
-            <li>Choose Juan or Gloria from Mode Select. Gloria brings Slap, Throw, Basooka, Kick Barrage, and the one-hit K.O. Spirit Bomb.</li>
+            <!-- <li>Choose Juan or Gloria from Mode Select. Gloria brings Slap, Throw, Basooka, Kick Barrage, and the one-hit K.O. Spirit Bomb.</li> -->
+            <!-- JT-2026/11/28 - keep the original ana announcement focused on her debut -->
+            <li>Ana joins Arena with Slap, Throw, Kick Barrage, and the one-hit K.O. Spirit Bomb.</li>
           </ul>
         </article>
         <!-- JT-2026/11/24 - announce the two challengers and monster attack sounds -->

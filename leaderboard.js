@@ -137,7 +137,10 @@
       for (const entry of data.entries) {
         const row = document.createElement("tr");
         row.classList.toggle("rank-you", entry.isYou);
-        for (const value of [entry.rank, entry.nickname, entry.fighter === "gloria" ? "Gloria" : "Juan", entry.cleared, formatTime(entry.activeMs)]) {
+        // for (const value of [entry.rank, entry.nickname, entry.fighter === "gloria" ? "Gloria" : "Juan", entry.cleared, formatTime(entry.activeMs)]) {
+        //JT-2026/11/28 - display the current fighter name on both existing and new scores
+        const fighter = FIGHTER_NAMES[canonicalFighterId(entry.fighter)];
+        for (const value of [entry.rank, entry.nickname, fighter, entry.cleared, formatTime(entry.activeMs)]) {
           const cell = document.createElement("td");
           cell.textContent = value;
           row.append(cell);

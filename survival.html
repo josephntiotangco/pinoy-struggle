@@ -10,7 +10,10 @@
   <!-- JT-2026/11/24 - include maypajo in the eight-arena survival run -->
   <!-- <meta name="description" content="Fight through 24 waves as Juan across eight 2.5D survival arenas from Tondo to Maypajo."> -->
   <!-- JT-2026/11/25 - mention both playable fighters in survival -->
-  <meta name="description" content="Fight through 24 waves as Juan or Gloria across eight 2.5D survival arenas from Tondo to Maypajo.">
+  <!-- <meta name="description" content="Fight through 24 waves as Juan or Gloria across eight 2.5D survival arenas from Tondo to Maypajo."> -->
+  <!-- JT-2026/11/27 - include jose in the survival fighter lineup -->
+  <!-- JT-2026/11/27 - include maria in the survival fighter lineup -->
+  <meta name="description" content="Fight through 24 waves as Juan, Ana, Jose, or Maria across eight 2.5D survival arenas from Tondo to Maypajo.">
   <title>Pinoy Struggle Survival</title>
   <!-- JT-2026/11/24 - use the pinoy struggle icon in the browser tab -->
   <link rel="icon" type="image/png" sizes="48x48" href="assets/ps-favicon.png">
@@ -21,13 +24,18 @@
   <!-- JT-2026/11/24 - load the shared monster cues before survival starts -->
   <script src="monster-audio.js" defer></script>
   <!-- JT-2026/11/24 - load the shared almighty push timing before survival starts -->
-  <script src="almighty-push.js" defer></script>
-  <!-- JT-2026/11/25 - load the shared fighter selection and gloria's moves -->
-  <script src="playable-fighters.js" defer></script>
+  <!-- <script src="almighty-push.js" defer></script> -->
+  <!-- JT-2026/11/25 - load the shared fighter selection and ana's moves -->
+  <!-- <script src="playable-fighters.js" defer></script> -->
+  <!-- JT-2026/11/28 - refresh the shared cast and fighter scripts together -->
+  <script src="almighty-push.js?v=20261128-gondola" defer></script>
+  <script src="playable-fighters.js?v=20261128-ana" defer></script>
   <!-- JT-2026/11/26 - track survival scores only in the web page -->
   <link rel="stylesheet" href="leaderboard.css">
   <script src="leaderboard.js" defer></script>
-  <script src="survival.js" defer></script>
+  <!-- <script src="survival.js" defer></script> -->
+  <!-- JT-2026/11/28 - use the survival script that recognizes ana -->
+  <script src="survival.js?v=20261128-ana" defer></script>
 </head>
 <body>
   <!-- JT-2026/11/23 - give the survival game its own arena hud and controls -->
@@ -132,11 +140,22 @@
     <!-- JT-2026/11/23 - show recent survival changes below the wave guide -->
     <section class="game-updates" aria-labelledby="updates-title">
       <h2 id="updates-title">Game Updates</h2>
-      <!-- JT-2026/11/25 - introduce gloria's crowd attacks in survival -->
+      <!-- JT-2026/11/28 - summarize the latest fighter and skill changes for survival -->
+      <article class="update-entry">
+        <h3><time datetime="2026-11-28">November 28, 2026</time></h3>
+        <ul>
+          <li>Maria joins Survival. Merchandise Barrage throws clothes and shoes in three volleys. Gondola Push rolls through enemies in its lane. Gondola Fall drops one rack on each active enemy for a one-hit K.O.</li>
+          <li>Jose joins Survival. Megaphone Blast and Giant Swing shoot across the map. 3 Sword Style immediately knocks out all active enemies when cast.</li>
+          <li>Ana’s Rei Gun now fires from her fingertip and hits enemies in the same lane.</li>
+        </ul>
+      </article>
+      <!-- JT-2026/11/25 - introduce ana's crowd attacks in survival -->
       <article class="update-entry">
         <h3><time datetime="2026-11-25">November 25, 2026</time></h3>
         <ul>
-          <li>Gloria joins Survival. Kick Barrage hits nearby enemies, Basooka hits enemies in its lane, and Spirit Bomb clears the field.</li>
+          <!-- <li>Gloria joins Survival. Kick Barrage hits nearby enemies, Basooka hits enemies in its lane, and Spirit Bomb clears the field.</li> -->
+          <!-- JT-2026/11/28 - keep the original ana announcement focused on her debut -->
+          <li>Ana joins Survival. Kick Barrage hits nearby enemies and Spirit Bomb clears the field.</li>
         </ul>
       </article>
       <!-- JT-2026/11/24 - announce balintawak and the monster attack sounds -->

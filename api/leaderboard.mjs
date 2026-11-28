@@ -3,7 +3,9 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 //JT-2026/11/26 - serve the web player profile, run checkpoints, and public rankings
 const COOKIE = "pinoy_struggle_player";
 const MODES = new Set(["arena", "survival"]);
-const FIGHTERS = new Set(["juan", "gloria"]);
+// const FIGHTERS = new Set(["juan", "gloria"]);
+//JT-2026/11/28 - accept all four fighters on ranked runs
+const FIGHTERS = new Set(["juan", "ana", "jose", "maria"]);
 const RUN_ID = /^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/u;
 
 export default {
@@ -89,7 +91,10 @@ async function saveProfile(value, existingToken, secure) {
 }
 
 //JT-2026/11/26 - issue a run id tied to the player and selected fighter
-async function startRun({ mode, fighter }, playerKey) {
+// async function startRun({ mode, fighter }, playerKey) {
+//JT-2026/11/28 - accept existing clients and store ana's current fighter id
+async function startRun({ mode, fighter: requestedFighter }, playerKey) {
+  const fighter = requestedFighter === "gloria" ? "ana" : requestedFighter;
   if (!MODES.has(mode) || !FIGHTERS.has(fighter)) return json({ error: "Invalid mode or fighter." }, 400);
   const runId = randomUUID();
   const rows = await query(`

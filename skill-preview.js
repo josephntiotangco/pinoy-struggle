@@ -49,14 +49,40 @@ const skillPreviews = {
   },
 };
 
-//JT-2026/11/25 - reuse gloria's combat sheets and share the prayer sound between fighters
-const gloriaPreviewSheets = Object.fromEntries(Object.entries(GLORIA_ATLASES).map(([key, id]) => [key, {
-  id, frame: key === "spirit" ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME,
+//JT-2026/11/25 - reuse ana's combat sheets and share the prayer sound between fighters
+// const gloriaPreviewSheets = Object.fromEntries(Object.entries(GLORIA_ATLASES).map(([key, id]) => [key, {
+  // id, frame: key === "spirit" ? GLORIA_SPIRIT_FRAME : GLORIA_FRAME,
+//JT-2026/11/28 - use ana for the fighter and her moves
+const anaPreviewSheets = Object.fromEntries(Object.entries(ANA_ATLASES).map(([key, id]) => [key, {
+  id, frame: key === "spirit" ? ANA_SPIRIT_FRAME : ANA_FRAME,
 }]));
-const gloriaPreviews = Object.fromEntries(Object.entries(GLORIA_SKILLS).map(([slot, skill]) => [slot, {
+// const gloriaPreviews = Object.fromEntries(Object.entries(GLORIA_SKILLS).map(([slot, skill]) => [slot, {
+//JT-2026/11/28 - use ana for the fighter and her moves
+const anaPreviews = Object.fromEntries(Object.entries(ANA_SKILLS).map(([slot, skill]) => [slot, {
   ...skill, slot, previewDuration: skill.thrown ? 1.35 : skill.duration,
   sound: slot === "pray" ? skillPreviews.pray.sound : skill.sound,
 }]));
+
+//JT-2026/11/27 - preview jose with the same poses, projectiles, and sounds as combat
+const josePreviewSheets = { base: { id: JOSE_PROFILE.id, frame: JOSE_FRAME } };
+const josePreviews = Object.fromEntries(Object.entries(JOSE_SKILLS).map(([slot, skill]) => [slot, {
+  ...skill, slot, sheet: "base", previewDuration: skill.projectile ? 1.8 : skill.duration,
+  sound: slot === "pray" ? skillPreviews.pray.sound : skill.sound,
+}]));
+
+//JT-2026/11/28 - give maria's preview enough time to show the falling rack and crash
+const mariaPreviewSheets = { base: { id: MARIA_ATLASES.base }, fx: { id: MARIA_ATLASES.fx } };
+const mariaPreviewLanding = 1.15;
+const mariaPreviews = Object.fromEntries(Object.entries(MARIA_SKILLS).map(([slot, skill]) => {
+  const move = skill.dropStart ? {
+    ...skill, impact: mariaPreviewLanding, duration: 2.7, dropHeight: 116,
+    soundEnd: mariaPreviewLanding + (skill.soundEnd - skill.impact),
+  } : skill;
+  return [slot, {
+    ...move, slot, sheet: "base", previewDuration: skill.projectile ? 1.85 : move.duration,
+    sound: slot === "pray" ? skillPreviews.pray.sound : skill.sound,
+  }];
+}));
 
 //JT-2026/11/24 - connect the selection buttons and prepare art near the preview
 const skillSection = document.getElementById("skills");
@@ -76,8 +102,20 @@ let skillAudioContext = null;
 let skillOscillator = null;
 let skillPlayback = 0;
 //JT-2026/11/25 - track fighter selection and preserve the default juan labels
+//JT-2026/11/27 - add jose to the existing web and android fighter picker
+appendJoseFighterOption();
+//JT-2026/11/27 - add maria to the existing web and android fighter picker
+appendMariaFighterOption();
 const fighterButtons = [...document.querySelectorAll("button[data-fighter]")];
 const fighterModeLinks = [...document.querySelectorAll(".mode-grid a")];
+//JT-2026/11/28 - give players the background of each fighter before choosing a mode
+const fighterDescription = document.getElementById("fighter-description");
+const fighterDescriptions = {
+  juan: "Juan is an off-duty construction worker on a no-work, no-pay contract. He faces the everyday challenges of life as a Filipino.",
+  ana: "Ana works in an office in a well-known central business district. She faces a tough commute every workday while dealing with the everyday challenges of life in the Philippines.",
+  jose: "Jose is a company driver and union leader at a beverage company. He stands up for fair benefits for his coworkers while facing the everyday hardships of life in the Philippines.",
+  maria: "Maria is a contract sales associate at a well-known department store. Under a no-work, no-pay policy, she faces the daily challenge of making ends meet in the Philippines.",
+};
 const juanSkillLabels = new Map(skillButtons.map(button => [button, button.firstElementChild.textContent]));
 let previewFighter;
 let activeSkillSheets = skillSheets;
@@ -133,7 +171,11 @@ async function loadSkillPreviewArt() {
   for (const sheet of Object.values(sheets)) if (!sheet.image) sheet.ready = null;
   for (const button of skillButtons) {
     // button.disabled = !skillContext || !skillSheets[skillPreviews[button.dataset.skill].sheet].image;
-    button.disabled = !skillContext || !sheets[activeSkillPreviews[button.dataset.skill].sheet].image;
+    // button.disabled = !skillContext || !sheets[activeSkillPreviews[button.dataset.skill].sheet].image;
+    //JT-2026/11/28 - require maria's effects sheet for previews that use it
+    const skill = activeSkillPreviews[button.dataset.skill];
+    button.disabled = !skillContext || !sheets[skill.sheet].image ||
+      (sheets === mariaPreviewSheets && Boolean(skill.projectile || skill.dropStart) && !sheets.fx.image);
   }
   const available = skillButtons.find(button => !button.disabled);
   if (!available) {
@@ -168,7 +210,9 @@ async function playSkillPreview(button) {
   const skill = activeSkillPreviews[button.dataset.skill];
   const playback = skillPlayback;
   //JT-2026/11/25 - preview spirit bomb with the same charge and release timeline as combat
-  if (skill.chargeSound) {
+  // if (skill.chargeSound) {
+  //JT-2026/11/27 - give jose's immediate slash the same standalone audio as combat
+  if (skill.slot === "almightyPush") {
     skillUltimateCast = { kind: button.dataset.skill, elapsed: 0, cast: skill };
     resumeAlmightyPushVoice(skillUltimateCast);
     drawSkillPreview(skill, 0);
@@ -176,7 +220,7 @@ async function playSkillPreview(button) {
     return;
   }
   // const sound = playSkillSound(skill, playback);
-  //JT-2026/11/25 - wait until release frames for gloria's strike effects
+  //JT-2026/11/25 - wait until release frames for ana's strike effects
   const sound = skill.effect ? null : playSkillSound(skill, playback);
   drawSkillPreview(skill, 0);
   const clip = skill.syncSound ? await sound : null;
@@ -237,9 +281,22 @@ function playSkillSound(skill, playback) {
 //JT-2026/11/24 - show the selected skill on a fixed stage without starting a fight
 function drawSkillPreview(skill, elapsed = Infinity) {
   if (!skillContext) return;
-  //JT-2026/11/25 - draw gloria's animation from the selected combat atlas
-  if (previewFighter === "gloria") {
-    drawGloriaSkillPreview(skill, elapsed);
+  //JT-2026/11/27 - use jose's shared pose and projectile art in the preview
+  if (previewFighter === "jose") {
+    drawJoseSkillPreview(skill, elapsed);
+    return;
+  }
+  //JT-2026/11/27 - use maria's shared pose and projectile art in the preview
+  if (previewFighter === "maria") {
+    drawMariaSkillPreview(skill, elapsed);
+    return;
+  }
+  //JT-2026/11/25 - draw ana's animation from the selected combat atlas
+  // if (previewFighter === "gloria") {
+    // drawGloriaSkillPreview(skill, elapsed);
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  if (previewFighter === "ana") {
+    drawAnaSkillPreview(skill, elapsed);
     return;
   }
   const active = elapsed < skill.duration;
@@ -322,8 +379,12 @@ function setPreviewFighter(fighter, save = false) {
   if (fighter === previewFighter) return;
   stopSkillPreview();
   previewFighter = fighter;
-  const gloria = fighter === "gloria";
-  const name = gloria ? "Gloria" : "Juan";
+  // const gloria = fighter === "gloria";
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  const ana = fighter === "ana";
+  // const name = gloria ? "Gloria" : "Juan";
+  //JT-2026/11/27 - display the selected name and pass jose into both mode links
+  const name = FIGHTER_NAMES[fighter];
   if (save) {
     rememberFighter(fighter);
     const url = new URL(window.location.href);
@@ -332,16 +393,25 @@ function setPreviewFighter(fighter, save = false) {
     catch { /* Mode links retain the selection on local pages. */ }
   }
   for (const button of fighterButtons) button.setAttribute("aria-pressed", String(button.dataset.fighter === fighter));
+  //JT-2026/11/28 - update the description with the current fighter selection
+  if (fighterDescription) fighterDescription.textContent = fighterDescriptions[fighter] ?? "";
   for (const link of fighterModeLinks) {
-    if (gloria) linkToFighterPage(link, fighter);
+    // if (gloria) linkToFighterPage(link, fighter);
+    //JT-2026/11/27 - carry both alternate fighters to combat
+    if (fighter !== "juan") linkToFighterPage(link, fighter);
     else link.setAttribute("href", link.getAttribute("href").split("?")[0]);
   }
   document.getElementById("skills-fighter").textContent = name + "’s";
   skillCanvas.setAttribute("aria-label", name + "’s skill animation");
-  activeSkillSheets = gloria ? gloriaPreviewSheets : skillSheets;
-  activeSkillPreviews = gloria ? gloriaPreviews : skillPreviews;
+  // activeSkillSheets = gloria ? gloriaPreviewSheets : skillSheets;
+  // activeSkillPreviews = gloria ? gloriaPreviews : skillPreviews;
+  //JT-2026/11/27 - choose jose's shared preview data and atlas
+  activeSkillSheets = fighter === "jose" ? josePreviewSheets : fighter === "maria" ? mariaPreviewSheets : ana ? anaPreviewSheets : skillSheets;
+  activeSkillPreviews = fighter === "jose" ? josePreviews : fighter === "maria" ? mariaPreviews : ana ? anaPreviews : skillPreviews;
   for (const button of skillButtons) {
-    button.firstElementChild.textContent = gloria ? activeSkillPreviews[button.dataset.skill].label : juanSkillLabels.get(button);
+    // button.firstElementChild.textContent = gloria ? activeSkillPreviews[button.dataset.skill].label : juanSkillLabels.get(button);
+    //JT-2026/11/27 - keep move labels in sync with the active preview
+    button.firstElementChild.textContent = activeSkillPreviews[button.dataset.skill].label ?? juanSkillLabels.get(button);
     button.disabled = true;
   }
   skillReplay.disabled = true;
@@ -350,12 +420,17 @@ function setPreviewFighter(fighter, save = false) {
   if (skillArtRequested) loadSkillPreviewArt();
 }
 
-//JT-2026/11/25 - preview gloria's throw, beam, barrage, and airborne spirit bomb
-function drawGloriaSkillPreview(skill, elapsed) {
+//JT-2026/11/25 - preview ana's throw, beam, barrage, and airborne spirit bomb
+// function drawGloriaSkillPreview(skill, elapsed) {
+//JT-2026/11/28 - use ana for the fighter and her moves
+function drawAnaSkillPreview(skill, elapsed) {
   const active = elapsed < skill.duration;
   const spirit = skill.slot === "almightyPush";
-  const [, row, column] = active ? gloriaSkillPose(skill.slot, elapsed) : [GLORIA_ATLASES.base, 0, 0];
-  const { image, frame } = gloriaPreviewSheets[active ? skill.sheet : "base"];
+  // const [, row, column] = active ? gloriaSkillPose(skill.slot, elapsed) : [GLORIA_ATLASES.base, 0, 0];
+  // const { image, frame } = gloriaPreviewSheets[active ? skill.sheet : "base"];
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  const [, row, column] = active ? anaSkillPose(skill.slot, elapsed) : [ANA_ATLASES.base, 0, 0];
+  const { image, frame } = anaPreviewSheets[active ? skill.sheet : "base"];
   const x = skill.thrown || skill.beamEnd ? 285 : 385;
   const floor = spirit ? 325 : 308;
   const size = spirit ? 1 : 1.23;
@@ -366,19 +441,140 @@ function drawGloriaSkillPreview(skill, elapsed) {
   skillContext.beginPath();
   skillContext.ellipse(x, floor + 2, 41, 9, 0, 0, Math.PI * 2);
   skillContext.fill();
-  if (active && skill.beamEnd) {
+  // if (active && skill.beamEnd) {
+  //   skillContext.save();
+  //   skillContext.translate(x + 165 * size, floor - 81 * size);
+  //   drawBasookaBeam(skillContext, skillCanvas.width - x, elapsed, 19);
+  //   skillContext.restore();
+  // }
+  //JT-2026/11/27 - align the rei gun preview with the shared release art
+  const beam = active && skill.beamEnd && reiGunBeamPose(elapsed);
+  if (beam) {
+    const start = x + beam.x * size;
     skillContext.save();
-    skillContext.translate(x + 165 * size, floor - 81 * size);
-    drawBasookaBeam(skillContext, skillCanvas.width - x, elapsed, 19);
+    skillContext.translate(start, floor - beam.y * size);
+    drawReiGunBeam(skillContext, image, skillCanvas.width - start, size, beam.column);
     skillContext.restore();
   }
-  const lift = active && spirit ? gloriaSpiritLift(elapsed) * size : 0;
-  if (active && spirit) drawGloriaSpiritOrb(skillContext, image, x, floor - lift, size, elapsed, skillCanvas.width);
+  // const lift = active && spirit ? gloriaSpiritLift(elapsed) * size : 0;
+  // if (active && spirit) drawGloriaSpiritOrb(skillContext, image, x, floor - lift, size, elapsed, skillCanvas.width);
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  const lift = active && spirit ? anaSpiritLift(elapsed) * size : 0;
+  if (active && spirit) drawAnaSpiritOrb(skillContext, image, x, floor - lift, size, elapsed, skillCanvas.width);
   skillContext.drawImage(image, column * width, row * height, width, height,
     x - anchorX * size, floor - lift - anchorY * size, width * size, height * size);
-  if (skill.thrown && elapsed >= skill.impact && elapsed < skill.previewDuration && gloriaPreviewSheets.base.image) {
+  // if (skill.thrown && elapsed >= skill.impact && elapsed < skill.previewDuration && gloriaPreviewSheets.base.image) {
+  //JT-2026/11/28 - use ana for the fighter and her moves
+  if (skill.thrown && elapsed >= skill.impact && elapsed < skill.previewDuration && anaPreviewSheets.base.image) {
     const position = x + 55 + (elapsed - skill.impact) * 465;
-    skillContext.drawImage(gloriaPreviewSheets.base.image, 0, 8 * height, width, height,
+    // skillContext.drawImage(gloriaPreviewSheets.base.image, 0, 8 * height, width, height,
+    //JT-2026/11/28 - use ana for the fighter and her moves
+    skillContext.drawImage(anaPreviewSheets.base.image, 0, 8 * height, width, height,
       position - anchorX, floor - 66 - anchorY, width, height);
+  }
+}
+
+//JT-2026/11/27 - add the third portrait wherever the shared fighter picker is present
+function appendJoseFighterOption() {
+  const options = document.querySelector(".fighter-options");
+  if (!options || options.querySelector('[data-fighter="jose"]')) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.fighter = "jose";
+  button.setAttribute("aria-pressed", "false");
+  const portrait = document.createElement("img");
+  portrait.src = "assets/arcade/previews/hero_jose.png";
+  portrait.alt = "";
+  portrait.width = 128;
+  portrait.height = 160;
+  const label = document.createElement("span");
+  label.textContent = FIGHTER_NAMES.jose;
+  button.append(portrait, label);
+  options.append(button);
+}
+
+//JT-2026/11/27 - add the fourth portrait wherever the shared fighter picker is present
+function appendMariaFighterOption() {
+  const options = document.querySelector(".fighter-options");
+  if (!options || options.querySelector('[data-fighter="maria"]')) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.fighter = "maria";
+  button.setAttribute("aria-pressed", "false");
+  const portrait = document.createElement("img");
+  portrait.src = "assets/arcade/previews/hero_maria.png";
+  portrait.alt = "";
+  portrait.width = 128;
+  portrait.height = 160;
+  const label = document.createElement("span");
+  label.textContent = FIGHTER_NAMES.maria;
+  button.append(portrait, label);
+  options.append(button);
+}
+
+//JT-2026/11/27 - show jose's full moves, including the end of his prayer sequence
+function drawJoseSkillPreview(skill, elapsed) {
+  const { image, frame } = josePreviewSheets.base;
+  skillContext.clearRect(0, 0, skillCanvas.width, skillCanvas.height);
+  if (!image) return;
+  const x = skill.projectile ? 285 : skillCanvas.width / 2;
+  const floor = 308;
+  const size = 1.24;
+  const { width, height, x: anchorX, y: anchorY } = frame;
+  const [row, column] = elapsed < skill.duration ? joseSkillPose(skill.slot, elapsed, true) : [0, 0];
+  skillContext.fillStyle = "#110e0bb3";
+  skillContext.beginPath();
+  skillContext.ellipse(x, floor + 2, 41, 9, 0, 0, Math.PI * 2);
+  skillContext.fill();
+  skillContext.drawImage(image, column * width, row * height, width, height,
+    x - anchorX * size, floor - anchorY * size, width * size, height * size);
+  if (skill.projectile && elapsed >= skill.impact && elapsed < skill.previewDuration) {
+    const projectile = skill.projectile;
+    skillContext.save();
+    skillContext.translate(x + 65 + (elapsed - skill.impact) * projectile.speed * .75, floor - projectile.handHeight * size);
+    drawJoseProjectile(skillContext, image, projectile, size);
+    skillContext.restore();
+  }
+}
+
+//JT-2026/11/28 - show maria's props and hold the broken rack after its preview lands
+function drawMariaSkillPreview(skill, elapsed) {
+  const image = mariaPreviewSheets.base.image;
+  const effects = mariaPreviewSheets.fx.image;
+  skillContext.clearRect(0, 0, skillCanvas.width, skillCanvas.height);
+  if (!image) return;
+  const x = skill.projectile || skill.dropStart ? 285 : skillCanvas.width / 2;
+  const floor = 308;
+  const size = 1.23;
+  const { width, height, x: anchorX, y: anchorY } = MARIA_FRAME;
+  const poseTime = skill.dropStart ? elapsed * MARIA_SKILLS.almightyPush.duration / skill.duration : elapsed;
+  const [row, column] = elapsed < skill.duration ? mariaSkillPose(skill.slot, poseTime, true) : [0, 0];
+  skillContext.fillStyle = "#110e0bb3";
+  skillContext.beginPath();
+  skillContext.ellipse(x, floor + 2, 41, 9, 0, 0, Math.PI * 2);
+  skillContext.fill();
+  skillContext.drawImage(image, column * width, row * height, width, height,
+    x - anchorX * size, floor - anchorY * size, width * size, height * size);
+  if (skill.projectile && elapsed >= skill.impact && elapsed < skill.previewDuration) {
+    const projectile = skill.projectile;
+    const releases = [skill.impact, ...(skill.followUps ?? [])];
+    for (const [volley, release] of releases.entries()) {
+      const flight = elapsed - release;
+      if (flight < 0) break;
+      const position = x + 51 + flight * projectile.speed * .72;
+      skillContext.save();
+      skillContext.translate(position, floor - projectile.handHeight * size);
+      drawMariaProjectile(skillContext, effects, projectile, flight, size, volley);
+      skillContext.restore();
+    }
+  }
+  if (skill.dropStart && elapsed >= skill.dropStart) {
+    const landingX = skillCanvas.width * .68;
+    const rackTime = Math.min(elapsed, skill.duration - .01);
+    skillContext.fillStyle = "#110e0bb3";
+    skillContext.beginPath();
+    skillContext.ellipse(landingX, floor + 2, 57, 9, 0, 0, Math.PI * 2);
+    skillContext.fill();
+    drawMariaGondolaFall(skillContext, effects, landingX, floor, 1.05, rackTime, skill);
   }
 }

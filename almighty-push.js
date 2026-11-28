@@ -52,19 +52,40 @@ function resumeAlmightyPushVoice(attack) {
   const cast = attack?.cast ?? ALMIGHTY_PUSH;
   if (attack?.kind !== "almightyPush" || attack.elapsed >= cast.soundEnd || document.hidden) return;
   attack.audioEnabled = true;
-  const chargeEnd = cast.chargeEnd ?? 0;
+  // const chargeEnd = cast.chargeEnd ?? 0;
+  //JT-2026/11/28 - schedule the crash sound at the impact frame
+  const chargeEnd = cast.soundAtImpact ? cast.impact : (cast.chargeEnd ?? 0);
   const charging = attack.elapsed < chargeEnd;
   const cue = charging ? cast.chargeSound : cast.sound;
-  const clip = prepareUltimateCue(cue);
-  if (!clip || clip.error) return;
-  const start = (charging ? 0 : chargeEnd) - (cue.offset ?? 0);
-  const end = charging ? chargeEnd : cast.soundEnd;
-  const voice = { clip, start, end, started: false, stalled: 0 };
-  attack.voice = voice;
-  voice.clip.currentTime = attack.elapsed - start;
-  voice.clip.play()
-    .then(() => { voice.started = true; })
-    .catch(() => { if (attack.voice === voice) attack.voice = null; });
+  // const clip = prepareUltimateCue(cue);
+  // if (!clip || clip.error) return;
+  // const start = (charging ? 0 : chargeEnd) - (cue.offset ?? 0);
+  // const end = charging ? chargeEnd : cast.soundEnd;
+  // const voice = { clip, start, end, started: false, stalled: 0 };
+  // attack.voice = voice;
+  // voice.clip.currentTime = attack.elapsed - start;
+  // voice.clip.play()
+  //   .then(() => { voice.started = true; })
+  //   .catch(() => { if (attack.voice === voice) attack.voice = null; });
+  //JT-2026/11/28 - keep media startup failures out of the animation loop
+  try {
+    if (!cue) {
+      if (cast.soundAtImpact) prepareUltimateCue(cast.sound);
+      return;
+    }
+    const clip = prepareUltimateCue(cue);
+    if (!clip || clip.error) return;
+    const start = (charging ? 0 : chargeEnd) - (cue.offset ?? 0);
+    const end = charging ? chargeEnd : cast.soundEnd;
+    const voice = { clip, start, end, started: false, stalled: 0 };
+    attack.voice = voice;
+    voice.clip.currentTime = attack.elapsed - start;
+    voice.clip.play()
+      .then(() => { voice.started = true; })
+      .catch(() => { if (attack.voice === voice) attack.voice = null; });
+  } catch {
+    attack.voice = null;
+  }
 }
 
 //JT-2026/11/24 - detach the sound so a muted cast can still finish
@@ -102,6 +123,14 @@ function advanceAlmightyPush(attack, dt) {
 //JT-2026/11/25 - time the charge in game and sync the blast to the release voice
 function advanceAlmightyPush(attack, dt) {
   const cast = attack.cast ?? ALMIGHTY_PUSH;
+  //JT-2026/11/28 - let the gondola land and recover even when audio stalls
+  if (cast.soundAtImpact) {
+    const previous = attack.elapsed;
+    attack.elapsed += dt;
+    if (attack.audioEnabled && previous < cast.impact && attack.elapsed >= cast.impact) resumeAlmightyPushVoice(attack);
+    if (attack.voice && attack.elapsed >= cast.soundEnd) pauseAlmightyPushVoice(attack, true);
+    return;
+  }
   const chargeEnd = cast.chargeEnd ?? 0;
   if (attack.elapsed < chargeEnd) {
     attack.elapsed = Math.min(chargeEnd, attack.elapsed + dt);

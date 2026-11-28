@@ -19,7 +19,13 @@
 <!-- JT-2026/11/24 - include the twenty-four survival waves through maypajo -->
 <!-- Play as Juan in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**. -->
 <!-- JT-2026/11/25 - introduce the fighter choice in both modes -->
-Play as **Juan** or **Gloria** in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**.
+<!-- Play as **Juan** or **Gloria** in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**. -->
+<!-- JT-2026/11/28 - describe the current roster and new fighters' moves -->
+Play as **Juan**, **Ana**, **Jose**, or **Maria** in Metro Manila. Face 20 opponents in **Arena** or survive 24 waves across eight arenas from Tondo to Maypajo in **Survival**.
+
+Jose uses **Newspaper Hack (J)** and **Kick (K)**. **Megaphone Blast (L)** and **Giant Swing (I)** each cost one Special Bar. **3 Sword Style (O)** requires two full bars and empties the meter to knock out the Arena opponent or every living enemy on the field in Survival.
+
+Maria uses **Hanger Slap (J)** and **Hanger Throw (K)**. **Merchandise Barrage (L)** throws three volleys and **Gondola Push (I)** rolls a rack through enemies in its lane. Each costs one Special Bar. **Gondola Fall (O)** requires two full bars and empties the meter. Each active enemy is knocked out when its rack lands.
 
 ## Play locally
 
@@ -103,20 +109,28 @@ While on the ground, use **Kamehame Haduken (`L`, 100 damage)** or **Konoha Senp
 <!-- JT-2026/11/24 - explain the two-bar arena knockout and its spoken cue -->
 Fill at least two Special Bars, then press **`O`** or tap **Almighty Push**. The cast empties the meter and knocks out your opponent anywhere in the arena as Juan says “Push!”
 
-<!-- JT-2026/11/25 - list gloria's controls and the cost of each special -->
-## Gloria’s moves
+<!-- JT-2026/11/25 - list ana's controls and the cost of each special -->
+<!-- ## Gloria’s moves -->
+<!-- JT-2026/11/28 - use ana as the fighter name -->
+## Ana’s moves
 
-Choose **Gloria** on the Mode Select page before entering Arena or Survival. Her skills are available to try on the same page.
+<!-- Choose **Gloria** on the Mode Select page before entering Arena or Survival. Her skills are available to try on the same page. -->
+<!-- JT-2026/11/28 - use ana as the fighter name -->
+Choose **Ana** on the Mode Select page before entering Arena or Survival. Her skills are available to try on the same page.
 
+<!-- | `L` | Basooka | Fires a beam straight ahead for one Special Bar | -->
+<!-- JT-2026/11/27 - document ana's fingertip beam on the l key -->
 | Key | Move | Effect |
 | --- | --- | --- |
 | `J` | Slap | Close-range strike that builds Special on hit |
 | `K` | Throw | Throws a stapler that builds Special on hit |
-| `L` | Basooka | Fires a beam straight ahead for one Special Bar |
+| `L` | Rei Gun | Fires a beam from Ana’s fingertip for one Special Bar |
 | `I` | Kick Barrage | Lands three rapid kicks for one Special Bar |
 | `O` | Spirit Bomb | Requires two full Special Bars and empties the meter for a one-hit knockout |
 
-Spirit Bomb takes 2.7 seconds to charge overhead before Gloria calls out and releases it downward. It protects her through landing and knocks out the Arena opponent from anywhere or clears all active enemies in Survival. Hold `U` to Pray in Arena or collect Charge Tokens to build Special in Survival.
+<!-- Spirit Bomb takes 2.7 seconds to charge overhead before Gloria calls out and releases it downward. It protects her through landing and knocks out the Arena opponent from anywhere or clears all active enemies in Survival. Hold `U` to Pray in Arena or collect Charge Tokens to build Special in Survival. -->
+<!-- JT-2026/11/28 - use ana as the fighter name -->
+Spirit Bomb takes 2.7 seconds to charge overhead before Ana calls out and releases it downward. It protects her through landing and knocks out the Arena opponent from anywhere or clears all active enemies in Survival. Hold `U` to Pray in Arena or collect Charge Tokens to build Special in Survival.
 
 ## Opponent ladder
 
@@ -293,3 +307,6 @@ Enter a nickname to join the public leaderboard. Arena ranks levels cleared, and
 3. Deploy the updated web project. Open the site, enter a nickname, clear the first level or wave, and check the corresponding leaderboard tab.
 
 The Android app uses its own menus and runs offline. The web game can be played unranked when the leaderboard service is unavailable.
+
+<!-- JT-2026/11/28 - migrate saved scores to ana and enable the current roster -->
+If the leaderboard tables already exist, run the updated [database/leaderboard-jose.sql](database/leaderboard-jose.sql) in the Neon SQL Editor before deploying. It updates Ana's existing scores to her current name and enables all four fighters. Run it again if you used an earlier version of the script.
